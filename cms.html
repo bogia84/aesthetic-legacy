@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CMS — Aesthetic Legacy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --red: #e63946;
+            --dark: #111;
+            --grey: #f4f4f4;
+            --border: #e0e0e0;
+            --muted: #888;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Manrope', sans-serif; color: var(--dark); background: #f8f8f8; }
+
+        /* ---- HEADER ---- */
+        .cms-header {
+            background: #fff;
+            border-bottom: 1px solid var(--border);
+            padding: 18px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-left { display: flex; align-items: center; gap: 14px; }
+        .header-logo { display: flex; align-items: center; gap: 10px; font-weight: 900; font-size: 1rem; }
+        .header-sep { color: #ccc; font-weight: 300; }
+        .header-label { color: var(--muted); font-weight: 600; font-size: 0.9rem; }
+        .back-link {
+            text-decoration: none;
+            color: var(--dark);
+            font-size: 0.82rem;
+            font-weight: 700;
+            border: 1px solid var(--border);
+            padding: 8px 18px;
+            transition: all 0.2s;
+        }
+        .back-link:hover { background: var(--dark); color: #fff; }
+
+        /* ---- ACTION BAR ---- */
+        .action-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 40px;
+            background: #fff;
+            border-bottom: 1px solid var(--border);
+        }
+        .btn {
+            padding: 10px 22px;
+            font-family: 'Manrope', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            letter-spacing: 0.03em;
+            transition: all 0.2s;
+        }
+        .btn-save { background: var(--dark); color: #fff; }
+        .btn-save:hover { background: var(--red); }
+        .btn-reset { background: transparent; color: var(--dark); border: 1px solid var(--border); }
+        .btn-reset:hover { background: var(--grey); }
+        .save-status { font-size: 0.8rem; font-weight: 700; transition: opacity 0.3s; }
+        .save-status.success { color: #16a34a; }
+        .save-status.info { color: var(--red); }
+
+        /* ---- MAIN ---- */
+        .cms-main { padding: 40px; max-width: 1400px; margin: 0 auto; }
+
+        .cms-section { margin-bottom: 56px; }
+        .section-title { font-size: 1.15rem; font-weight: 900; margin-bottom: 4px; }
+        .section-sub {
+            font-size: 0.78rem;
+            color: var(--muted);
+            font-weight: 500;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .section-sub::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        /* ---- BANNER LIST (drop zone) ---- */
+        .banner-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+            gap: 14px;
+            padding: 16px;
+            background: #efefef;
+            border-radius: 4px;
+            min-height: 80px;
+        }
+
+        /* ---- BANNER CARD ---- */
+        .banner-card {
+            background: #fff;
+            border: 2px solid transparent;
+            border-radius: 4px;
+            overflow: hidden;
+            cursor: grab;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s, opacity 0.15s;
+            user-select: none;
+        }
+        .banner-card:active { cursor: grabbing; }
+        .banner-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.1); transform: translateY(-2px); }
+        .banner-card.is-dragging { opacity: 0.35; }
+        .banner-card.drag-over { border-color: var(--red); transform: scale(1.04); box-shadow: 0 8px 24px rgba(230,57,70,0.2); }
+
+        .card-img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; display: block; pointer-events: none; }
+        .card-body { padding: 10px 12px 12px; }
+        .card-pos {
+            display: inline-block;
+            font-size: 0.6rem;
+            font-weight: 900;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: #fff;
+            background: var(--red);
+            padding: 2px 6px;
+            border-radius: 2px;
+            margin-bottom: 7px;
+        }
+        .card-title { font-size: 0.78rem; font-weight: 700; line-height: 1.35; margin-bottom: 4px; }
+        .card-date { font-size: 0.68rem; color: #aaa; }
+        .card-hint {
+            margin-top: 8px;
+            font-size: 0.62rem;
+            color: #ccc;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* ---- RESPONSIVE ---- */
+        @media (max-width: 768px) {
+            .cms-header { padding: 14px 20px; }
+            .action-bar { padding: 12px 20px; flex-wrap: wrap; }
+            .cms-main { padding: 20px; }
+            .banner-list { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+        }
+    </style>
+</head>
+<body>
+
+<header class="cms-header">
+    <div class="header-left">
+        <div class="header-logo">
+            <svg width="26" height="24" viewBox="0 0 30 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M13.4007 7.72751H18.9762V0H10.833L13.4007 7.72751Z" fill="#0A0A0A"/>
+                <path d="M5.6 27.9999L0 17.3379H18.9764V27.9999H5.6Z" fill="#0A0A0A"/>
+                <path d="M29.6386 22.3755L18.9766 28V0H29.6386V22.3755Z" fill="url(#g_cms)"/>
+                <defs>
+                    <linearGradient id="g_cms" x1="23.6961" y1="28" x2="23.6961" y2="0" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#DB2A30"/><stop offset="1" stop-color="#F57B7F"/>
+                    </linearGradient>
+                </defs>
+            </svg>
+            <span>AESTHETIC LEGACY</span>
+        </div>
+        <span class="header-sep">|</span>
+        <span class="header-label">CMS Dashboard</span>
+    </div>
+    <a href="index.html" class="back-link">← Back to Homepage</a>
+</header>
+
+<div class="action-bar">
+    <button class="btn btn-save" onclick="saveCMS()">Save to Homepage</button>
+    <button class="btn btn-reset" onclick="resetCMS()">Reset to Default</button>
+    <span class="save-status" id="save-status"></span>
+</div>
+
+<main class="cms-main">
+
+    <section class="cms-section">
+        <h2 class="section-title">Most Popular</h2>
+        <p class="section-sub">Drag cards to reorder — top banner carousel on the homepage</p>
+        <div class="banner-list" id="list-popular"></div>
+    </section>
+
+    <section class="cms-section">
+        <h2 class="section-title">Women</h2>
+        <p class="section-sub">Drag cards to reorder — Women section carousel</p>
+        <div class="banner-list" id="list-women"></div>
+    </section>
+
+    <section class="cms-section">
+        <h2 class="section-title">Men</h2>
+        <p class="section-sub">Drag cards to reorder — Men section carousel</p>
+        <div class="banner-list" id="list-men"></div>
+    </section>
+
+</main>
+
+<script>
+    const STORAGE_KEY = 'aestheticLegacyCMS';
+
+    const bannerData = {
+        popular: [
+            { img: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=400', title: 'Building the ultimate physique.', date: 'Sep 4, 2021' },
+            { img: 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&q=80&w=400', title: 'Nutrition tips for max growth.', date: 'Sep 4, 2021' },
+            { img: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400', title: 'Mastering the perfect form.', date: 'Sep 4, 2021' },
+            { img: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&q=80&w=400', title: 'Cardio vs Weightlifting.', date: 'Sep 4, 2021' },
+            { img: 'https://images.unsplash.com/photo-1526506159807-1a52701b22e1?auto=format&fit=crop&q=80&w=400', title: 'Advanced recovery tactics.', date: 'Sep 5, 2021' },
+            { img: 'https://images.unsplash.com/photo-1594381898411-846e7d193883?auto=format&fit=crop&q=80&w=400', title: 'Mental resilience in sports.', date: 'Sep 6, 2021' },
+            { img: 'https://images.unsplash.com/photo-1608667508764-33cf0726b13a?auto=format&fit=crop&q=80&w=400', title: 'Protein supplements guide.', date: 'Sep 7, 2021' },
+            { img: 'https://images.unsplash.com/photo-1574680093668-0782e2cb658e?auto=format&fit=crop&q=80&w=400', title: 'Optimizing sleep for athletes.', date: 'Sep 8, 2021' }
+        ],
+        women: [
+            { img: 'https://images.unsplash.com/photo-1608667508764-33cf0726b13a?auto=format&fit=crop&q=80&w=400', title: 'Core strengthening guide.', date: 'Sep 4, 2021' },
+            { img: 'https://images.unsplash.com/photo-1594381898411-846e7d193883?auto=format&fit=crop&q=80&w=400', title: 'HIIT workouts to maximize.', date: 'Sep 4, 2021' },
+            { img: 'https://images.unsplash.com/photo-1574680093668-0782e2cb658e?auto=format&fit=crop&q=80&w=400', title: 'Yoga flows for recovery.', date: 'Sep 4, 2021' },
+            { img: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&q=80&w=400', title: 'Nutrition for active women.', date: 'Sep 4, 2021' }
+        ],
+        men: [
+            { img: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=400', title: 'Best compound movements.', date: 'Sep 4, 2021' },
+            { img: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400', title: 'Overcoming training plateaus.', date: 'Sep 4, 2021' },
+            { img: 'https://images.unsplash.com/photo-1526506159807-1a52701b22e1?auto=format&fit=crop&q=80&w=400', title: 'Pre-workout breakdown.', date: 'Sep 4, 2021' },
+            { img: 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&q=80&w=400', title: 'Arm day specialized routine.', date: 'Sep 4, 2021' }
+        ]
+    };
+
+    // ---- Drag state ----
+    let dragSrc = null;
+
+    function makeDraggable(card) {
+        card.addEventListener('dragstart', function(e) {
+            dragSrc = this;
+            e.dataTransfer.effectAllowed = 'move';
+            this.classList.add('is-dragging');
+        });
+        card.addEventListener('dragend', function() {
+            this.classList.remove('is-dragging');
+            document.querySelectorAll('.banner-card').forEach(c => c.classList.remove('drag-over'));
+        });
+        card.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        });
+        card.addEventListener('dragenter', function(e) {
+            e.preventDefault();
+            if (this !== dragSrc) this.classList.add('drag-over');
+        });
+        card.addEventListener('dragleave', function() {
+            this.classList.remove('drag-over');
+        });
+        card.addEventListener('drop', function(e) {
+            e.stopPropagation();
+            e.preventDefault();
+            this.classList.remove('drag-over');
+            if (!dragSrc || dragSrc === this) return;
+            if (dragSrc.parentNode !== this.parentNode) return;
+
+            const parent = this.parentNode;
+            const cards = Array.from(parent.querySelectorAll('.banner-card'));
+            const srcIdx = cards.indexOf(dragSrc);
+            const tgtIdx = cards.indexOf(this);
+
+            if (srcIdx < tgtIdx) {
+                parent.insertBefore(dragSrc, this.nextSibling);
+            } else {
+                parent.insertBefore(dragSrc, this);
+            }
+            refreshPositionLabels(parent);
+        });
+    }
+
+    function refreshPositionLabels(listEl) {
+        listEl.querySelectorAll('.card-pos').forEach((el, i) => {
+            el.textContent = '#' + (i + 1);
+        });
+    }
+
+    function createCard(sectionKey, origIdx, position) {
+        const data = bannerData[sectionKey][origIdx];
+        const card = document.createElement('div');
+        card.className = 'banner-card';
+        card.draggable = true;
+        card.dataset.section = sectionKey;
+        card.dataset.origIdx = origIdx;
+        card.innerHTML =
+            '<img class="card-img" src="' + data.img + '" alt="' + escapeAttr(data.title) + '" loading="lazy">' +
+            '<div class="card-body">' +
+                '<span class="card-pos">#' + (position + 1) + '</span>' +
+                '<div class="card-title">' + escapeHtml(data.title) + '</div>' +
+                '<div class="card-date">' + escapeHtml(data.date) + '</div>' +
+                '<div class="card-hint">' +
+                    '<svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">' +
+                        '<circle cx="2" cy="2" r="1.5" fill="#ccc"/>' +
+                        '<circle cx="8" cy="2" r="1.5" fill="#ccc"/>' +
+                        '<circle cx="2" cy="8" r="1.5" fill="#ccc"/>' +
+                        '<circle cx="8" cy="8" r="1.5" fill="#ccc"/>' +
+                    '</svg>' +
+                    'drag to reorder' +
+                '</div>' +
+            '</div>';
+        makeDraggable(card);
+        return card;
+    }
+
+    function renderSection(sectionKey, listId, order) {
+        const list = document.getElementById(listId);
+        list.innerHTML = '';
+        order.forEach(function(origIdx, pos) {
+            list.appendChild(createCard(sectionKey, origIdx, pos));
+        });
+    }
+
+    function getInitialOrder() {
+        var saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+            try { return JSON.parse(saved); } catch(e) {}
+        }
+        return {
+            popular: bannerData.popular.map(function(_, i) { return i; }),
+            women:   bannerData.women.map(function(_, i) { return i; }),
+            men:     bannerData.men.map(function(_, i) { return i; })
+        };
+    }
+
+    function getOrder(listId) {
+        return Array.from(document.querySelectorAll('#' + listId + ' .banner-card'))
+            .map(function(card) { return parseInt(card.dataset.origIdx, 10); });
+    }
+
+    function saveCMS() {
+        var orders = {
+            popular: getOrder('list-popular'),
+            women:   getOrder('list-women'),
+            men:     getOrder('list-men')
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
+        showStatus('✓ Saved! Reload the homepage to see changes.', 'success');
+    }
+
+    function resetCMS() {
+        if (!confirm('Reset all banner orders to default? This will clear your saved configuration.')) return;
+        localStorage.removeItem(STORAGE_KEY);
+        var defaults = {
+            popular: bannerData.popular.map(function(_, i) { return i; }),
+            women:   bannerData.women.map(function(_, i) { return i; }),
+            men:     bannerData.men.map(function(_, i) { return i; })
+        };
+        renderSection('popular', 'list-popular', defaults.popular);
+        renderSection('women',   'list-women',   defaults.women);
+        renderSection('men',     'list-men',     defaults.men);
+        showStatus('✓ Reset to default order.', 'info');
+    }
+
+    function showStatus(msg, type) {
+        var el = document.getElementById('save-status');
+        el.textContent = msg;
+        el.className = 'save-status ' + type;
+        clearTimeout(el._t);
+        el._t = setTimeout(function() { el.textContent = ''; }, 4000);
+    }
+
+    function escapeHtml(str) {
+        return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+    function escapeAttr(str) {
+        return String(str).replace(/"/g,'&quot;');
+    }
+
+    // ---- Init ----
+    var initialOrder = getInitialOrder();
+    renderSection('popular', 'list-popular', initialOrder.popular);
+    renderSection('women',   'list-women',   initialOrder.women);
+    renderSection('men',     'list-men',     initialOrder.men);
+</script>
+
+</body>
+</html>

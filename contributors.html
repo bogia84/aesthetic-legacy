@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contributors — Aesthetic Legacy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary-red: #e63946; --light-grey: #f4f4f4; --text-dark: #111; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Manrope', sans-serif; color: var(--text-dark); overflow-x: hidden; }
+
+        .scroll-container { height: 100vh; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; }
+
+        /* --- HEADER --- */
+        header { position: absolute; top: 40px; left: 10%; width: 80%; display: flex; justify-content: space-between; align-items: center; z-index: 100; }
+        .logo { font-weight: 900; font-size: 1.2rem; display: flex; align-items: center; gap: 10px; }
+        nav { display: flex; font-size: 0.9rem; font-weight: 600; }
+        nav a { text-decoration: none; color: var(--text-dark); margin-left: 20px; }
+        nav a.active { color: var(--primary-red); }
+        .hamburger { display: none; cursor: pointer; color: var(--text-dark); padding: 5px; }
+
+        /* --- PAGE CONTENT SECTION --- */
+        .block-page {
+            min-height: 100vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            padding: 160px 10% 8%;
+            background: var(--light-grey);
+        }
+
+        .page-eyebrow { font-size: 0.75rem; font-weight: 800; letter-spacing: 0.15em; text-transform: uppercase; color: var(--primary-red); margin-bottom: 20px; }
+        .page-heading { font-size: clamp(3rem, 7vw, 6rem); font-weight: 900; line-height: 0.95; margin-bottom: 30px; }
+        .page-divider { width: 60px; height: 4px; background: var(--primary-red); margin-bottom: 40px; }
+        .page-body { max-width: 640px; }
+        .page-body p { font-size: 1rem; line-height: 1.85; color: #555; font-weight: 400; margin-bottom: 20px; }
+        .page-body p:last-child { margin-bottom: 0; }
+
+        /* --- FOOTER --- */
+        .block-footer {
+            min-height: 100vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            padding: 5% 10%;
+            background: #fff;
+            align-items: center;
+            text-align: center;
+        }
+        .footer-content { display: flex; justify-content: space-between; width: 100%; align-items: center; }
+        .footer-left { text-align: left; }
+        .footer-logo-container svg { width: 100%; height: auto; max-width: 416px; display: block; }
+        .socials { margin-top: 20px; font-size: 0.9rem; font-weight: 800; }
+        .socials span { margin-right: 15px; cursor: pointer; color: var(--primary-red); }
+        .footer-right img { max-height: 50vh; object-fit: contain; }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 768px) {
+            .block-page { padding: 40px 5% 80px 5%; height: auto; min-height: auto; justify-content: flex-start; }
+            body { overflow: auto; }
+            header { position: relative; width: 100%; left: 0; flex-direction: row; justify-content: space-between; top: 0; margin-bottom: 20px; }
+            .logo-text { display: none; }
+            .hamburger { display: flex; align-items: center; z-index: 101; position: relative; }
+            nav { position: absolute; top: 45px; right: 0; width: 100%; background: #ffffff; flex-direction: column; align-items: center; border-radius: 12px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); max-height: 0; opacity: 0; visibility: hidden; overflow: hidden; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+            nav.open { max-height: 300px; opacity: 1; visibility: visible; padding: 20px 0; }
+            nav a { margin: 15px 0; font-size: 1.1rem; opacity: 0; transform: translateY(-10px); transition: all 0.3s ease; }
+            nav.open a { opacity: 1; transform: translateY(0); }
+            nav.open a:nth-child(1) { transition-delay: 0.1s; }
+            nav.open a:nth-child(2) { transition-delay: 0.2s; }
+            nav.open a:nth-child(3) { transition-delay: 0.3s; }
+            .block-footer { padding: 40px 5% 120px 5%; height: auto; min-height: auto; justify-content: flex-start; }
+            .footer-content { flex-direction: column; gap: 40px; justify-content: center; text-align: center; }
+            .footer-left { text-align: center; display: flex; flex-direction: column; align-items: center; }
+            .socials span { margin: 0 10px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="scroll-container">
+
+    <section class="block-page">
+        <header>
+            <div class="logo">
+                <svg width="30" height="28" viewBox="0 0 30 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M13.4007 7.72751H18.9762V0H10.833L13.4007 7.72751Z" fill="#0A0A0A"/>
+                    <path d="M5.6 27.9999L0 17.3379H18.9764V27.9999H5.6Z" fill="#0A0A0A"/>
+                    <path d="M29.6386 22.3755L18.9766 28V0H29.6386V22.3755Z" fill="url(#paint0_contrib)"/>
+                    <defs>
+                        <linearGradient id="paint0_contrib" x1="23.6961" y1="28" x2="23.6961" y2="0" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#DB2A30"/><stop offset="1" stop-color="#F57B7F"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <span class="logo-text">AESTHETIC LEGACY</span>
+            </div>
+            <nav id="main-nav">
+                <a href="index.html">Home</a>
+                <a href="about.html">About us</a>
+                <a href="contributors.html" class="active">Contributors</a>
+            </nav>
+            <div class="hamburger" id="hamburger-menu">
+                <svg width="30" height="20" viewBox="0 0 30 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0 1H30M0 10H30M0 19H30" stroke="currentColor" stroke-width="2"/>
+                </svg>
+            </div>
+        </header>
+
+        <div>
+            <p class="page-eyebrow">The people behind it</p>
+            <h1 class="page-heading">Contri-<br>butors.</h1>
+            <div class="page-divider"></div>
+            <div class="page-body">
+                <p>Aesthetic Legacy is built by a passionate collective of athletes, coaches, nutritionists, and writers who share a single vision: to raise the standard of fitness content.</p>
+                <p>Our contributors bring real-world experience from competitive sports, elite training environments, and evidence-based nutrition research — delivering knowledge you can actually use.</p>
+                <p>This page is a work in progress. Contributor profiles coming soon.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="block-footer">
+        <div class="footer-content">
+            <div class="footer-left">
+                <div class="footer-logo-container">
+                    <svg viewBox="0 0 416 98" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <g clip-path="url(#clip0_contrib_footer)">
+                    <path d="M117.808 42.6613L133.95 0.423828H139L155.189 42.6613H146.599L136.499 13.8116L126.398 42.6613H117.808ZM133.997 35.9203L131.448 28.2364H147.826V35.9203H133.997Z" fill="#0A0A0A"/>
+                    <path d="M209.326 43.085C207.296 43.085 205.314 42.8965 203.426 42.4722C201.491 42.0479 199.697 41.4823 197.998 40.6809C196.299 39.8795 194.789 38.9367 193.42 37.8525L197.101 31.3C198.753 32.6199 200.594 33.657 202.765 34.4112C204.889 35.1183 207.108 35.4955 209.326 35.4955C211.922 35.4955 213.951 35.0712 215.367 34.1755C216.783 33.2799 217.538 32.0542 217.538 30.4515C217.538 29.2258 217.161 28.283 216.453 27.6231C215.745 26.9631 214.801 26.4917 213.621 26.2089C212.441 25.926 211.167 25.6432 209.798 25.4075C208.146 25.1718 206.494 24.8418 204.795 24.4647C203.096 24.0876 201.538 23.4748 200.122 22.6734C198.706 21.872 197.573 20.6935 196.724 19.1379C195.874 17.6294 195.449 15.5552 195.449 13.0097C195.449 8.86135 196.818 5.65583 199.509 3.39311C202.246 1.13038 206.069 -0.000976562 211.025 -0.000976562C213.291 -0.000976562 215.65 0.376144 218.01 1.13038C220.37 1.88462 222.589 2.96885 224.618 4.38305L221.267 11.1241C219.615 9.99271 217.916 9.09705 216.17 8.48423C214.376 7.87141 212.677 7.58857 211.072 7.58857C208.618 7.58857 206.73 8.01283 205.408 8.81421C204.087 9.61559 203.379 10.747 203.379 12.2083C203.379 13.5754 203.756 14.6124 204.559 15.3195C205.361 16.0266 206.4 16.5452 207.674 16.8752C208.948 17.2051 210.317 17.5351 211.827 17.818C213.479 18.1479 215.084 18.5251 216.689 18.9493C218.294 19.3736 219.757 20.0807 221.125 20.9292C222.447 21.7777 223.533 22.9562 224.335 24.4647C225.137 25.9732 225.515 27.9059 225.515 30.2629C225.515 34.4112 224.099 37.5225 221.314 39.7852C218.482 42.0008 214.518 43.1321 209.42 43.1321L209.326 43.085Z" fill="#0A0A0A"/>
+                    <path d="M226.884 8.10765V0.423828H257.894V8.10765H226.884ZM238.401 42.6613V3.91219H246.377V42.7084H238.401V42.6613Z" fill="#0A0A0A"/>
+                    <path d="M262.519 42.6613V0.423828H270.496V42.6613H262.519ZM266.248 25.5495V17.8656H285.694L281.634 25.5495H266.201H266.248ZM285.694 42.6613V0.423828H293.67V42.6613H285.694Z" fill="#0A0A0A"/>
+                    <path d="M302.968 42.6613V0.423828H310.944V42.6613H302.968ZM305.847 8.10765V0.423828H331.287V8.10765H305.847ZM314.956 25.5495L310.897 17.8656H324.726V25.5495H314.956ZM305.847 42.6613V34.9775H331.287V42.6613H305.847Z" fill="#0A0A0A"/>
+                    <path d="M160.429 42.6613V0.423828H168.405V42.6613H160.429ZM163.308 8.10765V0.423828H188.748V8.10765H163.308ZM172.464 25.5495L168.405 17.8656H182.234V25.5495H172.464ZM163.308 42.6613V34.9775H188.748V42.6613H163.308Z" fill="#0A0A0A"/>
+                    <path d="M333.931 8.10765V0.423828H364.94V8.10765H333.931ZM345.447 42.6613V3.91219H353.424V42.7084H345.447V42.6613Z" fill="#0A0A0A"/>
+                    <path d="M377.258 0.423828V42.6613H368.999V0.423828H377.258Z" fill="#0A0A0A"/>
+                    <path d="M400.386 43.085C397.129 43.085 394.391 42.4722 392.126 41.2466C389.86 40.0209 388.114 38.2296 386.887 35.8726C385.707 33.5156 385.093 30.6872 385.093 27.3402V15.7438C385.093 12.3969 385.707 9.56845 386.887 7.21145C388.067 4.85445 389.813 3.06313 392.126 1.83748C394.391 0.611844 397.176 -0.000976562 400.386 -0.000976562C403.076 -0.000976562 405.436 0.564704 407.513 1.69606C409.589 2.82743 411.336 4.47733 412.704 6.64577C414.073 8.81421 415.017 11.4541 415.536 14.5653H407.277C406.946 13.1511 406.474 11.9726 405.813 10.9826C405.153 9.99271 404.398 9.23847 403.454 8.71993C402.51 8.20139 401.518 7.91855 400.338 7.91855C398.12 7.91855 396.374 8.57851 395.147 9.94557C393.919 11.3126 393.306 13.2454 393.306 15.6967V27.2931C393.306 29.7915 393.919 31.6771 395.147 33.0442C396.374 34.4112 398.12 35.0712 400.338 35.0712C402.085 35.0712 403.548 34.5055 404.775 33.327C405.955 32.1957 406.805 30.5458 407.229 28.4245H415.489C414.923 31.4886 413.979 34.1284 412.61 36.2968C411.241 38.4653 409.542 40.1152 407.465 41.2937C405.389 42.4251 403.029 42.9907 400.338 42.9907L400.386 43.085Z" fill="#0A0A0A"/>
+                    <path d="M220.417 96.1647L236.607 53.9272H241.657L257.846 96.1647H249.256L239.155 67.315L229.055 96.1647H220.465H220.417ZM236.607 89.3765L234.058 81.6927H250.436V89.3765H236.607Z" fill="#0A0A0A"/>
+                    <path d="M151.932 96.1647V53.9272H159.909V96.1647H151.932ZM154.811 61.6111V53.9272H180.251V61.6111H154.811ZM163.968 79.0057L159.909 71.3219H173.738V79.0057H163.968ZM154.811 96.1647V88.4809H180.251V96.1647H154.811Z" fill="#0A0A0A"/>
+                    <path d="M117.808 96.1647V53.9272H125.785V96.1647H117.808ZM129.797 96.1647L125.737 88.4809H146.08V96.1647H129.749H129.797Z" fill="#0A0A0A"/>
+                    <path d="M202.954 72.5472H217.633V80.7967C217.633 83.9551 216.972 86.7364 215.698 89.1405C214.423 91.5447 212.63 93.336 210.317 94.6559C208.004 95.9758 205.314 96.6358 202.199 96.6358C199.084 96.6358 196.346 96.023 194.033 94.7973C191.721 93.5717 189.88 91.8275 188.606 89.6119C187.331 87.3964 186.67 84.7565 186.67 81.7867V69.3417C186.67 66.1833 187.331 63.4021 188.606 61.0451C189.88 58.6881 191.673 56.8496 193.986 55.5297C196.299 54.2098 198.989 53.5498 202.104 53.5498C204.653 53.5498 207.013 54.0683 209.09 55.1054C211.166 56.1425 212.96 57.6038 214.376 59.4894C215.792 61.3751 216.783 63.5435 217.302 66.0891H208.712C208.287 64.722 207.438 63.6378 206.163 62.9307C204.889 62.1764 203.52 61.7993 202.104 61.7993C199.933 61.7993 198.234 62.5064 196.913 63.8735C195.591 65.2405 194.977 67.079 194.977 69.3417V81.7867C194.977 83.7666 195.638 85.3693 196.96 86.595C198.281 87.8206 200.075 88.4334 202.246 88.4334C204.417 88.4334 206.116 87.7735 207.438 86.4535C208.759 85.1336 209.373 83.3423 209.373 80.9853V80.2782H202.954V72.5944V72.5472Z" fill="#0A0A0A"/>
+                    <path d="M274.979 96.5884C271.723 96.5884 268.985 95.9756 266.72 94.75C264.454 93.5243 262.708 91.733 261.481 89.376C260.301 87.019 259.687 84.1906 259.687 80.8437V69.2472C259.687 65.9003 260.301 63.0719 261.481 60.7149C262.661 58.3579 264.407 56.5665 266.72 55.3409C268.985 54.1153 271.77 53.5024 274.979 53.5024C277.67 53.5024 280.03 54.0681 282.106 55.1995C284.183 56.3308 285.929 57.9807 287.298 60.1492C288.667 62.3176 289.611 64.9575 290.13 68.0687H281.87C281.54 66.6545 281.068 65.476 280.407 64.4861C279.746 63.4961 278.991 62.7419 278.047 62.2233C277.103 61.7048 276.112 61.422 274.932 61.422C272.714 61.422 270.967 62.0819 269.74 63.449C268.513 64.816 267.9 66.7488 267.9 69.2001V80.7965C267.9 83.2949 268.513 85.1805 269.74 86.5476C270.967 87.9147 272.714 88.5746 274.932 88.5746C276.678 88.5746 278.142 88.0089 279.369 86.8304C280.596 85.6519 281.398 84.0492 281.823 81.9279H290.083C289.517 84.992 288.573 87.6318 287.204 89.8003C285.835 91.9687 284.136 93.6186 282.059 94.7971C279.982 95.9285 277.622 96.4941 274.932 96.4941L274.979 96.5884Z" fill="#0A0A0A"/>
+                    <path d="M324.16 53.9272L311.699 79.8543V96.1647H303.723V79.8543L291.262 53.9272H299.616L307.687 72.1233L315.758 53.9272H324.112H324.16Z" fill="#0A0A0A"/>
+                    <path d="M46.632 26.9164H66.0306V0.09375H37.7114L46.632 26.9164Z" fill="#0A0A0A"/>
+                    <path d="M19.5402 97.3904L0 60.3384H66.0308V97.3904H19.5402Z" fill="#0A0A0A"/>
+                    <path d="M103.129 77.8748L66.0308 97.3908V0.09375H103.129V77.8748Z" fill="url(#paint0_linear_contrib_footer)"/>
+                    </g>
+                    <defs>
+                    <linearGradient id="paint0_linear_contrib_footer" x1="82.4524" y1="97.3908" x2="82.4524" y2="0.0937489" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#DB2A30"/>
+                    <stop offset="1" stop-color="#F57B7F"/>
+                    </linearGradient>
+                    <clipPath id="clip0_contrib_footer">
+                    <rect width="415.933" height="97.2985" fill="white"/>
+                    </clipPath>
+                    </defs>
+                    </svg>
+                </div>
+                <div class="socials">
+                    Follow Us
+                    <span>Facebook</span>
+                    <span>Twitter</span>
+                    <span>Instagram</span>
+                </div>
+            </div>
+            <div class="footer-right">
+                <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&q=80&w=600" alt="Fitness Equipment" style="border-radius: 10px;">
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<script>
+    const hamburger = document.getElementById('hamburger-menu');
+    const mainNav = document.getElementById('main-nav');
+    hamburger.addEventListener('click', function() {
+        mainNav.classList.toggle('open');
+    });
+</script>
+
+</body>
+</html>
