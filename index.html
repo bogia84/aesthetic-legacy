@@ -76,8 +76,24 @@
         .swiper-button-disabled { opacity: 0.3 !important; border-color: #e0e0e0; cursor: not-allowed; }
 
         /* --- SLIDE CONTENT & OVERLAY --- */
-        .swiper-slide { background-color: #111; position: relative; overflow: hidden; aspect-ratio: 4 / 5; height: auto; }
-        .swiper-slide img { width: 100%; height: 100%; object-fit: cover; opacity: 0.85; transition: 0.5s ease; }
+        /* Forced aspect ratio on all swiper slides */
+        .swiper-slide { 
+            background-color: #111; 
+            position: relative; 
+            overflow: hidden; 
+            aspect-ratio: 4 / 5 !important; 
+            height: auto !important; 
+        }
+        .swiper-slide img { 
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            opacity: 0.85; 
+            transition: 0.5s ease; 
+        }
         .swiper-slide:hover img { transform: scale(1.05); }
 
         .slide-content { position: absolute; bottom: 0; left: 0; width: 100%; padding: 0; z-index: 2; }
@@ -233,6 +249,7 @@
                 grid-template-columns: 1fr; 
                 gap: 20px;
                 transform: none !important; 
+                align-items: start !important; /* Fixes grid stretching height on mobile */
             }
             .block-women .swiper-slide, .block-men .swiper-slide { width: 100% !important; margin-right: 0 !important; }
             .block-women .header-controls, .block-men .header-controls { display: none; }
@@ -457,34 +474,38 @@
 
 <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
 <script>
-    // --- Swiper Init ---
-    new Swiper('.swiper-popular', {
-        spaceBetween: 20,
-        navigation: { nextEl: '.pop-next', prevEl: '.pop-prev' },
-        breakpoints: {
-            320: { slidesPerView: 1.5 },
-            768: { slidesPerView: 3.2 },
-            1024: { slidesPerView: 4.5 } 
+    document.addEventListener("DOMContentLoaded", function() {
+        // --- Swiper Init ---
+        new Swiper('.swiper-popular', {
+            spaceBetween: 20,
+            navigation: { nextEl: '.pop-next', prevEl: '.pop-prev' },
+            breakpoints: {
+                320: { slidesPerView: 1.5 },
+                768: { slidesPerView: 3.2 },
+                1024: { slidesPerView: 4.5 } 
+            }
+        });
+
+        const splitConfig = {
+            spaceBetween: 20,
+            breakpoints: {
+                320: { enabled: false }, 
+                768: { enabled: true, slidesPerView: 2.2 } 
+            }
+        };
+
+        new Swiper('.swiper-women', { ...splitConfig, navigation: { nextEl: '.wom-next', prevEl: '.wom-prev' } });
+        new Swiper('.swiper-men', { ...splitConfig, navigation: { nextEl: '.men-next', prevEl: '.men-prev' } });
+
+        // --- Mobile Menu Toggle ---
+        const hamburger = document.getElementById('hamburger-menu');
+        const mainNav = document.getElementById('main-nav');
+
+        if(hamburger) {
+            hamburger.addEventListener('click', function() {
+                mainNav.classList.toggle('open');
+            });
         }
-    });
-
-    const splitConfig = {
-        spaceBetween: 20,
-        breakpoints: {
-            320: { enabled: false }, 
-            768: { enabled: true, slidesPerView: 2.2 } 
-        }
-    };
-
-    new Swiper('.swiper-women', { ...splitConfig, navigation: { nextEl: '.wom-next', prevEl: '.wom-prev' } });
-    new Swiper('.swiper-men', { ...splitConfig, navigation: { nextEl: '.men-next', prevEl: '.men-prev' } });
-
-    // --- Mobile Menu Toggle ---
-    const hamburger = document.getElementById('hamburger-menu');
-    const mainNav = document.getElementById('main-nav');
-
-    hamburger.addEventListener('click', function() {
-        mainNav.classList.toggle('open');
     });
 </script>
 
