@@ -37,7 +37,6 @@
             justify-content: space-between;
             align-items: center;
             z-index: 1000; 
-            /* Removed blur background to match Home */
         }
         
         .logo { font-weight: 900; font-size: 1.2rem; display: flex; align-items: center; gap: 10px; text-transform: uppercase;}
@@ -311,16 +310,16 @@
                 flex-direction: row; 
                 justify-content: space-between; 
                 top: 0; 
-                margin-bottom: 20px; 
+                margin-bottom: 0px; /* Reduced to pull title up */
                 padding: 15px 5%;
             }
-            .logo span { display: none; } /* Replicated .logo-text display:none behavior */
+            .logo span { display: none; } 
             
             .hamburger { display: flex; align-items: center; z-index: 101; position: relative;}
             
             nav { 
                 position: absolute; 
-                top: 60px; /* Slide down right below header */
+                top: 60px; 
                 right: 5%;
                 width: 90%;
                 background: #ffffff;
@@ -329,7 +328,6 @@
                 border-radius: 12px;
                 box-shadow: 0 15px 35px rgba(0,0,0,0.1);
                 
-                /* Animation baseline */
                 max-height: 0;
                 opacity: 0;
                 visibility: hidden;
@@ -337,7 +335,6 @@
                 transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             }
 
-            /* Active Class added via JS */
             nav.open {
                 max-height: 300px;
                 opacity: 1;
@@ -345,7 +342,6 @@
                 padding: 20px 0;
             }
 
-            /* Link Stagger Animation */
             nav a { 
                 margin: 15px 0; 
                 font-size: 1.1rem;
@@ -364,10 +360,18 @@
 
             /* Base spacing fixes */
             .block { padding: 30px 5%; min-height: auto; } 
-            .sec1-hero { padding-top: 10px; margin-bottom: 30px; flex-direction: column; align-items: flex-start; text-align: left; }
-            .split-5050-container { padding: 30px 5%; min-height: auto; }
+            
+            /* Target only the first block to collapse the gap below the header */
+            main > section:first-child { padding-top: 10px; } 
 
             /* --- SECTION 1 MOBILE OVERRIDES --- */
+            .sec1-hero { 
+                padding-top: 0px; /* Eliminated extra padding */
+                margin-bottom: 30px; 
+                flex-direction: column; 
+                align-items: flex-start; 
+                text-align: left; 
+            }
             .sec1-title-top { text-align: left; font-size: 15vw; line-height: 1.05; }
             .sec1-title-top .thin-red { display: block; margin-top: 2px; }
             .sec1-title-bottom-wrap { flex-direction: column; text-align: left; align-items: flex-start; gap: 15px; margin-top: 5px; }
@@ -386,16 +390,13 @@
             .split-5050-wrapper { flex-direction: column; }
             .split-5050-left, .split-5050-right { width: 100%; flex: 1 1 auto; }
             
-            /* Tighten up padding inside split sections */
             .split-5050-left { padding: 30px 5%; text-align: left; align-items: flex-start; }
             .split-5050-right { min-height: 450px; }
 
-            /* Section 3 specific typography */
             .s3-title-top { font-size: 14vw; line-height: 1.05; }
             .s3-title-bottom { font-size: 14vw; line-height: 1.05; margin-bottom: 15px; }
             .s3-desc br, .s4-desc br { display: none; } 
             
-            /* Section 4 specific typography */
             .s4-title-container { align-items: flex-start; margin-bottom: 15px; }
             .s4-t1 { font-size: 6.5vw; margin-bottom: 15px; }
             .s4-t-row { justify-content: flex-start; gap: 10px; margin-bottom: 0px; }
@@ -403,11 +404,9 @@
             .s4-t3 { font-size: 15vw; line-height: 1.1; }
             .s4-desc { text-align: left; margin-top: 10px; }
 
-            /* Section 5 specific typography */
             .s5-t1 { width: 100%; text-align: center; font-size: 6.5vw; line-height: 1.2; margin-bottom: 5px; }
             .s5-t2 { width: 100%; text-align: center; font-size: 20vw; line-height: 1; margin-bottom: 25px; }
             
-            /* Fix centering alignment for section 5 text */
             .split-5050-container.bg-dark .split-5050-left .s3-desc { text-align: left; width: 100%; margin: 0 auto; }
 
             /* Footer Mobile Overrides */
