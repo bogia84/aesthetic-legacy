@@ -27,20 +27,17 @@
             position: relative;
         }
 
-        /* --- HEADER (FIXED/FROZEN) --- */
+        /* --- HEADER (SYNCED WITH HOME PAGE) --- */
         header {
-            position: fixed; 
-            top: 0;
-            left: 0;
-            width: 100%; 
+            position: absolute; /* Matches home page style */
+            top: 40px;
+            left: 10%;
+            width: 80%; 
             display: flex;
             justify-content: space-between;
             align-items: center;
             z-index: 1000; 
-            background: rgba(255, 255, 255, 0.95); 
-            padding: 20px 10%; 
-            backdrop-filter: blur(5px); 
-            border-bottom: 1px solid rgba(0,0,0,0.05); 
+            /* Removed blur background to match Home */
         }
         
         .logo { font-weight: 900; font-size: 1.2rem; display: flex; align-items: center; gap: 10px; text-transform: uppercase;}
@@ -71,6 +68,7 @@
             display: flex;
             justify-content: center;
             width: 100%;
+            padding-top: 60px; /* Buffer below the absolute header */
         }
         
         .sec1-title-container {
@@ -304,19 +302,72 @@
 
         /* --- RESPONSIVE MOBILE FIXES --- */
         @media (max-width: 768px) {
-            header { padding: 15px 5%; }
-            .logo span { display: none; } 
             
-            nav { display: none; } 
-            .hamburger { display: block; }
+            /* --- HEADER MOBILE SYNC --- */
+            header { 
+                position: relative; 
+                width: 100%; 
+                left: 0; 
+                flex-direction: row; 
+                justify-content: space-between; 
+                top: 0; 
+                margin-bottom: 20px; 
+                padding: 15px 5%;
+            }
+            .logo span { display: none; } /* Replicated .logo-text display:none behavior */
             
-            /* Remove full height on mobile and fix massive padding gaps */
+            .hamburger { display: flex; align-items: center; z-index: 101; position: relative;}
+            
+            nav { 
+                position: absolute; 
+                top: 60px; /* Slide down right below header */
+                right: 5%;
+                width: 90%;
+                background: #ffffff;
+                flex-direction: column;
+                align-items: center;
+                border-radius: 12px;
+                box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+                
+                /* Animation baseline */
+                max-height: 0;
+                opacity: 0;
+                visibility: hidden;
+                overflow: hidden;
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            /* Active Class added via JS */
+            nav.open {
+                max-height: 300px;
+                opacity: 1;
+                visibility: visible;
+                padding: 20px 0;
+            }
+
+            /* Link Stagger Animation */
+            nav a { 
+                margin: 15px 0; 
+                font-size: 1.1rem;
+                opacity: 0; 
+                transform: translateY(-10px); 
+                transition: all 0.3s ease; 
+            }
+            nav.open a { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+            nav.open a:nth-child(1) { transition-delay: 0.1s; }
+            nav.open a:nth-child(2) { transition-delay: 0.2s; }
+            nav.open a:nth-child(3) { transition-delay: 0.3s; }
+
+
+            /* Base spacing fixes */
             .block { padding: 30px 5%; min-height: auto; } 
-            main > section:first-child { padding-top: 100px; } /* Prevent Hero from hiding under header */
+            .sec1-hero { padding-top: 10px; margin-bottom: 30px; flex-direction: column; align-items: flex-start; text-align: left; }
             .split-5050-container { padding: 30px 5%; min-height: auto; }
 
             /* --- SECTION 1 MOBILE OVERRIDES --- */
-            .sec1-hero { flex-direction: column; align-items: flex-start; text-align: left; margin-bottom: 30px; }
             .sec1-title-top { text-align: left; font-size: 15vw; line-height: 1.05; }
             .sec1-title-top .thin-red { display: block; margin-top: 2px; }
             .sec1-title-bottom-wrap { flex-direction: column; text-align: left; align-items: flex-start; gap: 15px; margin-top: 5px; }
@@ -367,7 +418,7 @@
 </head>
 <body>
 
-    <!-- HEADER -->
+    <!-- HEADER (UPDATED TO MATCH HOME) -->
     <header>
         <div class="logo">
             <svg width="30" height="28" viewBox="0 0 30 28" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -618,27 +669,13 @@
                 });
             }
 
-            // Mobile Hamburger Menu Toggle
+            // Mobile Menu Logic (Synced with Home)
             const hamburger = document.getElementById('hamburger-menu');
-            const mainNav = document.getElementById('main-nav');
+            const nav = document.getElementById('main-nav');
 
-            if(hamburger) {
+            if (hamburger && nav) {
                 hamburger.addEventListener('click', function() {
-                    if (mainNav.style.display === "flex") {
-                        mainNav.style.display = "none";
-                    } else {
-                        mainNav.style.display = "flex";
-                        mainNav.style.flexDirection = "column";
-                        mainNav.style.position = "absolute";
-                        mainNav.style.top = "60px";
-                        mainNav.style.right = "5%";
-                        mainNav.style.background = "#fff";
-                        mainNav.style.padding = "20px";
-                        mainNav.style.boxShadow = "0 10px 30px rgba(0,0,0,0.1)";
-                        mainNav.style.borderRadius = "8px";
-                        mainNav.style.gap = "15px";
-                        mainNav.style.zIndex = "1001";
-                    }
+                    nav.classList.toggle('open');
                 });
             }
         });
