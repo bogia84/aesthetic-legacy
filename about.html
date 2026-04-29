@@ -3,132 +3,533 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About Us — Aesthetic Legacy</title>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <title>About Us - Aesthetic Legacy</title>
+    <!-- Include Manrope Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Include Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
     <style>
-        :root { --primary-red: #e63946; --light-grey: #f4f4f4; --text-dark: #111; }
+        /* --- GLOBAL VARIABLES & RESET --- */
+        :root {
+            --primary-red: #EC262D; 
+            --light-grey: #f4f4f4;
+            --text-dark: #111;
+            --bg-dark: #282828;
+            --text-light: #fff;
+        }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Manrope', sans-serif; color: var(--text-dark); overflow-x: hidden; }
-
-        .scroll-container { height: 100vh; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; }
-
-        /* --- HEADER --- */
-        header { position: absolute; top: 40px; left: 10%; width: 80%; display: flex; justify-content: space-between; align-items: center; z-index: 100; }
-        .logo { font-weight: 900; font-size: 1.2rem; display: flex; align-items: center; gap: 10px; }
-        nav { display: flex; font-size: 0.9rem; font-weight: 600; }
-        nav a { text-decoration: none; color: var(--text-dark); margin-left: 20px; }
-        nav a.active { color: var(--primary-red); }
-        .hamburger { display: none; cursor: pointer; color: var(--text-dark); padding: 5px; }
-
-        /* --- PAGE CONTENT SECTION --- */
-        .block-page {
-            min-height: 100vh;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
+        
+        body { 
+            font-family: 'Manrope', sans-serif; 
+            color: var(--text-dark); 
+            overflow-x: hidden; 
+            background: #fff; 
             position: relative;
-            padding: 160px 10% 8%;
-            background: #fff;
         }
 
-        .page-eyebrow { font-size: 0.75rem; font-weight: 800; letter-spacing: 0.15em; text-transform: uppercase; color: var(--primary-red); margin-bottom: 20px; }
-        .page-heading { font-size: clamp(3rem, 7vw, 6rem); font-weight: 900; line-height: 0.95; margin-bottom: 30px; }
-        .page-divider { width: 60px; height: 4px; background: var(--primary-red); margin-bottom: 40px; }
-        .page-body { max-width: 640px; }
-        .page-body p { font-size: 1rem; line-height: 1.85; color: #555; font-weight: 400; margin-bottom: 20px; }
-        .page-body p:last-child { margin-bottom: 0; }
-
-        /* --- FOOTER --- */
-        .block-footer {
-            min-height: 100vh;
-            width: 100%;
+        /* --- HEADER (FIXED/FROZEN) --- */
+        header {
+            position: fixed; 
+            top: 0;
+            left: 0;
+            width: 100%; 
             display: flex;
-            flex-direction: column;
-            justify-content: center;
-            position: relative;
-            padding: 5% 10%;
-            background: #fff;
+            justify-content: space-between;
             align-items: center;
-            text-align: center;
+            z-index: 1000; 
+            background: rgba(255, 255, 255, 0.95); 
+            padding: 20px 10%; 
+            backdrop-filter: blur(5px); 
+            border-bottom: 1px solid rgba(0,0,0,0.05); 
         }
-        .footer-content { display: flex; justify-content: space-between; width: 100%; align-items: center; }
-        .footer-left { text-align: left; }
-        .footer-logo-container svg { width: 100%; height: auto; max-width: 416px; display: block; }
-        .socials { margin-top: 20px; font-size: 0.9rem; font-weight: 800; }
-        .socials span { margin-right: 15px; cursor: pointer; color: var(--primary-red); }
-        .footer-right img { max-height: 50vh; object-fit: contain; }
+        
+        .logo { font-weight: 900; font-size: 1.2rem; display: flex; align-items: center; gap: 10px; text-transform: uppercase;}
+        
+        nav { display: flex; font-size: 0.9rem; font-weight: 600; text-transform: uppercase; }
+        nav a { text-decoration: none; color: var(--text-dark); margin-left: 20px;}
+        
+        .hamburger { display: none; cursor: pointer; color: var(--text-dark); padding: 5px;}
 
-        /* --- RESPONSIVE --- */
+        /* --- COMMON BLOCK LAYOUT --- */
+        .block {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            padding: 80px 10%;
+        }
+
+        .bg-dark { background-color: var(--bg-dark); color: var(--text-light); }
+        .bg-white { background-color: #fff; }
+        .text-red { color: var(--primary-red); }
+
+        /* --- SECTION 1: HERO --- */
+        .sec1-hero {
+            margin-bottom: 50px;
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+        
+        .sec1-title-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 1100px;
+        }
+
+        .sec1-title-top {
+            font-weight: 800;
+            font-size: clamp(45px, 7vw, 110px);
+            line-height: 1;
+            letter-spacing: 0%;
+            text-transform: uppercase;
+        }
+
+        .sec1-title-top .thin-red {
+            font-weight: 200; 
+            color: var(--primary-red);
+        }
+
+        .sec1-title-bottom-wrap {
+            display: flex;
+            align-items: center; 
+            gap: 40px;
+            margin-top: 5px;
+        }
+
+        .sec1-title-bottom {
+            font-weight: 800;
+            font-size: clamp(45px, 7vw, 110px);
+            line-height: 1;
+            letter-spacing: 0%;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .sec1-desc {
+            font-size: clamp(14px, 1.2vw, 16px);
+            line-height: 1.6;
+            font-weight: 500;
+            max-width: 420px; 
+        }
+
+        /* Swiper Banner */
+        .swiper-sec1 { width: 100%; margin-bottom: 40px; }
+        
+        .swiper-sec1 .swiper-wrapper {
+            transition-timing-function: linear !important; 
+            margin: 0 auto;
+        }
+
+        .swiper-sec1 .swiper-slide {
+            aspect-ratio: 4 / 5 !important;
+            height: auto !important;
+            overflow: hidden;
+            background: #000;
+        }
+        .swiper-sec1 .swiper-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.9;
+        }
+
+        .sec1-bottom-text {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+            font-size: 16px;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        /* --- SECTION 2: WHY WE EXIST --- */
+        .sec2-title {
+            font-weight: 800;
+            font-size: clamp(40px, 5vw, 64px);
+            line-height: 100%;
+            text-transform: uppercase;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .sec2-bottom-text {
+            max-width: 650px;
+            margin: 0 auto;
+            text-align: center;
+            font-size: 14px;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        .custom-video-container {
+            margin: 50px auto 0;
+            width: 100%;
+            max-width: 1000px;
+            aspect-ratio: 16 / 9;
+            background: #000;
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+        }
+        
+        .custom-video-container .video-cover {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(100%);
+            transition: transform 0.6s ease, filter 0.6s ease;
+        }
+
+        .custom-video-container:hover .video-cover {
+            transform: scale(1.03);
+            filter: grayscale(80%);
+        }
+
+        .custom-video-container .play-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            border: 1px solid #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(2px);
+            transition: transform 0.3s ease, background 0.3s ease;
+            z-index: 2;
+        }
+
+        .custom-video-container .play-button svg {
+            width: 25px;
+            height: 25px;
+            margin-left: 5px;
+        }
+
+        .custom-video-container:hover .play-button {
+            transform: translate(-50%, -50%) scale(1.1);
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .custom-video-container iframe {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            border: none;
+            display: none;
+            z-index: 3;
+        }
+
+        .custom-video-container.is-playing .video-cover,
+        .custom-video-container.is-playing .play-button { display: none; }
+        .custom-video-container.is-playing iframe { display: block; }
+
+        /* --- 50/50 SPLIT COMPONENT --- */
+        .split-5050-container {
+            min-height: 100vh;
+            padding: 80px 10%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .split-5050-wrapper {
+            display: flex;
+            width: 100%;
+            max-width: 1100px;
+        }
+
+        .card-shadow {
+            background-color: #fff;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        }
+
+        .split-5050-left {
+            width: 50%;
+            flex: 0 0 50%; 
+            padding: 8%; 
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            color: var(--text-dark);
+        }
+
+        .split-5050-right {
+            width: 50%;
+            flex: 0 0 50%;
+            display: flex;
+            min-height: 500px; 
+        }
+
+        .split-5050-right img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Section 3 Typography */
+        .s3-title-top { font-weight: 200; font-size: clamp(36px, 4vw, 64px); line-height: 1.1; text-transform: uppercase; }
+        .s3-title-bottom { font-weight: 800; font-size: clamp(36px, 4vw, 64px); line-height: 1.1; text-transform: uppercase; margin-bottom: 25px; }
+        .s3-desc { font-size: 15px; line-height: 1.6; font-weight: 500; max-width: 400px; }
+
+        /* Section 4 Typography */
+        .s4-title-container { display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 20px; }
+        .s4-t1 { font-weight: 300; font-size: 26px; text-transform: uppercase; line-height: 1.2; margin-bottom: 15px; color: #111; }
+        .s4-t-row { display: flex; align-items: baseline; gap: 15px; margin-bottom: 5px; }
+        .s4-t2 { font-weight: 700; font-size: 30px; text-transform: uppercase; line-height: 1; color: #111; }
+        .s4-t3 { font-weight: 800; font-size: clamp(50px, 6vw, 75px); line-height: 0.9; text-transform: uppercase; color: var(--primary-red); }
+        .s4-desc { font-size: 15px; line-height: 1.6; font-weight: 500; max-width: 400px; }
+
+        /* Section 5 Typography */
+        .s5-t1 { font-weight: 700; font-size: 28px; line-height: 1.2; text-transform: uppercase; margin-bottom: 5px;}
+        .s5-t2 { font-weight: 800; font-size: clamp(50px, 7vw, 90px); line-height: 1; text-transform: uppercase; color: var(--primary-red); margin-bottom: 25px;}
+
+        /* --- SECTION 6: FOOTER --- */
+        .block-footer { background: #fff; align-items: center; text-align: center; padding: 60px 10%; }
+        .footer-logo-container svg { width: 100%; height: auto; max-width: 416px; display: block; margin: 0 auto 30px; }
+        
+        .socials-wrapper { display: flex; align-items: center; justify-content: center; gap: 20px; }
+        .follow-text { font-size: 1.1rem; font-weight: 500; color: #111; }
+        .social-icons { display: flex; gap: 15px; align-items: center; }
+        .social-icons svg { width: 24px; height: 24px; cursor: pointer; color: #111; transition: color 0.3s ease; }
+        .social-icons svg:hover { color: var(--primary-red); }
+
+        /* --- RESPONSIVE MOBILE FIXES --- */
         @media (max-width: 768px) {
-            .block-page { padding: 40px 5% 80px 5%; height: auto; min-height: auto; justify-content: flex-start; }
-            body { overflow: auto; }
-            header { position: relative; width: 100%; left: 0; flex-direction: row; justify-content: space-between; top: 0; margin-bottom: 20px; }
-            .logo-text { display: none; }
-            .hamburger { display: flex; align-items: center; z-index: 101; position: relative; }
-            nav { position: absolute; top: 45px; right: 0; width: 100%; background: #ffffff; flex-direction: column; align-items: center; border-radius: 12px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); max-height: 0; opacity: 0; visibility: hidden; overflow: hidden; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
-            nav.open { max-height: 300px; opacity: 1; visibility: visible; padding: 20px 0; }
-            nav a { margin: 15px 0; font-size: 1.1rem; opacity: 0; transform: translateY(-10px); transition: all 0.3s ease; }
-            nav.open a { opacity: 1; transform: translateY(0); }
-            nav.open a:nth-child(1) { transition-delay: 0.1s; }
-            nav.open a:nth-child(2) { transition-delay: 0.2s; }
-            nav.open a:nth-child(3) { transition-delay: 0.3s; }
-            .block-footer { padding: 40px 5% 120px 5%; height: auto; min-height: auto; justify-content: flex-start; }
-            .footer-content { flex-direction: column; gap: 40px; justify-content: center; text-align: center; }
-            .footer-left { text-align: center; display: flex; flex-direction: column; align-items: center; }
-            .socials span { margin: 0 10px; }
+            header { padding: 15px 5%; }
+            .logo span { display: none; } 
+            
+            nav { display: none; } 
+            .hamburger { display: block; }
+            
+            /* Remove full height on mobile and fix massive padding gaps */
+            .block { padding: 30px 5%; min-height: auto; } 
+            main > section:first-child { padding-top: 100px; } /* Prevent Hero from hiding under header */
+            .split-5050-container { padding: 30px 5%; min-height: auto; }
+
+            /* --- SECTION 1 MOBILE OVERRIDES --- */
+            .sec1-hero { flex-direction: column; align-items: flex-start; text-align: left; margin-bottom: 30px; }
+            .sec1-title-top { text-align: left; font-size: 15vw; line-height: 1.05; }
+            .sec1-title-top .thin-red { display: block; margin-top: 2px; }
+            .sec1-title-bottom-wrap { flex-direction: column; text-align: left; align-items: flex-start; gap: 15px; margin-top: 5px; }
+            .sec1-title-bottom { font-size: 15vw; line-height: 1.05; }
+            .sec1-desc { text-align: left; padding: 0; max-width: 100%; font-size: 15px; }
+            .sec1-bottom-text { text-align: left; padding: 0; font-size: 15px; }
+            .sec1-bottom-text br { display: none; } 
+
+            /* --- SECTION 2 MOBILE OVERRIDES --- */
+            .sec2-title { text-align: left; font-size: 12vw; margin-bottom: 15px; }
+            .sec2-bottom-text { text-align: left; margin: 0 0 25px 0; font-size: 15px; max-width: 100%; }
+            .sec2-bottom-text br { display: none; } 
+            .custom-video-container { margin: 0; }
+
+            /* --- SECTION 3, 4, 5 MOBILE OVERRIDES --- */
+            .split-5050-wrapper { flex-direction: column; }
+            .split-5050-left, .split-5050-right { width: 100%; flex: 1 1 auto; }
+            
+            /* Tighten up padding inside split sections */
+            .split-5050-left { padding: 30px 5%; text-align: left; align-items: flex-start; }
+            .split-5050-right { min-height: 450px; }
+
+            /* Section 3 specific typography */
+            .s3-title-top { font-size: 14vw; line-height: 1.05; }
+            .s3-title-bottom { font-size: 14vw; line-height: 1.05; margin-bottom: 15px; }
+            .s3-desc br, .s4-desc br { display: none; } 
+            
+            /* Section 4 specific typography */
+            .s4-title-container { align-items: flex-start; margin-bottom: 15px; }
+            .s4-t1 { font-size: 6.5vw; margin-bottom: 15px; }
+            .s4-t-row { justify-content: flex-start; gap: 10px; margin-bottom: 0px; }
+            .s4-t2 { font-size: 9.5vw; }
+            .s4-t3 { font-size: 15vw; line-height: 1.1; }
+            .s4-desc { text-align: left; margin-top: 10px; }
+
+            /* Section 5 specific typography */
+            .s5-t1 { width: 100%; text-align: center; font-size: 6.5vw; line-height: 1.2; margin-bottom: 5px; }
+            .s5-t2 { width: 100%; text-align: center; font-size: 20vw; line-height: 1; margin-bottom: 25px; }
+            
+            /* Fix centering alignment for section 5 text */
+            .split-5050-container.bg-dark .split-5050-left .s3-desc { text-align: left; width: 100%; margin: 0 auto; }
+
+            /* Footer Mobile Overrides */
+            .block-footer { padding: 50px 5%; }
+            .footer-logo-container svg { max-width: 80%; margin-bottom: 25px; }
         }
     </style>
 </head>
 <body>
 
-<div class="scroll-container">
-
-    <section class="block-page">
-        <header>
-            <div class="logo">
-                <svg width="30" height="28" viewBox="0 0 30 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M13.4007 7.72751H18.9762V0H10.833L13.4007 7.72751Z" fill="#0A0A0A"/>
-                    <path d="M5.6 27.9999L0 17.3379H18.9764V27.9999H5.6Z" fill="#0A0A0A"/>
-                    <path d="M29.6386 22.3755L18.9766 28V0H29.6386V22.3755Z" fill="url(#paint0_about)"/>
-                    <defs>
-                        <linearGradient id="paint0_about" x1="23.6961" y1="28" x2="23.6961" y2="0" gradientUnits="userSpaceOnUse">
-                            <stop stop-color="#DB2A30"/><stop offset="1" stop-color="#F57B7F"/>
-                        </linearGradient>
-                    </defs>
-                </svg>
-                <span class="logo-text">AESTHETIC LEGACY</span>
-            </div>
-            <nav id="main-nav">
-                <a href="https://bogia84.github.io/aesthetic-legacy/">Home</a>
-                <a href="https://bogia84.github.io/aesthetic-legacy/about">About us</a>
-                <a href="https://bogia84.github.io/aesthetic-legacy/contributors">Contributors</a>
-            </nav>
-            <div class="hamburger" id="hamburger-menu">
-                <svg width="30" height="20" viewBox="0 0 30 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M0 1H30M0 10H30M0 19H30" stroke="currentColor" stroke-width="2"/>
-                </svg>
-            </div>
-        </header>
-
-        <div>
-            <p class="page-eyebrow">Who we are</p>
-            <h1 class="page-heading">About<br>Us.</h1>
-            <div class="page-divider"></div>
-            <div class="page-body">
-                <p>Aesthetic Legacy is a platform dedicated to the pursuit of physical excellence, mental resilience, and the timeless principles of training that have shaped champions across generations.</p>
-                <p>Our mission is to curate the most impactful knowledge in fitness, nutrition, and performance — and deliver it to athletes and enthusiasts who demand more from themselves.</p>
-                <p>This page is a work in progress. Content coming soon.</p>
-            </div>
+    <!-- HEADER -->
+    <header>
+        <div class="logo">
+            <svg width="30" height="28" viewBox="0 0 30 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M13.4007 7.72751H18.9762V0H10.833L13.4007 7.72751Z" fill="#0A0A0A"/>
+                <path d="M5.6 27.9999L0 17.3379H18.9764V27.9999H5.6Z" fill="#0A0A0A"/>
+                <path d="M29.6386 22.3755L18.9766 28V0H29.6386V22.3755Z" fill="url(#paint0_linear_1213_3730)"/>
+                <defs>
+                <linearGradient id="paint0_linear_1213_3730" x1="23.6961" y1="28" x2="23.6961" y2="0" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#EC262D"/><stop offset="1" stop-color="#F57B7F"/>
+                </linearGradient>
+                </defs>
+            </svg>
+            <span>AESTHETIC LEGACY</span>
         </div>
-    </section>
+        <nav id="main-nav">
+            <a href="https://bogia84.github.io/aesthetic-legacy/">Home</a>
+            <a href="https://bogia84.github.io/aesthetic-legacy/about">About us</a>
+            <a href="https://bogia84.github.io/aesthetic-legacy/contributors">Contributors</a>
+        </nav>
+        <div class="hamburger" id="hamburger-menu">
+            <svg width="30" height="20" viewBox="0 0 30 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0 1H30M0 10H30M0 19H30" stroke="currentColor" stroke-width="2"/>
+            </svg>
+        </div>
+    </header>
 
-    <section class="block-footer">
-        <div class="footer-content">
-            <div class="footer-left">
-                <div class="footer-logo-container">
-                    <svg viewBox="0 0 416 98" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <g clip-path="url(#clip0_about_footer)">
+    <main>
+        <!-- SECTION 1 -->
+        <section class="block bg-white">
+            <div class="sec1-hero">
+                <div class="sec1-title-container">
+                    <div class="sec1-title-top">
+                        WHAT A <span class="thin-red">GREAT TIME</span>
+                    </div>
+                    <div class="sec1-title-bottom-wrap">
+                        <div class="sec1-title-bottom">
+                            TO BE <span class="text-red">ALIVE</span>
+                        </div>
+                        <div class="sec1-desc">
+                            We are witnessing a moment in history—where athleticism, strength, and health are finally receiving the recognition and celebration they’ve long deserved.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="swiper swiper-sec1">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=400" alt="Slider 1"></div>
+                    <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400" alt="Slider 2"></div>
+                    <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&q=80&w=400" alt="Slider 3"></div>
+                    <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1526506159807-1a52701b22e1?auto=format&fit=crop&q=80&w=400" alt="Slider 4"></div>
+                    <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1594381898411-846e7d193883?auto=format&fit=crop&q=80&w=400" alt="Slider 5"></div>
+                    <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1608667508764-33cf0726b13a?auto=format&fit=crop&q=80&w=400" alt="Slider 6"></div>
+                    <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1574680093668-0782e2cb658e?auto=format&fit=crop&q=80&w=400" alt="Slider 7"></div>
+                    <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&q=80&w=400" alt="Slider 8"></div>
+                    <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=400" alt="Slider 9"></div>
+                    <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400" alt="Slider 10"></div>
+                    <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&q=80&w=400" alt="Slider 11"></div>
+                    <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1526506159807-1a52701b22e1?auto=format&fit=crop&q=80&w=400" alt="Slider 12"></div>
+                    <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1594381898411-846e7d193883?auto=format&fit=crop&q=80&w=400" alt="Slider 13"></div>
+                    <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1608667508764-33cf0726b13a?auto=format&fit=crop&q=80&w=400" alt="Slider 14"></div>
+                    <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1574680093668-0782e2cb658e?auto=format&fit=crop&q=80&w=400" alt="Slider 15"></div>
+                </div>
+            </div>
+
+            <div class="sec1-bottom-text">
+                It’s a triumph, a long-awaited victory for those who have dedicated their lives<br>
+                to shaping not just their bodies, but the very future of what it means to live<br>
+                with purpose, power, and vitality.
+            </div>
+        </section>
+
+        <!-- SECTION 2 -->
+        <section class="block bg-white">
+            <h2 class="sec2-title"><span class="text-red">WHY</span> WE EXIST</h2>
+            <div class="sec2-bottom-text">
+                Every day, countless individuals work tirelessly to craft physiques that are<br>
+                nothing short of art. Their dedication and timeless aesthetics inspire<br>
+                generations. It is about time these effort get their regconition.
+            </div>
+            
+            <div class="custom-video-container" id="custom-video-player">
+                <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=1200" alt="Video Cover" class="video-cover">
+                
+                <div class="play-button">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M8 5V19L19 12L8 5Z" stroke="white" stroke-width="1" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+
+                <iframe id="video-iframe" src="" allow="autoplay; fullscreen" allowfullscreen></iframe>
+            </div>
+        </section>
+
+        <!-- SECTION 3 -->
+        <section class="split-5050-container bg-dark">
+            <div class="split-5050-wrapper card-shadow">
+                <div class="split-5050-left">
+                    <div class="s3-title-top">HOW WILL</div>
+                    <div class="s3-title-bottom">WE <span class="text-red">DO</span> IT</div>
+                    <div class="s3-desc">
+                        Our mission is to honor these individuals—<br>
+                        sharing their triumphs, challenges, sacrifices,<br>
+                        and the passion that drives their success.
+                    </div>
+                </div>
+                <div class="split-5050-right">
+                    <img src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=800" alt="How we do it image">
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4 -->
+        <section class="split-5050-container bg-white">
+            <div class="split-5050-wrapper">
+                <div class="split-5050-left">
+                    
+                    <div class="s4-title-container">
+                        <div class="s4-t1">WHAT WILL WE DO TO</div>
+                        
+                        <div class="s4-t-row">
+                            <span class="s4-t2">REACH</span>
+                            <span class="s4-t3">THIS</span>
+                        </div>
+                        
+                        <div class="s4-t3">MISSION</div>
+                    </div>
+
+                    <div class="s4-desc">
+                        Capture the unique essence of these<br>
+                        indivduals and share their inspiring<br>
+                        stories to leave an ever lasting legacy.
+                    </div>
+
+                </div>
+                <div class="split-5050-right">
+                    <img src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&q=80&w=600" alt="Reach this mission">
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5 -->
+        <section class="split-5050-container bg-dark">
+            <div class="split-5050-wrapper card-shadow">
+                <div class="split-5050-left">
+                    <div class="s5-t1">Aesthetics legacy's</div>
+                    <div class="s5-t2">VISION</div>
+                    <div class="s3-desc">
+                        We aim to honor the stories of these incredible individuals, whose legacies will not only redefine the world around them but will ignite a movement—a lasting legacy that inspires others to follow in their footsteps.
+                    </div>
+                </div>
+                <div class="split-5050-right">
+                    <img src="https://images.unsplash.com/photo-1526506159807-1a52701b22e1?auto=format&fit=crop&q=80&w=800" alt="Vision">
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 6: FOOTER -->
+        <section class="block-footer">
+            <div class="footer-logo-container">
+                <svg viewBox="0 0 416 98" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <g clip-path="url(#clip0_footer)">
                     <path d="M117.808 42.6613L133.95 0.423828H139L155.189 42.6613H146.599L136.499 13.8116L126.398 42.6613H117.808ZM133.997 35.9203L131.448 28.2364H147.826V35.9203H133.997Z" fill="#0A0A0A"/>
                     <path d="M209.326 43.085C207.296 43.085 205.314 42.8965 203.426 42.4722C201.491 42.0479 199.697 41.4823 197.998 40.6809C196.299 39.8795 194.789 38.9367 193.42 37.8525L197.101 31.3C198.753 32.6199 200.594 33.657 202.765 34.4112C204.889 35.1183 207.108 35.4955 209.326 35.4955C211.922 35.4955 213.951 35.0712 215.367 34.1755C216.783 33.2799 217.538 32.0542 217.538 30.4515C217.538 29.2258 217.161 28.283 216.453 27.6231C215.745 26.9631 214.801 26.4917 213.621 26.2089C212.441 25.926 211.167 25.6432 209.798 25.4075C208.146 25.1718 206.494 24.8418 204.795 24.4647C203.096 24.0876 201.538 23.4748 200.122 22.6734C198.706 21.872 197.573 20.6935 196.724 19.1379C195.874 17.6294 195.449 15.5552 195.449 13.0097C195.449 8.86135 196.818 5.65583 199.509 3.39311C202.246 1.13038 206.069 -0.000976562 211.025 -0.000976562C213.291 -0.000976562 215.65 0.376144 218.01 1.13038C220.37 1.88462 222.589 2.96885 224.618 4.38305L221.267 11.1241C219.615 9.99271 217.916 9.09705 216.17 8.48423C214.376 7.87141 212.677 7.58857 211.072 7.58857C208.618 7.58857 206.73 8.01283 205.408 8.81421C204.087 9.61559 203.379 10.747 203.379 12.2083C203.379 13.5754 203.756 14.6124 204.559 15.3195C205.361 16.0266 206.4 16.5452 207.674 16.8752C208.948 17.2051 210.317 17.5351 211.827 17.818C213.479 18.1479 215.084 18.5251 216.689 18.9493C218.294 19.3736 219.757 20.0807 221.125 20.9292C222.447 21.7777 223.533 22.9562 224.335 24.4647C225.137 25.9732 225.515 27.9059 225.515 30.2629C225.515 34.4112 224.099 37.5225 221.314 39.7852C218.482 42.0008 214.518 43.1321 209.42 43.1321L209.326 43.085Z" fill="#0A0A0A"/>
                     <path d="M226.884 8.10765V0.423828H257.894V8.10765H226.884ZM238.401 42.6613V3.91219H246.377V42.7084H238.401V42.6613Z" fill="#0A0A0A"/>
@@ -146,41 +547,102 @@
                     <path d="M324.16 53.9272L311.699 79.8543V96.1647H303.723V79.8543L291.262 53.9272H299.616L307.687 72.1233L315.758 53.9272H324.112H324.16Z" fill="#0A0A0A"/>
                     <path d="M46.632 26.9164H66.0306V0.09375H37.7114L46.632 26.9164Z" fill="#0A0A0A"/>
                     <path d="M19.5402 97.3904L0 60.3384H66.0308V97.3904H19.5402Z" fill="#0A0A0A"/>
-                    <path d="M103.129 77.8748L66.0308 97.3908V0.09375H103.129V77.8748Z" fill="url(#paint0_linear_about_footer)"/>
+                    <path d="M103.129 77.8748L66.0308 97.3908V0.09375H103.129V77.8748Z" fill="url(#paint0_linear_footer)"/>
                     </g>
                     <defs>
-                    <linearGradient id="paint0_linear_about_footer" x1="82.4524" y1="97.3908" x2="82.4524" y2="0.0937489" gradientUnits="userSpaceOnUse">
-                    <stop stop-color="#DB2A30"/>
+                    <linearGradient id="paint0_linear_footer" x1="82.4524" y1="97.3908" x2="82.4524" y2="0.0937489" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#EC262D"/>
                     <stop offset="1" stop-color="#F57B7F"/>
                     </linearGradient>
-                    <clipPath id="clip0_about_footer">
+                    <clipPath id="clip0_footer">
                     <rect width="415.933" height="97.2985" fill="white"/>
                     </clipPath>
                     </defs>
+                </svg>
+            </div>
+
+            <div class="socials-wrapper">
+                <span class="follow-text">Follow Us</span>
+                <div class="social-icons">
+                    <!-- Facebook Icon -->
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M22.675 0h-21.35c-.732 0-1.325.593-1.325 1.325v21.351c0 .731.593 1.324 1.325 1.324h11.495v-9.294h-3.128v-3.622h3.128v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.312h3.587l-.467 3.622h-3.12v9.293h6.116c.73 0 1.323-.593 1.323-1.325v-21.35c0-.732-.593-1.325-1.325-1.325z"/>
+                    </svg>
+                    <!-- Twitter/X Icon -->
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                    </svg>
+                    <!-- Instagram Icon -->
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
                     </svg>
                 </div>
-                <div class="socials">
-                    Follow Us
-                    <span>Facebook</span>
-                    <span>Twitter</span>
-                    <span>Instagram</span>
-                </div>
             </div>
-            <div class="footer-right">
-                <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&q=80&w=600" alt="Fitness Equipment" style="border-radius: 10px;">
-            </div>
-        </div>
-    </section>
+        </section>
+    </main>
 
-</div>
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            
+            const sec1Swiper = new Swiper('.swiper-sec1', {
+                loop: true,
+                freemode: true, 
+                slidesPerView: 'auto', 
+                spaceBetween: 15,
+                speed: 8000, 
+                autoplay: {
+                    delay: 0,
+                    disableOnInteraction: false,
+                    pauseOnMouseEnter: false 
+                },
+                allowTouchMove: false, 
+                breakpoints: {
+                    320: { slidesPerView: 2.5, spaceBetween: 10 }, 
+                    768: { slidesPerView: 4, spaceBetween: 15 },
+                    1024: { slidesPerView: 6.2, spaceBetween: 15 } 
+                }
+            });
 
-<script>
-    const hamburger = document.getElementById('hamburger-menu');
-    const mainNav = document.getElementById('main-nav');
-    hamburger.addEventListener('click', function() {
-        mainNav.classList.toggle('open');
-    });
-</script>
+            // Video Player Swap
+            const videoContainer = document.getElementById('custom-video-player');
+            const videoIframe = document.getElementById('video-iframe');
+
+            if (videoContainer && videoIframe) {
+                videoContainer.addEventListener('click', function() {
+                    videoContainer.classList.add('is-playing');
+                    videoIframe.src = "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&controls=1";
+                });
+            }
+
+            // Mobile Hamburger Menu Toggle
+            const hamburger = document.getElementById('hamburger-menu');
+            const mainNav = document.getElementById('main-nav');
+
+            if(hamburger) {
+                hamburger.addEventListener('click', function() {
+                    if (mainNav.style.display === "flex") {
+                        mainNav.style.display = "none";
+                    } else {
+                        mainNav.style.display = "flex";
+                        mainNav.style.flexDirection = "column";
+                        mainNav.style.position = "absolute";
+                        mainNav.style.top = "60px";
+                        mainNav.style.right = "5%";
+                        mainNav.style.background = "#fff";
+                        mainNav.style.padding = "20px";
+                        mainNav.style.boxShadow = "0 10px 30px rgba(0,0,0,0.1)";
+                        mainNav.style.borderRadius = "8px";
+                        mainNav.style.gap = "15px";
+                        mainNav.style.zIndex = "1001";
+                    }
+                });
+            }
+        });
+    </script>
 
 </body>
 </html>
