@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +9,7 @@
     <style>
         /* --- GLOBAL VARIABLES & RESET --- */
         :root {
-            --primary-red: #e63946;
+            --primary-red: #EC262D; /* Updated to match Contributors */
             --light-grey: #f4f4f4;
             --text-dark: #111;
         }
@@ -36,20 +38,26 @@
 
         /* --- HEADER --- */
         header {
-            position: absolute;
+            position: absolute; 
             top: 40px;
             left: 10%;
             width: 80%; 
             display: flex;
             justify-content: space-between;
             align-items: center;
-            z-index: 100;
+            z-index: 1000; 
+            background: #fff; 
+            padding: 15px 30px; 
+            border-radius: 4px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
-        .logo { font-weight: 900; font-size: 1.2rem; display: flex; align-items: center; gap: 10px; }
         
-        /* Desktop Nav */
-        nav { display: flex; font-size: 0.9rem; font-weight: 600; }
-        nav a { text-decoration: none; color: var(--text-dark); margin-left: 20px;}
+        .logo { font-weight: 900; font-size: 1.2rem; display: flex; align-items: center; gap: 10px; text-transform: uppercase;}
+        
+        nav { display: flex; font-size: 0.9rem; font-weight: 600; text-transform: uppercase; }
+        nav a { text-decoration: none; color: var(--text-dark); margin-left: 20px; transition: color 0.3s ease;}
+        nav a:hover { color: var(--primary-red); }
+        nav a.active { color: var(--primary-red); } 
         
         .hamburger { display: none; cursor: pointer; color: var(--text-dark); padding: 5px;}
 
@@ -87,7 +95,7 @@
         .block-popular { background: #fff; }
         
         .hero-title { 
-            margin-top: 80px; 
+            margin-top: 120px; /* Adjusted slightly to accommodate the new header style */
             margin-bottom: 30px; 
             width: 100%; 
             position: relative; 
@@ -161,58 +169,28 @@
             body { overflow: auto; }
             
             header { 
-                position: relative; 
-                width: 100%; 
-                left: 0; 
-                flex-direction: row; 
-                justify-content: space-between; 
-                top: 0; 
-                margin-bottom: 20px; 
+                position: relative; width: 100%; left: 0; flex-direction: row; 
+                justify-content: space-between; top: 0; margin-bottom: 20px; 
+                padding: 15px 5%; border-radius: 0; box-shadow: none;
             }
-            .logo-text { display: none; }
+            .logo span { display: none; } 
             
             /* Mobile Menu Setup */
             .hamburger { display: flex; align-items: center; z-index: 101; position: relative;}
             
             nav { 
-                position: absolute; 
-                top: 45px; /* Slide down right below header */
-                right: 0;
-                width: 100%;
-                background: #ffffff;
-                flex-direction: column;
-                align-items: center;
-                border-radius: 12px;
-                box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-                
-                /* Animation baseline */
-                max-height: 0;
-                opacity: 0;
-                visibility: hidden;
-                overflow: hidden;
+                position: absolute; top: 60px; right: 5%; width: 90%;
+                background: #ffffff; flex-direction: column; align-items: center;
+                border-radius: 12px; box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+                max-height: 0; opacity: 0; visibility: hidden; overflow: hidden;
                 transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                z-index: 100;
             }
 
             /* Active Class added via JS */
-            nav.open {
-                max-height: 300px;
-                opacity: 1;
-                visibility: visible;
-                padding: 20px 0;
-            }
-
-            /* Link Stagger Animation */
-            nav a { 
-                margin: 15px 0; 
-                font-size: 1.1rem;
-                opacity: 0; 
-                transform: translateY(-10px); 
-                transition: all 0.3s ease; 
-            }
-            nav.open a { 
-                opacity: 1; 
-                transform: translateY(0); 
-            }
+            nav.open { max-height: 300px; opacity: 1; visibility: visible; padding: 20px 0; }
+            nav a { margin: 15px 0; font-size: 1.1rem; opacity: 0; transform: translateY(-10px); transition: all 0.3s ease; }
+            nav.open a { opacity: 1; transform: translateY(0); }
             nav.open a:nth-child(1) { transition-delay: 0.1s; }
             nav.open a:nth-child(2) { transition-delay: 0.2s; }
             nav.open a:nth-child(3) { transition-delay: 0.3s; }
@@ -254,15 +232,15 @@
                     <path d="M29.6386 22.3755L18.9766 28V0H29.6386V22.3755Z" fill="url(#paint0_linear_1213_3730)"/>
                     <defs>
                     <linearGradient id="paint0_linear_1213_3730" x1="23.6961" y1="28" x2="23.6961" y2="0" gradientUnits="userSpaceOnUse">
-                    <stop stop-color="#DB2A30"/><stop offset="1" stop-color="#F57B7F"/>
+                    <stop stop-color="#EC262D"/><stop offset="1" stop-color="#F57B7F"/>
                     </linearGradient>
                     </defs>
                 </svg>
-                <span class="logo-text">AESTHETIC LEGACY</span>
+                <span>AESTHETIC LEGACY</span>
             </div>
             
             <nav id="main-nav">
-                <a href="https://bogia84.github.io/aesthetic-legacy/">Home</a>
+                <a href="https://bogia84.github.io/aesthetic-legacy/" class="active">Home</a>
                 <a href="https://bogia84.github.io/aesthetic-legacy/about">About us</a>
                 <a href="https://bogia84.github.io/aesthetic-legacy/contributors">Contributors</a>
             </nav>
@@ -428,7 +406,7 @@
                     </g>
                     <defs>
                     <linearGradient id="paint0_linear_1213_4192" x1="82.4524" y1="97.3908" x2="82.4524" y2="0.0937489" gradientUnits="userSpaceOnUse">
-                    <stop stop-color="#DB2A30"/>
+                    <stop stop-color="#EC262D"/>
                     <stop offset="1" stop-color="#F57B7F"/>
                     </linearGradient>
                     <clipPath id="clip0_1213_4192">
