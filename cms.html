@@ -142,12 +142,131 @@
             gap: 5px;
         }
 
+        /* ---- CONTRIBUTORS SECTION ---- */
+        .contrib-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 14px;
+        }
+        .contrib-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .contrib-card img {
+            width: 100%;
+            aspect-ratio: 4 / 5;
+            object-fit: cover;
+            display: block;
+        }
+        .contrib-card-body {
+            padding: 10px 12px 12px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .contrib-name { font-size: 0.82rem; font-weight: 800; }
+        .contrib-role { font-size: 0.72rem; color: var(--muted); font-weight: 500; }
+        .contrib-type {
+            display: inline-block;
+            font-size: 0.6rem;
+            font-weight: 900;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #fff;
+            background: var(--dark);
+            padding: 2px 6px;
+            border-radius: 2px;
+            align-self: flex-start;
+            margin-top: 4px;
+        }
+        .contrib-type.women { background: var(--red); }
+        .contrib-del {
+            margin-top: 8px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #aaa;
+            background: none;
+            border: 1px solid var(--border);
+            border-radius: 2px;
+            padding: 5px 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Manrope', sans-serif;
+        }
+        .contrib-del:hover { background: var(--red); color: #fff; border-color: var(--red); }
+
+        /* ---- ADD CONTRIBUTOR FORM ---- */
+        .add-contrib-toggle {
+            font-size: 0.78rem;
+            font-weight: 700;
+            font-family: 'Manrope', sans-serif;
+            background: none;
+            border: 1.5px dashed var(--border);
+            color: var(--muted);
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s;
+            margin-bottom: 14px;
+        }
+        .add-contrib-toggle:hover { border-color: var(--dark); color: var(--dark); }
+        .contrib-form-panel {
+            display: none;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 22px 24px;
+            margin-bottom: 20px;
+        }
+        .contrib-form-panel.open { display: block; }
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+        .form-group { display: flex; flex-direction: column; gap: 5px; }
+        .form-group.full { grid-column: 1 / -1; }
+        .form-group label {
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--muted);
+        }
+        .form-group input,
+        .form-group select {
+            font-family: 'Manrope', sans-serif;
+            font-size: 0.8rem;
+            padding: 8px 10px;
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .form-group input:focus,
+        .form-group select:focus { border-color: var(--dark); }
+        .form-actions { display: flex; gap: 10px; align-items: center; margin-top: 4px; }
+        .btn-add-confirm { background: var(--dark); color: #fff; }
+        .btn-add-confirm:hover { background: var(--red); }
+        .btn-add-cancel { background: transparent; color: var(--dark); border: 1px solid var(--border); }
+        .btn-add-cancel:hover { background: var(--grey); }
+        .form-err { font-size: 0.72rem; color: var(--red); font-weight: 600; display: none; }
+        .form-err.show { display: block; }
+
         /* ---- RESPONSIVE ---- */
         @media (max-width: 768px) {
             .cms-header { padding: 14px 20px; }
             .action-bar { padding: 12px 20px; flex-wrap: wrap; }
             .cms-main { padding: 20px; }
             .banner-list { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+            .form-grid { grid-template-columns: 1fr; }
+            .contrib-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
         }
     </style>
 </head>
@@ -198,6 +317,65 @@
         <h2 class="section-title">Men</h2>
         <p class="section-sub">Drag cards to reorder — Men section carousel</p>
         <div class="banner-list" id="list-men"></div>
+    </section>
+
+    <section class="cms-section">
+        <h2 class="section-title">Contributors</h2>
+        <p class="section-sub">Add or remove contributors — shown on the Contributors page</p>
+        <button class="add-contrib-toggle" id="add-contrib-toggle">+ Add New Contributor</button>
+        <div class="contrib-form-panel" id="contrib-form-panel">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="cf-name">Name</label>
+                    <input type="text" id="cf-name" placeholder="e.g. Alex Johnson">
+                </div>
+                <div class="form-group">
+                    <label for="cf-role">Role</label>
+                    <input type="text" id="cf-role" placeholder="e.g. Personal Trainer">
+                </div>
+                <div class="form-group">
+                    <label for="cf-type">Type</label>
+                    <select id="cf-type">
+                        <option value="men">Men</option>
+                        <option value="women">Women</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="cf-img">Card Image URL</label>
+                    <input type="url" id="cf-img" placeholder="https://...">
+                </div>
+                <div class="form-group">
+                    <label for="cf-avatar">Avatar URL</label>
+                    <input type="url" id="cf-avatar" placeholder="https://...">
+                </div>
+                <div class="form-group">
+                    <label for="cf-bg">Background URL</label>
+                    <input type="url" id="cf-bg" placeholder="https://...">
+                </div>
+                <div class="form-group">
+                    <label for="cf-stat1">Stat 1</label>
+                    <input type="text" id="cf-stat1" placeholder="e.g. Physique type">
+                </div>
+                <div class="form-group">
+                    <label for="cf-stat2">Stat 2</label>
+                    <input type="text" id="cf-stat2" placeholder="e.g. 5 Years">
+                </div>
+                <div class="form-group">
+                    <label for="cf-stat3">Stat 3</label>
+                    <input type="text" id="cf-stat3" placeholder="e.g. Casual approach">
+                </div>
+                <div class="form-group">
+                    <label for="cf-stat4">Stat 4</label>
+                    <input type="text" id="cf-stat4" placeholder="e.g. Specialisation">
+                </div>
+            </div>
+            <div class="form-actions">
+                <button class="btn btn-add-confirm" onclick="confirmAddContributor()">Add Contributor</button>
+                <button class="btn btn-add-cancel" onclick="closeContribForm()">Cancel</button>
+                <span class="form-err" id="form-err">Please fill in Name, Role, and Card Image URL.</span>
+            </div>
+        </div>
+        <div class="contrib-grid" id="contrib-grid"></div>
     </section>
 
 </main>
@@ -333,6 +511,100 @@
             .map(function(card) { return parseInt(card.dataset.origIdx, 10); });
     }
 
+    // ---- Contributors ----
+    const CONTRIBUTORS_KEY = 'aestheticLegacyContributors';
+
+    const DEFAULT_CONTRIBUTORS = [
+        { name: "Jeremy Buendia", role: "Men's Physique Champion", type: "men", img: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&q=80&w=800", bg: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&q=80&w=1920", avatar: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&q=80&w=200", stats: ["Physique type", "Training years", "Casual approach", "Specialisation"] },
+        { name: "Aminova Inna", role: "Yoga Instructor", type: "women", img: "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&q=80&w=800", bg: "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&q=80&w=1920", avatar: "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&q=80&w=200", stats: ["Flexibility", "8 Years", "Mindfulness", "Vinyasa"] },
+        { name: "Kathryn Murphy", role: "Bodybuilder Pro", type: "men", img: "https://images.unsplash.com/photo-1526506159807-1a52701b22e1?auto=format&fit=crop&q=80&w=800", bg: "https://images.unsplash.com/photo-1526506159807-1a52701b22e1?auto=format&fit=crop&q=80&w=1920", avatar: "https://images.unsplash.com/photo-1526506159807-1a52701b22e1?auto=format&fit=crop&q=80&w=200", stats: ["Mass Focus", "12 Years", "Strict approach", "Heavy lifting"] },
+        { name: "Coralie", role: "Crossfit Athlete", type: "women", img: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&q=80&w=800", bg: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&q=80&w=1920", avatar: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&q=80&w=200", stats: ["Endurance", "4 Years", "High intensity", "WOD Specialisation"] },
+        { name: "Lazar Angelov", role: "Boxing Coach", type: "men", img: "https://images.unsplash.com/photo-1594381898411-846e7d193883?auto=format&fit=crop&q=80&w=800", bg: "https://images.unsplash.com/photo-1594381898411-846e7d193883?auto=format&fit=crop&q=80&w=1920", avatar: "https://images.unsplash.com/photo-1594381898411-846e7d193883?auto=format&fit=crop&q=80&w=200", stats: ["Agility", "15 Years", "Pro approach", "Striking"] },
+        { name: "Guy Hawkins", role: "Gymnast", type: "women", img: "https://images.unsplash.com/photo-1574680093668-0782e2cb658e?auto=format&fit=crop&q=80&w=800", bg: "https://images.unsplash.com/photo-1574680093668-0782e2cb658e?auto=format&fit=crop&q=80&w=1920", avatar: "https://images.unsplash.com/photo-1574680093668-0782e2cb658e?auto=format&fit=crop&q=80&w=200", stats: ["Acrobatic", "10 Years", "Elite approach", "Calisthenics"] },
+        { name: "Wade Warren", role: "Sprinter", type: "men", img: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=800", bg: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=1920", avatar: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=200", stats: ["Speed", "6 Years", "Track Focus", "100m Dash"] },
+        { name: "Bessie Cooper", role: "Fitness Influencer", type: "women", img: "https://images.unsplash.com/photo-1608667508764-33cf0726b13a?auto=format&fit=crop&q=80&w=800", bg: "https://images.unsplash.com/photo-1608667508764-33cf0726b13a?auto=format&fit=crop&q=80&w=1920", avatar: "https://images.unsplash.com/photo-1608667508764-33cf0726b13a?auto=format&fit=crop&q=80&w=200", stats: ["Physique type", "Training years", "Casual approach", "Specialisation"] },
+        { name: "Jacob Jones", role: "Personal Trainer", type: "men", img: "https://images.unsplash.com/photo-1567013127542-490d757e51fc?auto=format&fit=crop&q=80&w=800", bg: "https://images.unsplash.com/photo-1567013127542-490d757e51fc?auto=format&fit=crop&q=80&w=1920", avatar: "https://images.unsplash.com/photo-1567013127542-490d757e51fc?auto=format&fit=crop&q=80&w=200", stats: ["Strength", "9 Years", "Functional", "HIIT"] },
+        { name: "Kristin Watson", role: "Pilates Coach", type: "women", img: "https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?auto=format&fit=crop&q=80&w=800", bg: "https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?auto=format&fit=crop&q=80&w=1920", avatar: "https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?auto=format&fit=crop&q=80&w=200", stats: ["Core Focus", "7 Years", "Mindful", "Pilates"] },
+        { name: "Cody Fisher", role: "Powerlifter", type: "men", img: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&q=80&w=800", bg: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&q=80&w=1920", avatar: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&q=80&w=200", stats: ["Raw Strength", "11 Years", "Competition", "Powerlifting"] },
+        { name: "Esther Howard", role: "Dance Fitness Coach", type: "women", img: "https://images.unsplash.com/photo-1579703473489-02ebcb7de488?auto=format&fit=crop&q=80&w=800", bg: "https://images.unsplash.com/photo-1579703473489-02ebcb7de488?auto=format&fit=crop&q=80&w=1920", avatar: "https://images.unsplash.com/photo-1579703473489-02ebcb7de488?auto=format&fit=crop&q=80&w=200", stats: ["Cardio", "5 Years", "High energy", "Zumba"] }
+    ];
+
+    var contributors = (function() {
+        var saved = localStorage.getItem(CONTRIBUTORS_KEY);
+        if (saved) { try { return JSON.parse(saved); } catch(e) {} }
+        return DEFAULT_CONTRIBUTORS.slice();
+    })();
+
+    function renderContributors() {
+        var grid = document.getElementById('contrib-grid');
+        grid.innerHTML = '';
+        contributors.forEach(function(c, i) {
+            var card = document.createElement('div');
+            card.className = 'contrib-card';
+            card.innerHTML =
+                '<img src="' + escapeAttr(c.img) + '" alt="' + escapeAttr(c.name) + '" loading="lazy">' +
+                '<div class="contrib-card-body">' +
+                    '<div class="contrib-name">' + escapeHtml(c.name) + '</div>' +
+                    '<div class="contrib-role">' + escapeHtml(c.role) + '</div>' +
+                    '<span class="contrib-type ' + escapeAttr(c.type) + '">' + escapeHtml(c.type) + '</span>' +
+                    '<button class="contrib-del" onclick="deleteContributor(' + i + ')">Remove</button>' +
+                '</div>';
+            grid.appendChild(card);
+        });
+    }
+
+    function deleteContributor(index) {
+        if (!confirm('Remove "' + contributors[index].name + '" from contributors?')) return;
+        contributors.splice(index, 1);
+        renderContributors();
+    }
+
+    function openContribForm() {
+        document.getElementById('contrib-form-panel').classList.add('open');
+        document.getElementById('add-contrib-toggle').style.display = 'none';
+    }
+
+    function closeContribForm() {
+        document.getElementById('contrib-form-panel').classList.remove('open');
+        document.getElementById('add-contrib-toggle').style.display = '';
+        document.getElementById('form-err').classList.remove('show');
+        ['cf-name','cf-role','cf-img','cf-avatar','cf-bg','cf-stat1','cf-stat2','cf-stat3','cf-stat4'].forEach(function(id) {
+            document.getElementById(id).value = '';
+        });
+        document.getElementById('cf-type').value = 'men';
+    }
+
+    function confirmAddContributor() {
+        var name   = document.getElementById('cf-name').value.trim();
+        var role   = document.getElementById('cf-role').value.trim();
+        var type   = document.getElementById('cf-type').value;
+        var img    = document.getElementById('cf-img').value.trim();
+        var avatar = document.getElementById('cf-avatar').value.trim();
+        var bg     = document.getElementById('cf-bg').value.trim();
+        var stat1  = document.getElementById('cf-stat1').value.trim();
+        var stat2  = document.getElementById('cf-stat2').value.trim();
+        var stat3  = document.getElementById('cf-stat3').value.trim();
+        var stat4  = document.getElementById('cf-stat4').value.trim();
+
+        if (!name || !role || !img) {
+            document.getElementById('form-err').classList.add('show');
+            return;
+        }
+        document.getElementById('form-err').classList.remove('show');
+
+        contributors.push({
+            name: name, role: role, type: type,
+            img: img,
+            avatar: avatar || img,
+            bg: bg || img,
+            stats: [stat1 || 'Stat 1', stat2 || 'Stat 2', stat3 || 'Stat 3', stat4 || 'Stat 4']
+        });
+        renderContributors();
+        closeContribForm();
+    }
+
+    document.getElementById('add-contrib-toggle').addEventListener('click', openContribForm);
+
     function saveCMS() {
         var orders = {
             popular: getOrder('list-popular'),
@@ -340,12 +612,15 @@
             men:     getOrder('list-men')
         };
         localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
-        showStatus('✓ Saved! Reload the homepage to see changes.', 'success');
+        localStorage.setItem(CONTRIBUTORS_KEY, JSON.stringify(contributors));
+        showStatus('✓ Saved! Reload the contributors page to see changes.', 'success');
     }
 
     function resetCMS() {
-        if (!confirm('Reset all banner orders to default? This will clear your saved configuration.')) return;
+        if (!confirm('Reset all banner orders and contributors to default? This will clear your saved configuration.')) return;
         localStorage.removeItem(STORAGE_KEY);
+        localStorage.removeItem(CONTRIBUTORS_KEY);
+        contributors = DEFAULT_CONTRIBUTORS.slice();
         var defaults = {
             popular: bannerData.popular.map(function(_, i) { return i; }),
             women:   bannerData.women.map(function(_, i) { return i; }),
@@ -354,6 +629,7 @@
         renderSection('popular', 'list-popular', defaults.popular);
         renderSection('women',   'list-women',   defaults.women);
         renderSection('men',     'list-men',     defaults.men);
+        renderContributors();
         showStatus('✓ Reset to default order.', 'info');
     }
 
@@ -377,6 +653,7 @@
     renderSection('popular', 'list-popular', initialOrder.popular);
     renderSection('women',   'list-women',   initialOrder.women);
     renderSection('men',     'list-men',     initialOrder.men);
+    renderContributors();
 </script>
 
 </body>
