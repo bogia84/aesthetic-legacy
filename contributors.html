@@ -164,6 +164,22 @@
         .info-stats-grid { display: grid; grid-template-columns: 1fr 1fr; column-gap: 30px; row-gap: 20px; }
         .stat-item { font-size: 13px; font-weight: 500; color: rgba(255, 255, 255, 0.9); padding-bottom: 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.3); }
 
+        .view-profile-btn {
+            display: inline-block;
+            margin-top: 25px;
+            padding: 10px 24px;
+            background: var(--primary-red);
+            color: #fff;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.78rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            border-radius: 2px;
+            transition: background 0.2s ease;
+        }
+        .view-profile-btn:hover { background: #c71d24; }
+
         .slider-wrapper {
             position: absolute;
             bottom: 40px;
@@ -236,6 +252,10 @@
         }
 
         .banner-card {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+            cursor: pointer;
             position: relative;
             width: 100%;
             aspect-ratio: 3/4; 
@@ -431,6 +451,7 @@
                     <div class="stat-item" id="stat-3">Casual approach</div>
                     <div class="stat-item" id="stat-4">Specialisation</div>
                 </div>
+                <a id="gallery-profile-link" href="contr_detail_tmp.html?index=0" class="view-profile-btn">View Profile →</a>
             </div>
 
             <div class="slider-wrapper">
@@ -557,6 +578,8 @@
                     loop: true, slidesPerView: 'auto', spaceBetween: 25, centeredSlides: true, slideToClickedSlide: true, grabCursor: true
                 });
 
+                const profileLink = document.getElementById('gallery-profile-link');
+
                 gallerySwiper.on('slideChange', function () {
                     const realIndex = this.realIndex;
                     document.querySelectorAll('.avatar-container').forEach(el => el.classList.remove('active'));
@@ -577,6 +600,7 @@
                         document.getElementById('stat-2').textContent = data.stats[1];
                         document.getElementById('stat-3').textContent = data.stats[2];
                         document.getElementById('stat-4').textContent = data.stats[3];
+                        if (profileLink) profileLink.href = 'contr_detail_tmp.html?index=' + realIndex;
                         bgImage.style.opacity = 1;
                         infoCard.classList.remove('animating');
                     }, 400); 
@@ -584,8 +608,8 @@
             }
 
             // --- Section 3: Filterable Grid Logic ---
-            var gridData = allContributors.map(function(c) {
-                return { name: c.name, type: c.type, img: c.img };
+            var gridData = allContributors.map(function(c, i) {
+                return { name: c.name, type: c.type, img: c.img, index: i };
             });
 
             const gridContainer = document.getElementById('banner-grid-container');
@@ -603,8 +627,9 @@
                 const itemsToShow = filteredData.slice(0, displayedCount);
 
                 itemsToShow.forEach((item, index) => {
-                    const card = document.createElement('div');
+                    const card = document.createElement('a');
                     card.className = 'banner-card';
+                    card.href = 'contr_detail_tmp.html?index=' + item.index;
                     card.style.animationDelay = `${index * 0.05}s`; 
                     card.innerHTML = `
                         <img src="${item.img}" alt="${item.name}">

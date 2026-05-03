@@ -240,7 +240,8 @@
             color: var(--muted);
         }
         .form-group input,
-        .form-group select {
+        .form-group select,
+        .form-group textarea {
             font-family: 'Manrope', sans-serif;
             font-size: 0.8rem;
             padding: 8px 10px;
@@ -248,9 +249,11 @@
             border-radius: 3px;
             outline: none;
             transition: border-color 0.2s;
+            resize: vertical;
         }
         .form-group input:focus,
-        .form-group select:focus { border-color: var(--dark); }
+        .form-group select:focus,
+        .form-group textarea:focus { border-color: var(--dark); }
         .form-actions { display: flex; gap: 10px; align-items: center; margin-top: 4px; }
         .btn-add-confirm { background: var(--dark); color: #fff; }
         .btn-add-confirm:hover { background: var(--red); }
@@ -268,6 +271,130 @@
             .form-grid { grid-template-columns: 1fr; }
             .contrib-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
         }
+
+        /* ============================================================
+           NEW LAYOUT — overrides + sidebar + panels
+        ============================================================ */
+        body { height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+
+        /* Header overrides */
+        .cms-header { padding: 0 32px; height: 56px; position: relative; flex-shrink: 0; }
+        .header-logo { font-size: 0.95rem; }
+        .header-right { display: flex; align-items: center; gap: 10px; }
+        .back-link { font-size: 0.78rem; padding: 6px 14px; }
+        .btn { padding: 8px 18px; font-size: 0.78rem; }
+        .save-status { font-size: 0.75rem; min-width: 200px; }
+
+        /* Main two-column layout */
+        .cms-layout { display: flex; flex: 1; overflow: hidden; }
+
+        /* Sidebar */
+        .cms-sidebar {
+            width: 220px;
+            flex-shrink: 0;
+            background: #fff;
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        .sidebar-section { padding: 18px 0 8px; border-bottom: 1px solid var(--border); }
+        .sidebar-section:last-child { border-bottom: none; flex: 1; }
+
+        .nav-l1 {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 18px;
+            font-size: 0.72rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--muted);
+            cursor: pointer;
+            user-select: none;
+            transition: color 0.15s;
+        }
+        .nav-l1:hover { color: var(--dark); }
+        .nav-l1.direct { color: var(--dark); font-size: 0.8rem; font-weight: 700; text-transform: none; letter-spacing: 0; }
+        .nav-l1.direct:hover, .nav-l1.direct.active { color: var(--red); }
+        .nav-l1.direct.active { font-weight: 800; }
+
+        .nav-arrow { width: 14px; height: 14px; transition: transform 0.2s; flex-shrink: 0; }
+        .nav-arrow.open { transform: rotate(90deg); }
+
+        .nav-l2-group { overflow: hidden; max-height: 0; transition: max-height 0.25s ease; }
+        .nav-l2-group.open { max-height: 300px; }
+        .nav-l2 {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 18px 7px 28px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #666;
+            cursor: pointer;
+            transition: color 0.15s, background 0.15s;
+            border-left: 2px solid transparent;
+        }
+        .nav-l2:hover { color: var(--dark); background: var(--grey); }
+        .nav-l2.active { color: var(--red); font-weight: 800; border-left-color: var(--red); background: #fff5f5; }
+        .nav-l2-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; flex-shrink: 0; opacity: 0.5; }
+
+        /* Panels area */
+        .cms-panels { flex: 1; overflow-y: auto; background: #f8f8f8; }
+
+        /* Landing screen */
+        .cms-landing { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; min-height: 400px; text-align: center; color: var(--muted); padding: 40px; }
+        .cms-landing-icon { margin-bottom: 20px; opacity: 0.25; }
+        .cms-landing h2 { font-size: 1.1rem; font-weight: 800; color: var(--dark); margin-bottom: 8px; opacity: 0.6; }
+        .cms-landing p { font-size: 0.82rem; font-weight: 500; max-width: 280px; line-height: 1.6; }
+        .cms-landing-hint { margin-top: 24px; display: flex; flex-direction: column; gap: 6px; }
+        .cms-landing-hint-item { display: flex; align-items: center; gap: 8px; font-size: 0.75rem; font-weight: 600; color: #aaa; }
+        .cms-landing-hint-item span { background: var(--grey); border-radius: 3px; padding: 3px 8px; font-size: 0.7rem; }
+
+        /* Panels */
+        .cms-panel { display: none; padding: 36px 40px; max-width: 1200px; }
+        .cms-panel.active { display: block; }
+        .panel-title { font-size: 1.15rem; font-weight: 900; margin-bottom: 4px; }
+        .panel-sub { font-size: 0.78rem; color: var(--muted); font-weight: 500; margin-bottom: 24px; display: flex; align-items: center; gap: 8px; }
+        .panel-sub::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+        /* Contributor tabs */
+        .contrib-tabs { display: flex; margin-bottom: 18px; border-bottom: 2px solid var(--border); }
+        .contrib-tab {
+            padding: 8px 20px;
+            font-family: 'Manrope', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            cursor: pointer;
+            border: none;
+            background: none;
+            color: var(--muted);
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            transition: color 0.15s, border-color 0.15s;
+        }
+        .contrib-tab:hover { color: var(--dark); }
+        .contrib-tab.active { color: var(--dark); border-bottom-color: var(--dark); }
+
+        /* Contributor grid & card overrides (drag support) */
+        .contrib-grid { padding: 16px; background: #efefef; border-radius: 4px; min-height: 80px; }
+        .contrib-card { border: 2px solid transparent; user-select: none; transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s, opacity 0.15s; }
+        .contrib-card.draggable { cursor: grab; }
+        .contrib-card.draggable:active { cursor: grabbing; }
+        .contrib-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.1); transform: translateY(-2px); }
+        .contrib-card.is-dragging { opacity: 0.35; }
+        .contrib-card.drag-over { border-color: var(--red); transform: scale(1.03); box-shadow: 0 8px 24px rgba(230,57,70,0.2); }
+        .contrib-pos { display: inline-block; font-size: 0.6rem; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; color: #fff; background: var(--muted); padding: 2px 6px; border-radius: 2px; align-self: flex-start; margin-bottom: 4px; }
+        .contrib-drag-hint { margin-top: 6px; font-size: 0.62rem; color: #ccc; display: flex; align-items: center; gap: 5px; }
+        .contrib-actions { display: flex; gap: 6px; margin-top: 10px; }
+        .contrib-btn { flex: 1; font-size: 0.68rem; font-weight: 700; color: #aaa; background: none; border: 1px solid var(--border); border-radius: 2px; padding: 5px 8px; cursor: pointer; transition: all 0.2s; font-family: 'Manrope', sans-serif; }
+        .contrib-btn-edit:hover { background: var(--dark); color: #fff; border-color: var(--dark); }
+        .contrib-btn-del:hover { background: var(--red); color: #fff; border-color: var(--red); }
+        .contrib-form-title { font-size: 0.9rem; font-weight: 900; margin-bottom: 16px; }
     </style>
 </head>
 <body>
@@ -290,95 +417,170 @@
         <span class="header-sep">|</span>
         <span class="header-label">CMS Dashboard</span>
     </div>
-    <a href="index.html" class="back-link">← Back to Homepage</a>
+    <div class="header-right">
+        <button class="btn btn-save" onclick="saveCMS()">Save Changes</button>
+        <button class="btn btn-reset" onclick="resetCMS()">Reset to Default</button>
+        <span class="save-status" id="save-status"></span>
+        <a href="index.html" class="back-link">← Back to Site</a>
+    </div>
 </header>
 
-<div class="action-bar">
-    <button class="btn btn-save" onclick="saveCMS()">Save to Homepage</button>
-    <button class="btn btn-reset" onclick="resetCMS()">Reset to Default</button>
-    <span class="save-status" id="save-status"></span>
-</div>
+<!-- ============================================================ MAIN LAYOUT -->
+<div class="cms-layout">
 
-<main class="cms-main">
+    <!-- ---- SIDEBAR ---- -->
+    <nav class="cms-sidebar">
 
-    <section class="cms-section">
-        <h2 class="section-title">Most Popular</h2>
-        <p class="section-sub">Drag cards to reorder — top banner carousel on the homepage</p>
-        <div class="banner-list" id="list-popular"></div>
-    </section>
-
-    <section class="cms-section">
-        <h2 class="section-title">Women</h2>
-        <p class="section-sub">Drag cards to reorder — Women section carousel</p>
-        <div class="banner-list" id="list-women"></div>
-    </section>
-
-    <section class="cms-section">
-        <h2 class="section-title">Men</h2>
-        <p class="section-sub">Drag cards to reorder — Men section carousel</p>
-        <div class="banner-list" id="list-men"></div>
-    </section>
-
-    <section class="cms-section">
-        <h2 class="section-title">Contributors</h2>
-        <p class="section-sub">Add or remove contributors — shown on the Contributors page</p>
-        <button class="add-contrib-toggle" id="add-contrib-toggle">+ Add New Contributor</button>
-        <div class="contrib-form-panel" id="contrib-form-panel">
-            <div class="form-grid">
-                <div class="form-group">
-                    <label for="cf-name">Name</label>
-                    <input type="text" id="cf-name" placeholder="e.g. Alex Johnson">
-                </div>
-                <div class="form-group">
-                    <label for="cf-role">Role</label>
-                    <input type="text" id="cf-role" placeholder="e.g. Personal Trainer">
-                </div>
-                <div class="form-group">
-                    <label for="cf-type">Type</label>
-                    <select id="cf-type">
-                        <option value="men">Men</option>
-                        <option value="women">Women</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="cf-img">Card Image URL</label>
-                    <input type="url" id="cf-img" placeholder="https://...">
-                </div>
-                <div class="form-group">
-                    <label for="cf-avatar">Avatar URL</label>
-                    <input type="url" id="cf-avatar" placeholder="https://...">
-                </div>
-                <div class="form-group">
-                    <label for="cf-bg">Background URL</label>
-                    <input type="url" id="cf-bg" placeholder="https://...">
-                </div>
-                <div class="form-group">
-                    <label for="cf-stat1">Stat 1</label>
-                    <input type="text" id="cf-stat1" placeholder="e.g. Physique type">
-                </div>
-                <div class="form-group">
-                    <label for="cf-stat2">Stat 2</label>
-                    <input type="text" id="cf-stat2" placeholder="e.g. 5 Years">
-                </div>
-                <div class="form-group">
-                    <label for="cf-stat3">Stat 3</label>
-                    <input type="text" id="cf-stat3" placeholder="e.g. Casual approach">
-                </div>
-                <div class="form-group">
-                    <label for="cf-stat4">Stat 4</label>
-                    <input type="text" id="cf-stat4" placeholder="e.g. Specialisation">
-                </div>
+        <!-- L1: Home page (collapsible) -->
+        <div class="sidebar-section">
+            <div class="nav-l1" id="l1-home" onclick="toggleL1('l1-home', 'l2-home')">
+                Home page
+                <svg class="nav-arrow open" id="arrow-home" viewBox="0 0 10 10" fill="none">
+                    <path d="M3 2L7 5L3 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
             </div>
-            <div class="form-actions">
-                <button class="btn btn-add-confirm" onclick="confirmAddContributor()">Add Contributor</button>
-                <button class="btn btn-add-cancel" onclick="closeContribForm()">Cancel</button>
-                <span class="form-err" id="form-err">Please fill in Name, Role, and Card Image URL.</span>
+            <div class="nav-l2-group open" id="l2-home">
+                <div class="nav-l2" id="nav-popular" onclick="activatePanel('panel-popular', 'nav-popular')">
+                    <span class="nav-l2-dot"></span> Most Popular
+                </div>
+                <div class="nav-l2" id="nav-men" onclick="activatePanel('panel-men', 'nav-men')">
+                    <span class="nav-l2-dot"></span> Men
+                </div>
+                <div class="nav-l2" id="nav-women" onclick="activatePanel('panel-women', 'nav-women')">
+                    <span class="nav-l2-dot"></span> Women
+                </div>
             </div>
         </div>
-        <div class="contrib-grid" id="contrib-grid"></div>
-    </section>
 
-</main>
+        <!-- L1: Contributor list (direct link) -->
+        <div class="sidebar-section">
+            <div class="nav-l1 direct" id="nav-contributors" onclick="activatePanel('panel-contributors', 'nav-contributors')">
+                Contributor list
+            </div>
+        </div>
+
+    </nav>
+
+    <!-- ---- PANELS AREA ---- -->
+    <div class="cms-panels" id="cms-panels">
+
+        <!-- Landing hint (shown when no panel active) -->
+        <div class="cms-landing" id="cms-landing">
+            <div class="cms-landing-icon">
+                <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+                    <rect x="8" y="8" width="16" height="16" rx="2" fill="#111" opacity="0.15"/>
+                    <rect x="8" y="30" width="16" height="18" rx="2" fill="#111" opacity="0.15"/>
+                    <rect x="30" y="8" width="18" height="28" rx="2" fill="#111" opacity="0.15"/>
+                    <rect x="30" y="42" width="18" height="6" rx="2" fill="#111" opacity="0.15"/>
+                </svg>
+            </div>
+            <h2>Select a section to edit</h2>
+            <p>Choose any item from the left menu to start managing your content.</p>
+            <div class="cms-landing-hint">
+                <div class="cms-landing-hint-item"><span>Home page</span> → Edit banner card ordering</div>
+                <div class="cms-landing-hint-item"><span>Contributor list</span> → Add, edit &amp; reorder contributors</div>
+            </div>
+        </div>
+
+        <!-- ======================================================= PANEL: MOST POPULAR -->
+        <div class="cms-panel" id="panel-popular">
+            <h2 class="panel-title">Most Popular</h2>
+            <p class="panel-sub">Drag cards to reorder — top banner carousel on the homepage</p>
+            <div class="banner-list" id="list-popular"></div>
+        </div>
+
+        <!-- ======================================================= PANEL: MEN -->
+        <div class="cms-panel" id="panel-men">
+            <h2 class="panel-title">Men</h2>
+            <p class="panel-sub">Drag cards to reorder — Men section carousel on the homepage</p>
+            <div class="banner-list" id="list-men"></div>
+        </div>
+
+        <!-- ======================================================= PANEL: WOMEN -->
+        <div class="cms-panel" id="panel-women">
+            <h2 class="panel-title">Women</h2>
+            <p class="panel-sub">Drag cards to reorder — Women section carousel on the homepage</p>
+            <div class="banner-list" id="list-women"></div>
+        </div>
+
+        <!-- ======================================================= PANEL: CONTRIBUTORS -->
+        <div class="cms-panel" id="panel-contributors">
+            <h2 class="panel-title">Contributor List</h2>
+            <p class="panel-sub">Add, edit or reorder contributors — shown on the Contributors page</p>
+
+            <!-- Add/Edit form -->
+            <button class="add-contrib-toggle" id="add-contrib-toggle">+ Add New Contributor</button>
+            <div class="contrib-form-panel" id="contrib-form-panel">
+                <div class="contrib-form-title" id="contrib-form-title">Add New Contributor</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="cf-name">Name</label>
+                        <input type="text" id="cf-name" placeholder="e.g. Alex Johnson">
+                    </div>
+                    <div class="form-group">
+                        <label for="cf-role">Role</label>
+                        <input type="text" id="cf-role" placeholder="e.g. Personal Trainer">
+                    </div>
+                    <div class="form-group">
+                        <label for="cf-type">Type</label>
+                        <select id="cf-type">
+                            <option value="men">Men</option>
+                            <option value="women">Women</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="cf-img">Card Image URL</label>
+                        <input type="url" id="cf-img" placeholder="https://...">
+                    </div>
+                    <div class="form-group">
+                        <label for="cf-avatar">Avatar URL</label>
+                        <input type="url" id="cf-avatar" placeholder="https://... (optional)">
+                    </div>
+                    <div class="form-group">
+                        <label for="cf-bg">Background URL</label>
+                        <input type="url" id="cf-bg" placeholder="https://... (optional)">
+                    </div>
+                    <div class="form-group">
+                        <label for="cf-stat1">Stat 1</label>
+                        <input type="text" id="cf-stat1" placeholder="e.g. Physique type">
+                    </div>
+                    <div class="form-group">
+                        <label for="cf-stat2">Stat 2</label>
+                        <input type="text" id="cf-stat2" placeholder="e.g. 5 Years">
+                    </div>
+                    <div class="form-group">
+                        <label for="cf-stat3">Stat 3</label>
+                        <input type="text" id="cf-stat3" placeholder="e.g. Casual approach">
+                    </div>
+                    <div class="form-group">
+                        <label for="cf-stat4">Stat 4</label>
+                        <input type="text" id="cf-stat4" placeholder="e.g. Specialisation">
+                    </div>
+                    <div class="form-group full">
+                        <label for="cf-bio">Bio <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
+                        <textarea id="cf-bio" rows="3" placeholder="Short bio about the contributor..."></textarea>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button class="btn btn-add-confirm" id="btn-contrib-submit" onclick="confirmContributor()">Add Contributor</button>
+                    <button class="btn btn-add-cancel" onclick="closeContribForm()">Cancel</button>
+                    <span class="form-err" id="form-err">Please fill in Name, Role, and Card Image URL.</span>
+                </div>
+            </div>
+
+            <!-- Filter tabs -->
+            <div class="contrib-tabs">
+                <button class="contrib-tab active" id="tab-all" onclick="setContribTab('all')">ALL</button>
+                <button class="contrib-tab" id="tab-men" onclick="setContribTab('men')">MEN</button>
+                <button class="contrib-tab" id="tab-women" onclick="setContribTab('women')">WOMEN</button>
+            </div>
+
+            <!-- Grid -->
+            <div class="contrib-grid" id="contrib-grid"></div>
+        </div>
+
+    </div><!-- /cms-panels -->
+</div><!-- /cms-layout -->
 
 <script>
     const STORAGE_KEY = 'aestheticLegacyCMS';
@@ -511,8 +713,10 @@
             .map(function(card) { return parseInt(card.dataset.origIdx, 10); });
     }
 
-    // ---- Contributors ----
-    const CONTRIBUTORS_KEY = 'aestheticLegacyContributors';
+    // ---- Contributors data ----
+    var CONTRIBUTORS_KEY     = 'aestheticLegacyContributors';
+    var CONTRIB_MEN_ORDER    = 'aestheticLegacyContribMenOrder';
+    var CONTRIB_WOMEN_ORDER  = 'aestheticLegacyContribWomenOrder';
 
     const DEFAULT_CONTRIBUTORS = [
         { name: "Jeremy Buendia", role: "Men's Physique Champion", type: "men", img: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&q=80&w=800", bg: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&q=80&w=1920", avatar: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&q=80&w=200", stats: ["Physique type", "Training years", "Casual approach", "Specialisation"] },
@@ -535,46 +739,173 @@
         return DEFAULT_CONTRIBUTORS.slice();
     })();
 
+    function loadGenderOrder(key, gender) {
+        var saved = localStorage.getItem(key);
+        if (saved) { try { return JSON.parse(saved); } catch(e) {} }
+        return contributors.reduce(function(acc, c, i) { if (c.type === gender) acc.push(i); return acc; }, []);
+    }
+
+    var menOrder   = loadGenderOrder(CONTRIB_MEN_ORDER,   'men');
+    var womenOrder = loadGenderOrder(CONTRIB_WOMEN_ORDER, 'women');
+
+    function saveContributors() {
+        localStorage.setItem(CONTRIBUTORS_KEY, JSON.stringify(contributors));
+        localStorage.setItem(CONTRIB_MEN_ORDER,   JSON.stringify(menOrder));
+        localStorage.setItem(CONTRIB_WOMEN_ORDER, JSON.stringify(womenOrder));
+    }
+
+    // ---- Contributor tabs ----
+    var activeContribTab = 'all';
+
+    function setContribTab(tab) {
+        activeContribTab = tab;
+        ['all','men','women'].forEach(function(t) {
+            document.getElementById('tab-' + t).classList.toggle('active', t === tab);
+        });
+        renderContributors();
+    }
+
+    // ---- Contributor render ----
+    var contribDragSrc = null;
+
+    function getDisplayList() {
+        if (activeContribTab === 'men')
+            return menOrder.map(function(i) { return { contribIdx: i, c: contributors[i] }; });
+        if (activeContribTab === 'women')
+            return womenOrder.map(function(i) { return { contribIdx: i, c: contributors[i] }; });
+        return contributors.map(function(c, i) { return { contribIdx: i, c: c }; });
+    }
+
     function renderContributors() {
         var grid = document.getElementById('contrib-grid');
         grid.innerHTML = '';
-        contributors.forEach(function(c, i) {
+        getDisplayList().forEach(function(item, displayPos) {
+            var c = item.c; var ci = item.contribIdx;
             var card = document.createElement('div');
-            card.className = 'contrib-card';
+            card.className = 'contrib-card draggable';
+            card.draggable = true;
+            card.dataset.displayPos = displayPos;
+            card.dataset.contribIdx = ci;
             card.innerHTML =
                 '<img src="' + escapeAttr(c.img) + '" alt="' + escapeAttr(c.name) + '" loading="lazy">' +
                 '<div class="contrib-card-body">' +
+                    '<span class="contrib-pos">#' + (displayPos + 1) + '</span>' +
                     '<div class="contrib-name">' + escapeHtml(c.name) + '</div>' +
                     '<div class="contrib-role">' + escapeHtml(c.role) + '</div>' +
                     '<span class="contrib-type ' + escapeAttr(c.type) + '">' + escapeHtml(c.type) + '</span>' +
-                    '<button class="contrib-del" onclick="deleteContributor(' + i + ')">Remove</button>' +
+                    '<div class="contrib-drag-hint">' +
+                        '<svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true"><circle cx="2" cy="2" r="1.5" fill="#ccc"/><circle cx="8" cy="2" r="1.5" fill="#ccc"/><circle cx="2" cy="8" r="1.5" fill="#ccc"/><circle cx="8" cy="8" r="1.5" fill="#ccc"/></svg>' +
+                        'drag to reorder' +
+                    '</div>' +
+                    '<div class="contrib-actions">' +
+                        '<button class="contrib-btn contrib-btn-edit" onclick="editContributor(' + ci + ')">Edit</button>' +
+                        '<button class="contrib-btn contrib-btn-del" onclick="deleteContributor(' + ci + ')">Remove</button>' +
+                    '</div>' +
                 '</div>';
+            makeContribDraggable(card);
             grid.appendChild(card);
         });
     }
 
-    function deleteContributor(index) {
-        if (!confirm('Remove "' + contributors[index].name + '" from contributors?')) return;
-        contributors.splice(index, 1);
+    // ---- Contributor drag ----
+    function makeContribDraggable(card) {
+        card.addEventListener('dragstart', function(e) {
+            contribDragSrc = this;
+            e.dataTransfer.effectAllowed = 'move';
+            this.classList.add('is-dragging');
+        });
+        card.addEventListener('dragend', function() {
+            this.classList.remove('is-dragging');
+            document.querySelectorAll('.contrib-card').forEach(function(c) { c.classList.remove('drag-over'); });
+            contribDragSrc = null;
+        });
+        card.addEventListener('dragover', function(e) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; });
+        card.addEventListener('dragenter', function(e) { e.preventDefault(); if (this !== contribDragSrc) this.classList.add('drag-over'); });
+        card.addEventListener('dragleave', function() { this.classList.remove('drag-over'); });
+        card.addEventListener('drop', function(e) {
+            e.stopPropagation(); e.preventDefault();
+            this.classList.remove('drag-over');
+            if (!contribDragSrc || contribDragSrc === this) return;
+            var srcPos = parseInt(contribDragSrc.dataset.displayPos, 10);
+            var tgtPos = parseInt(this.dataset.displayPos, 10);
+            if (srcPos === tgtPos) return;
+            applyContribReorder(srcPos, tgtPos);
+            saveContributors();
+            renderContributors();
+        });
+    }
+
+    function applyContribReorder(srcPos, tgtPos) {
+        if (activeContribTab === 'all') {
+            var item = contributors.splice(srcPos, 1)[0];
+            contributors.splice(tgtPos, 0, item);
+            menOrder   = contributors.reduce(function(acc, c, i) { if (c.type === 'men')   acc.push(i); return acc; }, []);
+            womenOrder = contributors.reduce(function(acc, c, i) { if (c.type === 'women') acc.push(i); return acc; }, []);
+        } else if (activeContribTab === 'men') {
+            var item = menOrder.splice(srcPos, 1)[0];
+            menOrder.splice(tgtPos, 0, item);
+        } else {
+            var item = womenOrder.splice(srcPos, 1)[0];
+            womenOrder.splice(tgtPos, 0, item);
+        }
+    }
+
+    // ---- Contributor CRUD ----
+    var editContribIdx = null;
+
+    function editContributor(ci) {
+        var c = contributors[ci]; if (!c) return;
+        editContribIdx = ci;
+        document.getElementById('cf-name').value   = c.name   || '';
+        document.getElementById('cf-role').value   = c.role   || '';
+        document.getElementById('cf-type').value   = c.type   || 'men';
+        document.getElementById('cf-img').value    = c.img    || '';
+        document.getElementById('cf-avatar').value = c.avatar || '';
+        document.getElementById('cf-bg').value     = c.bg     || '';
+        document.getElementById('cf-stat1').value  = (c.stats && c.stats[0]) || '';
+        document.getElementById('cf-stat2').value  = (c.stats && c.stats[1]) || '';
+        document.getElementById('cf-stat3').value  = (c.stats && c.stats[2]) || '';
+        document.getElementById('cf-stat4').value  = (c.stats && c.stats[3]) || '';
+        document.getElementById('cf-bio').value    = c.bio    || '';
+        document.getElementById('contrib-form-title').textContent = 'Edit Contributor';
+        document.getElementById('btn-contrib-submit').textContent = 'Update Contributor';
+        document.getElementById('form-err').classList.remove('show');
+        document.getElementById('contrib-form-panel').classList.add('open');
+        document.getElementById('add-contrib-toggle').style.display = 'none';
+        document.getElementById('contrib-form-panel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function deleteContributor(ci) {
+        if (!confirm('Remove "' + contributors[ci].name + '" from contributors?')) return;
+        contributors.splice(ci, 1);
+        menOrder   = menOrder.filter(function(i) { return i !== ci; }).map(function(i) { return i > ci ? i - 1 : i; });
+        womenOrder = womenOrder.filter(function(i) { return i !== ci; }).map(function(i) { return i > ci ? i - 1 : i; });
+        saveContributors();
         renderContributors();
     }
 
     function openContribForm() {
+        editContribIdx = null;
+        document.getElementById('contrib-form-title').textContent = 'Add New Contributor';
+        document.getElementById('btn-contrib-submit').textContent = 'Add Contributor';
         document.getElementById('contrib-form-panel').classList.add('open');
         document.getElementById('add-contrib-toggle').style.display = 'none';
     }
 
     function closeContribForm() {
+        editContribIdx = null;
         document.getElementById('contrib-form-panel').classList.remove('open');
         document.getElementById('add-contrib-toggle').style.display = '';
+        document.getElementById('contrib-form-title').textContent = 'Add New Contributor';
+        document.getElementById('btn-contrib-submit').textContent = 'Add Contributor';
         document.getElementById('form-err').classList.remove('show');
-        ['cf-name','cf-role','cf-img','cf-avatar','cf-bg','cf-stat1','cf-stat2','cf-stat3','cf-stat4'].forEach(function(id) {
+        ['cf-name','cf-role','cf-img','cf-avatar','cf-bg','cf-stat1','cf-stat2','cf-stat3','cf-stat4','cf-bio'].forEach(function(id) {
             document.getElementById(id).value = '';
         });
         document.getElementById('cf-type').value = 'men';
     }
 
-    function confirmAddContributor() {
+    function confirmContributor() {
         var name   = document.getElementById('cf-name').value.trim();
         var role   = document.getElementById('cf-role').value.trim();
         var type   = document.getElementById('cf-type').value;
@@ -585,26 +916,52 @@
         var stat2  = document.getElementById('cf-stat2').value.trim();
         var stat3  = document.getElementById('cf-stat3').value.trim();
         var stat4  = document.getElementById('cf-stat4').value.trim();
-
-        if (!name || !role || !img) {
-            document.getElementById('form-err').classList.add('show');
-            return;
-        }
+        var bio    = document.getElementById('cf-bio').value.trim();
+        if (!name || !role || !img) { document.getElementById('form-err').classList.add('show'); return; }
         document.getElementById('form-err').classList.remove('show');
-
-        contributors.push({
-            name: name, role: role, type: type,
-            img: img,
-            avatar: avatar || img,
-            bg: bg || img,
-            stats: [stat1 || 'Stat 1', stat2 || 'Stat 2', stat3 || 'Stat 3', stat4 || 'Stat 4']
-        });
+        var data = { name: name, role: role, type: type, img: img, avatar: avatar || img, bg: bg || img, stats: [stat1 || 'Stat 1', stat2 || 'Stat 2', stat3 || 'Stat 3', stat4 || 'Stat 4'], bio: bio };
+        if (editContribIdx !== null) {
+            var oldType = contributors[editContribIdx].type;
+            contributors[editContribIdx] = data;
+            if (oldType !== type) {
+                if (oldType === 'men') { menOrder = menOrder.filter(function(i) { return i !== editContribIdx; }); womenOrder.push(editContribIdx); }
+                else { womenOrder = womenOrder.filter(function(i) { return i !== editContribIdx; }); menOrder.push(editContribIdx); }
+            }
+        } else {
+            var newIdx = contributors.length;
+            contributors.push(data);
+            if (type === 'men') menOrder.push(newIdx); else womenOrder.push(newIdx);
+        }
+        saveContributors();
         renderContributors();
         closeContribForm();
     }
 
     document.getElementById('add-contrib-toggle').addEventListener('click', openContribForm);
 
+    // ---- Sidebar navigation ----
+    var activePanelId = null;
+    var activeNavId   = null;
+
+    function toggleL1(l1Id, l2GroupId) {
+        var group  = document.getElementById(l2GroupId);
+        var arrow  = document.getElementById('arrow-' + l1Id.replace('l1-', ''));
+        var isOpen = group.classList.contains('open');
+        group.classList.toggle('open', !isOpen);
+        if (arrow) arrow.classList.toggle('open', !isOpen);
+    }
+
+    function activatePanel(panelId, navId) {
+        document.getElementById('cms-landing').style.display = 'none';
+        if (activePanelId) { var prev = document.getElementById(activePanelId); if (prev) prev.classList.remove('active'); }
+        if (activeNavId)   { var prevNav = document.getElementById(activeNavId); if (prevNav) prevNav.classList.remove('active'); }
+        var panel = document.getElementById(panelId); if (panel) panel.classList.add('active');
+        var nav   = document.getElementById(navId);   if (nav)   nav.classList.add('active');
+        activePanelId = panelId;
+        activeNavId   = navId;
+    }
+
+    // ---- Save & Reset ----
     function saveCMS() {
         var orders = {
             popular: getOrder('list-popular'),
@@ -612,15 +969,19 @@
             men:     getOrder('list-men')
         };
         localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
-        localStorage.setItem(CONTRIBUTORS_KEY, JSON.stringify(contributors));
-        showStatus('✓ Saved! Reload the contributors page to see changes.', 'success');
+        saveContributors();
+        showStatus('✓ Saved! Reload the website to see changes.', 'success');
     }
 
     function resetCMS() {
         if (!confirm('Reset all banner orders and contributors to default? This will clear your saved configuration.')) return;
         localStorage.removeItem(STORAGE_KEY);
         localStorage.removeItem(CONTRIBUTORS_KEY);
+        localStorage.removeItem(CONTRIB_MEN_ORDER);
+        localStorage.removeItem(CONTRIB_WOMEN_ORDER);
         contributors = DEFAULT_CONTRIBUTORS.slice();
+        menOrder   = loadGenderOrder(CONTRIB_MEN_ORDER,   'men');
+        womenOrder = loadGenderOrder(CONTRIB_WOMEN_ORDER, 'women');
         var defaults = {
             popular: bannerData.popular.map(function(_, i) { return i; }),
             women:   bannerData.women.map(function(_, i) { return i; }),
@@ -630,7 +991,7 @@
         renderSection('women',   'list-women',   defaults.women);
         renderSection('men',     'list-men',     defaults.men);
         renderContributors();
-        showStatus('✓ Reset to default order.', 'info');
+        showStatus('✓ Reset to default.', 'info');
     }
 
     function showStatus(msg, type) {

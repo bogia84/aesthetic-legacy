@@ -546,9 +546,9 @@
     <main>
         <!-- SECTION 1: DETAIL HERO -->
         <section class="detail-hero">
-            <img src="https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?auto=format&fit=crop&q=80&w=1920" alt="Savannah Nguyen Background" class="hero-bg-image">
+            <img src="https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?auto=format&fit=crop&q=80&w=1920" alt="Savannah Nguyen Background" class="hero-bg-image" id="detail-hero-bg">
             <div class="hero-overlay"></div>
-            <h1 class="hero-title">Savannah<br>Nguyen</h1>
+            <h1 class="hero-title" id="detail-hero-title">Savannah<br>Nguyen</h1>
             <div class="scroll-indicator">
                 <svg viewBox="0 0 24 50" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12 0V48M12 48L6 42M12 48L18 42" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -560,14 +560,14 @@
         <section class="detail-content-section">
             <div class="detail-container">
                 <div class="detail-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&q=80&w=1000" alt="Savannah Nguyen Fitness Portrait">
+                    <img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&q=80&w=1000" alt="Savannah Nguyen Fitness Portrait" id="detail-main-img">
                 </div>
                 
                 <div class="detail-info-card">
-                    <h3>Savannah Nguyen</h3>
-                    <h2>Fitness influencer</h2>
+                    <h3 id="detail-name">Savannah Nguyen</h3>
+                    <h2 id="detail-role">Fitness influencer</h2>
                     
-                    <ul class="detail-stats-list">
+                    <ul class="detail-stats-list" id="detail-stats">
                         <li>Physique type</li>
                         <li>Casual approach</li>
                         <li>Specialisation</li>
@@ -575,7 +575,7 @@
                         <li>Physique typecert</li>
                     </ul>
 
-                    <p class="detail-bio">
+                    <p class="detail-bio" id="detail-bio">
                         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
                     </p>
                 </div>
@@ -584,7 +584,7 @@
 
         <!-- SECTION 3: CONTRIBUTOR ARTICLES -->
         <section class="contributor-articles-section">
-            <h2 class="articles-heading">Savannah Nguyen - Aesthetic Legacy</h2>
+            <h2 class="articles-heading" id="detail-articles-heading">Savannah Nguyen - Aesthetic Legacy</h2>
             
             <div class="articles-slider-container">
                 <div class="swiper article-swiper">
@@ -633,7 +633,7 @@
 
         <!-- SECTION 4: SOCIAL GALLERY -->
         <section class="social-gallery-section">
-            <h2 class="social-heading">Savannah Nguyen - Social</h2>
+            <h2 class="social-heading" id="detail-social-heading">Savannah Nguyen - Social</h2>
             
             <div class="social-gallery">
                 <!-- Column 1 -->
@@ -711,7 +711,7 @@
 
         <!-- SECTION 5: NEWSPAPER -->
         <section class="newspaper-section">
-            <h2 class="newspaper-heading">Savannah Nguyen - Newspaper</h2>
+            <h2 class="newspaper-heading" id="detail-newspaper-heading">Savannah Nguyen - Newspaper</h2>
             
             <div class="newspaper-grid">
                 <!-- Card 1 -->
@@ -804,6 +804,72 @@
     <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
+            // --- Dynamic Contributor Population ---
+            const CONTRIBUTORS_KEY = 'aestheticLegacyContributors';
+            const DEFAULT_CONTRIBUTORS = [
+                { name: "Jeremy Buendia", role: "Men's Physique Champion", type: "men", img: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&q=80&w=800", bg: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&q=80&w=1920", avatar: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&q=80&w=200", stats: ["Physique type", "Training years", "Casual approach", "Specialisation"], bio: "" },
+                { name: "Aminova Inna", role: "Yoga Instructor", type: "women", img: "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&q=80&w=800", bg: "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&q=80&w=1920", avatar: "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&q=80&w=200", stats: ["Flexibility", "8 Years", "Mindfulness", "Vinyasa"], bio: "" },
+                { name: "Kathryn Murphy", role: "Bodybuilder Pro", type: "men", img: "https://images.unsplash.com/photo-1526506159807-1a52701b22e1?auto=format&fit=crop&q=80&w=800", bg: "https://images.unsplash.com/photo-1526506159807-1a52701b22e1?auto=format&fit=crop&q=80&w=1920", avatar: "https://images.unsplash.com/photo-1526506159807-1a52701b22e1?auto=format&fit=crop&q=80&w=200", stats: ["Mass Focus", "12 Years", "Strict approach", "Heavy lifting"], bio: "" },
+                { name: "Coralie", role: "Crossfit Athlete", type: "women", img: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&q=80&w=800", bg: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&q=80&w=1920", avatar: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&q=80&w=200", stats: ["Endurance", "4 Years", "High intensity", "WOD Specialisation"], bio: "" },
+                { name: "Lazar Angelov", role: "Boxing Coach", type: "men", img: "https://images.unsplash.com/photo-1594381898411-846e7d193883?auto=format&fit=crop&q=80&w=800", bg: "https://images.unsplash.com/photo-1594381898411-846e7d193883?auto=format&fit=crop&q=80&w=1920", avatar: "https://images.unsplash.com/photo-1594381898411-846e7d193883?auto=format&fit=crop&q=80&w=200", stats: ["Agility", "15 Years", "Pro approach", "Striking"], bio: "" },
+                { name: "Guy Hawkins", role: "Gymnast", type: "women", img: "https://images.unsplash.com/photo-1574680093668-0782e2cb658e?auto=format&fit=crop&q=80&w=800", bg: "https://images.unsplash.com/photo-1574680093668-0782e2cb658e?auto=format&fit=crop&q=80&w=1920", avatar: "https://images.unsplash.com/photo-1574680093668-0782e2cb658e?auto=format&fit=crop&q=80&w=200", stats: ["Acrobatic", "10 Years", "Elite approach", "Calisthenics"], bio: "" },
+                { name: "Wade Warren", role: "Sprinter", type: "men", img: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=800", bg: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=1920", avatar: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=200", stats: ["Speed", "6 Years", "Track Focus", "100m Dash"], bio: "" },
+                { name: "Bessie Cooper", role: "Fitness Influencer", type: "women", img: "https://images.unsplash.com/photo-1608667508764-33cf0726b13a?auto=format&fit=crop&q=80&w=800", bg: "https://images.unsplash.com/photo-1608667508764-33cf0726b13a?auto=format&fit=crop&q=80&w=1920", avatar: "https://images.unsplash.com/photo-1608667508764-33cf0726b13a?auto=format&fit=crop&q=80&w=200", stats: ["Physique type", "Training years", "Casual approach", "Specialisation"], bio: "" },
+                { name: "Jacob Jones", role: "Personal Trainer", type: "men", img: "https://images.unsplash.com/photo-1567013127542-490d757e51fc?auto=format&fit=crop&q=80&w=800", bg: "https://images.unsplash.com/photo-1567013127542-490d757e51fc?auto=format&fit=crop&q=80&w=1920", avatar: "https://images.unsplash.com/photo-1567013127542-490d757e51fc?auto=format&fit=crop&q=80&w=200", stats: ["Strength", "9 Years", "Functional", "HIIT"], bio: "" },
+                { name: "Kristin Watson", role: "Pilates Coach", type: "women", img: "https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?auto=format&fit=crop&q=80&w=800", bg: "https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?auto=format&fit=crop&q=80&w=1920", avatar: "https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?auto=format&fit=crop&q=80&w=200", stats: ["Core Focus", "7 Years", "Mindful", "Pilates"], bio: "" },
+                { name: "Cody Fisher", role: "Powerlifter", type: "men", img: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&q=80&w=800", bg: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&q=80&w=1920", avatar: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&q=80&w=200", stats: ["Raw Strength", "11 Years", "Competition", "Powerlifting"], bio: "" },
+                { name: "Esther Howard", role: "Dance Fitness Coach", type: "women", img: "https://images.unsplash.com/photo-1579703473489-02ebcb7de488?auto=format&fit=crop&q=80&w=800", bg: "https://images.unsplash.com/photo-1579703473489-02ebcb7de488?auto=format&fit=crop&q=80&w=1920", avatar: "https://images.unsplash.com/photo-1579703473489-02ebcb7de488?auto=format&fit=crop&q=80&w=200", stats: ["Cardio", "5 Years", "High energy", "Zumba"], bio: "" }
+            ];
+
+            (function populateContributor() {
+                var saved = localStorage.getItem(CONTRIBUTORS_KEY);
+                var contributors = DEFAULT_CONTRIBUTORS;
+                if (saved) { try { contributors = JSON.parse(saved); } catch(e) {} }
+
+                var params = new URLSearchParams(window.location.search);
+                var idx = parseInt(params.get('index'), 10);
+                var c = (!isNaN(idx) && contributors[idx]) ? contributors[idx] : contributors[0];
+
+                document.title = c.name + ' - Aesthetic Legacy';
+
+                var heroBg = document.getElementById('detail-hero-bg');
+                if (heroBg) { heroBg.src = c.bg || c.img; heroBg.alt = c.name + ' Background'; }
+
+                var heroTitle = document.getElementById('detail-hero-title');
+                if (heroTitle) {
+                    var parts = c.name.trim().split(' ');
+                    heroTitle.innerHTML = parts.length > 1
+                        ? parts[0] + '<br>' + parts.slice(1).join(' ')
+                        : parts[0];
+                }
+
+                var mainImg = document.getElementById('detail-main-img');
+                if (mainImg) { mainImg.src = c.img; mainImg.alt = c.name + ' Portrait'; }
+
+                var nameEl = document.getElementById('detail-name');
+                if (nameEl) nameEl.textContent = c.name;
+
+                var roleEl = document.getElementById('detail-role');
+                if (roleEl) roleEl.textContent = c.role;
+
+                var statsList = document.getElementById('detail-stats');
+                if (statsList && c.stats) {
+                    statsList.innerHTML = c.stats.map(function(s) { return '<li>' + s + '</li>'; }).join('');
+                }
+
+                var bioEl = document.getElementById('detail-bio');
+                if (bioEl) bioEl.textContent = c.bio || '';
+
+                var articlesHeading = document.getElementById('detail-articles-heading');
+                if (articlesHeading) articlesHeading.textContent = c.name + ' - Aesthetic Legacy';
+
+                var socialHeading = document.getElementById('detail-social-heading');
+                if (socialHeading) socialHeading.textContent = c.name + ' - Social';
+
+                var newspaperHeading = document.getElementById('detail-newspaper-heading');
+                if (newspaperHeading) newspaperHeading.textContent = c.name + ' - Newspaper';
+            })();
+
             // --- Mobile Menu Toggle ---
             const hamburger = document.getElementById('hamburger-menu');
             const nav = document.getElementById('main-nav');
