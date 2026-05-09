@@ -1080,5 +1080,332 @@
             }
         });
     </script>
+
+    <!-- ================================================================
+         DYNAMIC ARTICLE POPULATION — reads ?id= from URL
+         ================================================================ -->
+    <script>
+    (function() {
+        var ARTICLES_KEY    = 'aestheticLegacyArticles';
+        var CONTRIBUTORS_KEY = 'aestheticLegacyContributors';
+        var HOME_ORDER_KEY  = 'aestheticLegacyCMSOrder';
+
+        // ---- helpers ----
+        function esc(str) { return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+        function escAttr(str) { return String(str || '').replace(/"/g,'&quot;'); }
+
+        var DEFAULT_CONTRIBUTORS = [
+            { name: "Jeremy Buendia",  role: "Men's Physique Champion", type: "men",   img: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&q=80&w=800",  avatar: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&q=80&w=200" },
+            { name: "Aminova Inna",    role: "Yoga Instructor",          type: "women", img: "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&q=80&w=800",  avatar: "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&q=80&w=200" },
+            { name: "Kathryn Murphy",  role: "Bodybuilder Pro",          type: "men",   img: "https://images.unsplash.com/photo-1526506159807-1a52701b22e1?auto=format&fit=crop&q=80&w=800",  avatar: "https://images.unsplash.com/photo-1526506159807-1a52701b22e1?auto=format&fit=crop&q=80&w=200" },
+            { name: "Coralie",         role: "Crossfit Athlete",         type: "women", img: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&q=80&w=800",  avatar: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&q=80&w=200" },
+            { name: "Lazar Angelov",   role: "Boxing Coach",             type: "men",   img: "https://images.unsplash.com/photo-1594381898411-846e7d193883?auto=format&fit=crop&q=80&w=800",  avatar: "https://images.unsplash.com/photo-1594381898411-846e7d193883?auto=format&fit=crop&q=80&w=200" },
+            { name: "Guy Hawkins",     role: "Gymnast",                  type: "women", img: "https://images.unsplash.com/photo-1574680093668-0782e2cb658e?auto=format&fit=crop&q=80&w=800",  avatar: "https://images.unsplash.com/photo-1574680093668-0782e2cb658e?auto=format&fit=crop&q=80&w=200" },
+            { name: "Wade Warren",     role: "Sprinter",                 type: "men",   img: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=800",  avatar: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=200" },
+            { name: "Bessie Cooper",   role: "Fitness Influencer",       type: "women", img: "https://images.unsplash.com/photo-1608667508764-33cf0726b13a?auto=format&fit=crop&q=80&w=800",  avatar: "https://images.unsplash.com/photo-1608667508764-33cf0726b13a?auto=format&fit=crop&q=80&w=200" },
+            { name: "Jacob Jones",     role: "Personal Trainer",         type: "men",   img: "https://images.unsplash.com/photo-1567013127542-490d757e51fc?auto=format&fit=crop&q=80&w=800",  avatar: "https://images.unsplash.com/photo-1567013127542-490d757e51fc?auto=format&fit=crop&q=80&w=200" },
+            { name: "Kristin Watson",  role: "Pilates Coach",            type: "women", img: "https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?auto=format&fit=crop&q=80&w=800",  avatar: "https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?auto=format&fit=crop&q=80&w=200" },
+            { name: "Cody Fisher",     role: "Powerlifter",              type: "men",   img: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&q=80&w=800",  avatar: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&q=80&w=200" },
+            { name: "Esther Howard",   role: "Dance Fitness Coach",      type: "women", img: "https://images.unsplash.com/photo-1579703473489-02ebcb7de488?auto=format&fit=crop&q=80&w=800",  avatar: "https://images.unsplash.com/photo-1579703473489-02ebcb7de488?auto=format&fit=crop&q=80&w=200" }
+        ];
+
+        // ---- read data ----
+        var params = new URLSearchParams(window.location.search);
+        var articleId = params.get('id');
+        if (!articleId) return; // no id → show static template
+
+        var articles;
+        try { articles = JSON.parse(localStorage.getItem(ARTICLES_KEY) || '[]'); } catch(e) { articles = []; }
+        var article = articles.find(function(a) { return a.id === articleId; });
+        if (!article) return; // article not found → show static template
+
+        var contributors;
+        try { contributors = JSON.parse(localStorage.getItem(CONTRIBUTORS_KEY) || 'null') || DEFAULT_CONTRIBUTORS; } catch(e) { contributors = DEFAULT_CONTRIBUTORS; }
+        var contrib = (article.contributorIdx !== null && article.contributorIdx !== undefined) ? contributors[article.contributorIdx] : null;
+
+        // ---- page title ----
+        document.title = (article.title || 'Article') + ' | Aesthetic Legacy';
+
+        // ---- HERO ----
+        if (article.heroImage) {
+            var heroBg = document.querySelector('.blog-hero-bg');
+            if (heroBg) heroBg.src = article.heroImage;
+        }
+
+        // ---- SIDEBAR: contributor avatar ----
+        if (contrib) {
+            var avatarImg = document.querySelector('.sidebar-avatar img');
+            if (avatarImg) { avatarImg.src = contrib.avatar || contrib.img || ''; avatarImg.alt = contrib.name || ''; }
+            var avatarH3 = document.querySelector('.sidebar-avatar-overlay h3');
+            if (avatarH3) avatarH3.textContent = contrib.name || '';
+        }
+
+        // ---- SIDEBAR: latest articles from same contributor ----
+        var sidebarLatest = document.querySelector('.sidebar-latest-articles');
+        if (sidebarLatest && contrib) {
+            var siblingArticles = articles.filter(function(a) {
+                return a.id !== article.id && a.contributorIdx === article.contributorIdx;
+            }).sort(function(a,b) { return b.createdAt - a.createdAt; }).slice(0, 4);
+
+            if (siblingArticles.length > 0) {
+                // Clear existing hardcoded cards
+                var existingCards = sidebarLatest.querySelectorAll('.sidebar-card');
+                existingCards.forEach(function(c) { c.remove(); });
+
+                siblingArticles.forEach(function(sa) {
+                    var link = document.createElement('a');
+                    link.href = 'blog_tmp.html?id=' + encodeURIComponent(sa.id);
+                    link.style.cssText = 'text-decoration:none;display:block;';
+                    var card = document.createElement('div');
+                    card.className = 'sidebar-card';
+                    var imgEl = document.createElement('img');
+                    imgEl.src = sa.heroImage || '';
+                    imgEl.alt = sa.title || '';
+                    var overlay = document.createElement('div');
+                    overlay.className = 'sidebar-card-overlay';
+                    var h4 = document.createElement('h4');
+                    h4.textContent = sa.title || 'Untitled';
+                    var span = document.createElement('span');
+                    span.textContent = sa.date || '';
+                    overlay.appendChild(h4);
+                    overlay.appendChild(span);
+                    card.appendChild(imgEl);
+                    card.appendChild(overlay);
+                    link.appendChild(card);
+                    sidebarLatest.appendChild(link);
+                });
+            }
+        }
+
+        // ---- MOST POPULAR SECTION ----
+        var popularSection = document.querySelector('.most-popular-section');
+        if (popularSection) {
+            var homeOrder;
+            try { homeOrder = JSON.parse(localStorage.getItem(HOME_ORDER_KEY) || 'null'); } catch(e) { homeOrder = null; }
+            var popularIds = homeOrder ? (homeOrder.popular || []) : [];
+            var popularArticles = popularIds.map(function(id) {
+                return articles.find(function(a) { return a.id === id; });
+            }).filter(Boolean).slice(0, 6);
+
+            if (popularArticles.length > 0) {
+                var grid = popularSection.querySelector('.popular-grid');
+                if (grid) {
+                    grid.innerHTML = '';
+                    popularArticles.forEach(function(pa) {
+                        var a = document.createElement('a');
+                        a.href = 'blog_tmp.html?id=' + encodeURIComponent(pa.id);
+                        a.style.cssText = 'text-decoration:none;display:block;';
+                        var card = document.createElement('div');
+                        card.className = 'popular-card';
+                        var img = document.createElement('img');
+                        img.src = pa.heroImage || '';
+                        img.alt = pa.title || '';
+                        var overlay = document.createElement('div');
+                        overlay.className = 'popular-overlay';
+                        var h3 = document.createElement('h3');
+                        h3.textContent = pa.title || 'Untitled';
+                        var span = document.createElement('span');
+                        span.textContent = pa.date || '';
+                        overlay.appendChild(h3);
+                        overlay.appendChild(span);
+                        card.appendChild(img);
+                        card.appendChild(overlay);
+                        a.appendChild(card);
+                        grid.appendChild(a);
+                    });
+                }
+            }
+        }
+
+        // ================================================================
+        //  MAIN CONTENT — component vs normal mode
+        // ================================================================
+        var mainContent = document.querySelector('.blog-main-content');
+        if (!mainContent) return;
+
+        if (article.editorMode === 'normal') {
+            // --- NORMAL MODE: inject HTML directly ---
+            // Clear all block elements (header, stats, content, pullquote, routine, social)
+            var toRemove = mainContent.querySelectorAll('.article-header-block,.quick-stats-block,.article-content-block,.article-pull-quote,.routine-block,.social-media-block');
+            toRemove.forEach(function(el) { el.remove(); });
+            // Inject normal content into a wrapper
+            var wrapper = document.createElement('div');
+            wrapper.className = 'normal-content-body';
+            wrapper.style.cssText = 'font-family:inherit;line-height:1.75;color:#282828;';
+            wrapper.innerHTML = article.normalContent || '';
+            mainContent.insertBefore(wrapper, mainContent.firstChild);
+        } else {
+            // --- COMPONENT MODE: populate template blocks ---
+            var blocks = article.blocks || [];
+
+            // Clear the existing static content so we can repopulate
+            var staticRemove = mainContent.querySelectorAll('.article-header-block,.quick-stats-block,.article-content-block,.article-pull-quote,.routine-block,.social-media-block');
+            staticRemove.forEach(function(el) { el.remove(); });
+
+            // Build and insert blocks in order
+            var fragment = document.createDocumentFragment();
+
+            blocks.forEach(function(blk) {
+                var el = buildBlockElement(blk);
+                if (el) fragment.appendChild(el);
+            });
+
+            // Insert before sidebar (which is outside mainContent, so just append)
+            mainContent.appendChild(fragment);
+        }
+
+        // ---- block builders ----
+        function buildBlockElement(blk) {
+            if (blk.type === 'header') return buildHeaderBlock(blk);
+            if (blk.type === 'stats')  return buildStatsBlock(blk);
+            if (blk.type === 'content') return buildContentBlock(blk);
+            if (blk.type === 'pullquote') return buildPullquoteBlock(blk);
+            if (blk.type === 'routine') return buildRoutineBlock(blk);
+            if (blk.type === 'social')  return buildSocialBlock(blk);
+            return null;
+        }
+
+        function buildHeaderBlock(blk) {
+            var div = document.createElement('div');
+            div.className = 'article-header-block';
+            var meta = document.createElement('div');
+            meta.className = 'article-meta';
+            var dateSpan = document.createElement('span');
+            dateSpan.className = 'article-date';
+            dateSpan.textContent = blk.date || article.date || '';
+            var langDiv = document.createElement('div');
+            langDiv.className = 'lang-switcher';
+            langDiv.innerHTML = '<button class="btn-vn">' + esc(blk.langVn || 'VN') + '</button><button class="btn-eng">' + esc(blk.langEn || 'ENG') + '</button>';
+            meta.appendChild(dateSpan);
+            meta.appendChild(langDiv);
+            var h1 = document.createElement('h1');
+            h1.textContent = blk.title || article.title || '';
+            div.appendChild(meta);
+            div.appendChild(h1);
+            return div;
+        }
+
+        function buildStatsBlock(blk) {
+            var div = document.createElement('div');
+            div.className = 'quick-stats-block';
+            var h2 = document.createElement('h2');
+            h2.className = 'quick-stats-title';
+            h2.textContent = blk.heading || 'Quick Stats:';
+            var ul = document.createElement('ul');
+            ul.className = 'stats-list';
+            (blk.items || []).forEach(function(item) {
+                var li = document.createElement('li');
+                li.textContent = item;
+                ul.appendChild(li);
+            });
+            div.appendChild(h2);
+            div.appendChild(ul);
+            return div;
+        }
+
+        function buildContentBlock(blk) {
+            var div = document.createElement('div');
+            div.className = 'article-content-block';
+            if (blk.image) {
+                var img = document.createElement('img');
+                img.src = blk.image;
+                img.alt = blk.imageAlt || '';
+                img.className = 'article-inline-image';
+                div.appendChild(img);
+            }
+            if (blk.heading) {
+                var h3 = document.createElement('h3');
+                h3.className = 'article-subheading';
+                h3.textContent = blk.heading;
+                div.appendChild(h3);
+            }
+            (blk.paragraphs || []).forEach(function(p) {
+                if (!p) return;
+                var para = document.createElement('p');
+                para.className = 'article-paragraph';
+                para.textContent = p;
+                div.appendChild(para);
+            });
+            return div;
+        }
+
+        function buildPullquoteBlock(blk) {
+            var div = document.createElement('div');
+            div.className = 'article-pull-quote';
+            var svgTL = '<svg class="quote-mark top-left" viewBox="0 0 40 32" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h14v16H6c0 4.418 3.582 8 8 8v8c-8.837 0-16-7.163-16-16V0z"/><path d="M22 0h14v16h-8c0 4.418 3.582 8 8 8v8c-8.837 0-16-7.163-16-16V0z"/></svg>';
+            var svgBR = '<svg class="quote-mark bottom-right" viewBox="0 0 40 32" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="transform:rotate(180deg)"><path d="M0 0h14v16H6c0 4.418 3.582 8 8 8v8c-8.837 0-16-7.163-16-16V0z"/><path d="M22 0h14v16h-8c0 4.418 3.582 8 8 8v8c-8.837 0-16-7.163-16-16V0z"/></svg>';
+            var p = document.createElement('p');
+            p.className = 'pull-quote-text';
+            p.textContent = blk.text || '';
+            div.innerHTML = svgTL;
+            div.appendChild(p);
+            div.insertAdjacentHTML('beforeend', svgBR);
+            return div;
+        }
+
+        function buildRoutineBlock(blk) {
+            var div = document.createElement('div');
+            div.className = 'routine-block';
+            var h2 = document.createElement('h2');
+            h2.className = 'routine-main-title';
+            h2.textContent = blk.title || 'Full Routine:';
+            div.appendChild(h2);
+            (blk.days || []).forEach(function(day) {
+                var dayDiv = document.createElement('div');
+                dayDiv.className = 'routine-day';
+                var h4 = document.createElement('h4');
+                h4.textContent = day.name || '';
+                var ul = document.createElement('ul');
+                ul.className = 'routine-list';
+                (day.exercises || []).forEach(function(ex) {
+                    if (!ex) return;
+                    var li = document.createElement('li');
+                    li.textContent = ex;
+                    ul.appendChild(li);
+                });
+                dayDiv.appendChild(h4);
+                dayDiv.appendChild(ul);
+                div.appendChild(dayDiv);
+            });
+            return div;
+        }
+
+        function buildSocialBlock(blk) {
+            var div = document.createElement('div');
+            div.className = 'social-media-block';
+            var h2 = document.createElement('h2');
+            h2.className = 'social-media-title';
+            h2.textContent = 'Social Media:';
+            div.appendChild(h2);
+            var iconsDiv = document.createElement('div');
+            iconsDiv.className = 'social-media-icons';
+
+            var socialSVGs = {
+                facebook: '<svg viewBox="0 0 36 36" fill="currentColor"><path d="M18 0C8.06 0 0 8.06 0 18c0 8.95 6.53 16.38 15.19 17.79v-12.58h-4.57v-5.21h4.57V14c0-4.51 2.69-7 6.8-7 1.97 0 4.04.35 4.04.35v4.44h-2.28c-2.24 0-2.94 1.39-2.94 2.81v3.38h5.05l-.81 5.21h-4.24v12.58C29.47 34.38 36 26.95 36 18 36 8.06 27.94 0 18 0z" fill="#1877F2"/></svg>',
+                twitter:  '<svg viewBox="0 0 36 36" fill="currentColor"><circle cx="18" cy="18" r="18" fill="#1DA1F2"/><path d="M26.8 13.1c-.6.3-1.3.5-2 .5.7-.4 1.3-1.1 1.5-1.9-.7.4-1.4.7-2.2.9-.6-.7-1.5-1.1-2.5-1.1-1.9 0-3.5 1.6-3.5 3.5 0 .3 0 .5.1.8-2.9-.1-5.5-1.5-7.2-3.6-.3.5-.5 1.1-.5 1.7 0 1.2.6 2.3 1.5 2.9-.6 0-1.1-.2-1.6-.4v.1c0 1.7 1.2 3.1 2.8 3.4-.3.1-.6.1-.9.1-.2 0-.4 0-.6-.1.4 1.4 1.7 2.4 3.3 2.4-1.2.9-2.7 1.5-4.3 1.5-.3 0-.6 0-.8 0 1.5 1 3.4 1.5 5.3 1.5 6.4 0 9.9-5.3 9.9-9.9v-.4c.7-.5 1.3-1.1 1.7-1.8z" fill="#FFF"/></svg>',
+                youtube:  '<svg viewBox="0 0 36 36" fill="currentColor"><circle cx="18" cy="18" r="18" fill="#FF0000"/><path d="M25.8 12.8c-.3-1.1-1.2-2-2.3-2.3C21.4 10 18 10 18 10s-3.4 0-5.5.5c-1.1.3-2 1.2-2.3 2.3-.5 2-.5 6.2-.5 6.2s0 4.2.5 6.2c.3 1.1 1.2 2 2.3 2.3 2.1.5 5.5.5 5.5.5s3.4 0 5.5-.5c1.1-.3 2-1.2 2.3-2.3.5-2 .5-6.2 .5-6.2s0-4.2-.5-6.2zM15 21v-6l6 3-6 3z" fill="#FFF"/></svg>',
+                instagram:'<svg viewBox="0 0 36 36" fill="currentColor"><defs><linearGradient id="ig-g2" x1="15%" y1="85%" x2="85%" y2="15%"><stop offset="0%" stop-color="#f09433"/><stop offset="20%" stop-color="#e6683c"/><stop offset="40%" stop-color="#dc2743"/><stop offset="60%" stop-color="#cc2366"/><stop offset="100%" stop-color="#8a3ab9"/></linearGradient></defs><circle cx="18" cy="18" r="18" fill="url(#ig-g2)"/><rect x="9.5" y="9.5" width="17" height="17" rx="4.5" fill="none" stroke="#FFF" stroke-width="2"/><circle cx="18" cy="18" r="4" fill="none" stroke="#FFF" stroke-width="2"/><circle cx="23" cy="13" r="1" fill="#FFF"/></svg>',
+                website:  '<svg viewBox="0 0 36 36" fill="none" stroke="#282828" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="18" r="15"/><ellipse cx="18" cy="18" rx="6.5" ry="15"/><line x1="18" y1="3" x2="18" y2="33"/><line x1="3" y1="18" x2="33" y2="18"/><line x1="6.5" y1="10.5" x2="29.5" y2="10.5"/><line x1="6.5" y1="25.5" x2="29.5" y2="25.5"/></svg>'
+            };
+            var labels = { facebook:'Facebook', twitter:'Twitter', youtube:'YouTube', instagram:'Instagram', website:'Website' };
+
+            Object.keys(socialSVGs).forEach(function(k) {
+                var url = blk[k];
+                if (!url) return;
+                var a = document.createElement('a');
+                a.href = url;
+                a.className = 'social-icon';
+                a.setAttribute('aria-label', labels[k]);
+                a.target = '_blank';
+                a.rel = 'noopener noreferrer';
+                a.innerHTML = socialSVGs[k];
+                iconsDiv.appendChild(a);
+            });
+            div.appendChild(iconsDiv);
+            return div;
+        }
+
+    })();
+    </script>
 </body>
 </html>

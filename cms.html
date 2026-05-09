@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -395,6 +395,436 @@
         .contrib-btn-edit:hover { background: var(--dark); color: #fff; border-color: var(--dark); }
         .contrib-btn-del:hover { background: var(--red); color: #fff; border-color: var(--red); }
         .contrib-form-title { font-size: 0.9rem; font-weight: 900; margin-bottom: 16px; }
+
+        /* ============================================================
+           BLOG ARTICLES — list + editor panels
+        ============================================================ */
+
+        /* Article list panel */
+        .article-search-bar { display: flex; gap: 10px; align-items: center; margin-bottom: 18px; flex-wrap: wrap; }
+        .article-search-bar input,
+        .article-search-bar select {
+            font-family: 'Manrope', sans-serif;
+            font-size: 0.8rem;
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            outline: none;
+            background: #fff;
+            transition: border-color 0.2s;
+        }
+        .article-search-bar input { flex: 1; min-width: 180px; }
+        .article-search-bar input:focus,
+        .article-search-bar select:focus { border-color: var(--dark); }
+        .article-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 14px;
+        }
+        .article-card-cms {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .article-card-cms-img {
+            width: 100%;
+            aspect-ratio: 16/9;
+            object-fit: cover;
+            display: block;
+            background: #e0e0e0;
+        }
+        .article-card-cms-img-placeholder {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: var(--grey);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ccc;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .article-card-cms-body { padding: 10px 12px 12px; flex: 1; display: flex; flex-direction: column; gap: 4px; }
+        .article-card-cms-title { font-size: 0.82rem; font-weight: 800; line-height: 1.3; }
+        .article-card-cms-date { font-size: 0.68rem; color: var(--muted); }
+        .article-card-cms-contrib { font-size: 0.68rem; color: var(--muted); font-weight: 600; }
+        .article-card-cms-badges { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+        .art-badge {
+            font-size: 0.58rem; font-weight: 900; letter-spacing: 0.07em;
+            text-transform: uppercase; color: #fff; background: var(--muted);
+            padding: 2px 5px; border-radius: 2px;
+        }
+        .art-badge.popular { background: #e6a817; }
+        .art-badge.men { background: var(--dark); }
+        .art-badge.women { background: var(--red); }
+        .article-card-cms-actions { display: flex; gap: 6px; margin-top: 8px; }
+        .article-card-cms-btn {
+            flex: 1; font-size: 0.68rem; font-weight: 700; color: #aaa;
+            background: none; border: 1px solid var(--border); border-radius: 2px;
+            padding: 5px 8px; cursor: pointer; transition: all 0.2s;
+            font-family: 'Manrope', sans-serif;
+        }
+        .article-card-cms-btn-edit:hover { background: var(--dark); color: #fff; border-color: var(--dark); }
+        .article-card-cms-btn-del:hover { background: var(--red); color: #fff; border-color: var(--red); }
+
+        /* Article editor panel */
+        .editor-meta-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+        .editor-meta-grid .form-group.full { grid-column: 1 / -1; }
+
+        .mode-toggle-bar {
+            display: flex;
+            gap: 0;
+            margin-bottom: 22px;
+            border: 1.5px solid var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+            width: fit-content;
+        }
+        .mode-btn {
+            padding: 9px 22px;
+            font-family: 'Manrope', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 800;
+            cursor: pointer;
+            border: none;
+            background: var(--grey);
+            color: var(--muted);
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            transition: all 0.2s;
+        }
+        .mode-btn.active { background: var(--dark); color: #fff; }
+        .mode-btn:not(.active):hover { background: #e0e0e0; color: var(--dark); }
+
+        /* Component editor */
+        .component-editor { display: none; }
+        .component-editor.active { display: flex; gap: 20px; }
+        .block-palette {
+            flex: 0 0 170px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .palette-label { font-size: 0.65rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 4px; }
+        .palette-btn {
+            padding: 9px 12px;
+            font-family: 'Manrope', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            border: 1.5px dashed var(--border);
+            background: #fff;
+            color: var(--dark);
+            border-radius: 3px;
+            text-align: left;
+            transition: all 0.2s;
+        }
+        .palette-btn:hover { border-color: var(--dark); background: var(--grey); }
+        .blocks-list { flex: 1; display: flex; flex-direction: column; gap: 10px; min-height: 80px; }
+        .block-item {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+            cursor: default;
+        }
+        .block-item.is-dragging { opacity: 0.35; }
+        .block-item.drag-over { border-color: var(--red); box-shadow: 0 0 0 2px rgba(230,57,70,0.2); }
+        .block-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            background: var(--grey);
+            cursor: pointer;
+            user-select: none;
+        }
+        .block-drag-handle {
+            cursor: grab;
+            color: #ccc;
+            flex-shrink: 0;
+        }
+        .block-drag-handle:active { cursor: grabbing; }
+        .block-type-label {
+            font-size: 0.65rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--muted);
+            flex: 1;
+        }
+        .block-collapse-arrow { width: 12px; height: 12px; color: #aaa; transition: transform 0.2s; flex-shrink: 0; }
+        .block-collapse-arrow.open { transform: rotate(90deg); }
+        .block-remove-btn {
+            font-size: 0.65rem; font-weight: 900; text-transform: uppercase;
+            background: none; border: none; color: #ccc; cursor: pointer;
+            padding: 2px 6px; border-radius: 2px; transition: all 0.15s;
+            font-family: 'Manrope', sans-serif;
+        }
+        .block-remove-btn:hover { color: var(--red); background: #fff5f5; }
+        .block-fields {
+            padding: 14px;
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .block-fields.open { display: flex; }
+        .block-fields .form-group label { font-size: 0.68rem; }
+        .block-fields .form-group input,
+        .block-fields .form-group textarea,
+        .block-fields .form-group select {
+            font-family: 'Manrope', sans-serif;
+            font-size: 0.8rem;
+            padding: 7px 9px;
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            outline: none;
+            resize: vertical;
+            transition: border-color 0.2s;
+        }
+        .block-fields .form-group input:focus,
+        .block-fields .form-group textarea:focus { border-color: var(--dark); }
+        .block-fields-row { display: flex; gap: 8px; }
+        .block-fields-row .form-group { flex: 1; }
+        .dynamic-list { display: flex; flex-direction: column; gap: 6px; }
+        .dynamic-list-item { display: flex; gap: 6px; align-items: flex-start; }
+        .dynamic-list-item input,
+        .dynamic-list-item textarea {
+            flex: 1;
+            font-family: 'Manrope', sans-serif;
+            font-size: 0.78rem;
+            padding: 6px 8px;
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            outline: none;
+        }
+        .dynamic-list-item input:focus,
+        .dynamic-list-item textarea:focus { border-color: var(--dark); }
+        .dynamic-list-remove {
+            background: none; border: none; color: #ccc; cursor: pointer; font-size: 1rem; padding: 4px;
+            flex-shrink: 0; line-height: 1; transition: color 0.15s;
+        }
+        .dynamic-list-remove:hover { color: var(--red); }
+        .add-dynamic-btn {
+            font-family: 'Manrope', sans-serif;
+            font-size: 0.7rem; font-weight: 700; cursor: pointer;
+            border: 1px dashed var(--border); background: none; color: var(--muted);
+            padding: 5px 10px; border-radius: 3px; transition: all 0.15s; text-align: left;
+        }
+        .add-dynamic-btn:hover { border-color: var(--dark); color: var(--dark); }
+        .day-block { border: 1px solid var(--border); border-radius: 3px; padding: 10px; background: var(--grey); }
+        .day-block-header { display: flex; gap: 6px; align-items: center; margin-bottom: 8px; }
+        .day-block-header input { flex: 1; }
+
+        /* Normal editor */
+        .normal-editor { display: none; }
+        .normal-editor.active { display: block; }
+        .editor-toolbar {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+            padding: 8px 10px;
+            background: var(--grey);
+            border: 1px solid var(--border);
+            border-bottom: none;
+            border-radius: 4px 4px 0 0;
+            flex-wrap: wrap;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .toolbar-btn {
+            padding: 5px 9px;
+            font-family: 'Manrope', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            border: 1px solid var(--border);
+            background: #fff;
+            color: var(--dark);
+            border-radius: 3px;
+            transition: all 0.15s;
+            line-height: 1.3;
+        }
+        .toolbar-btn:hover { background: var(--dark); color: #fff; border-color: var(--dark); }
+        .toolbar-sep { width: 1px; height: 20px; background: var(--border); margin: 0 3px; flex-shrink: 0; }
+        .editor-body {
+            min-height: 400px;
+            padding: 24px;
+            border: 1px solid var(--border);
+            border-radius: 0 0 4px 4px;
+            background: #fff;
+            font-family: 'Manrope', sans-serif;
+            font-size: 0.95rem;
+            line-height: 1.65;
+            color: var(--dark);
+            outline: none;
+        }
+        .editor-body:empty:before {
+            content: attr(data-placeholder);
+            color: #ccc;
+            pointer-events: none;
+        }
+        .editor-body img { max-width: 100%; border-radius: 2px; margin-bottom: 14px; display: block; }
+        .image-insert-panel {
+            background: var(--grey);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 14px;
+            margin-bottom: 12px;
+            display: none;
+        }
+        .image-insert-panel.open { display: block; }
+        .img-tabs { display: flex; gap: 0; margin-bottom: 12px; border-bottom: 1px solid var(--border); }
+        .img-tab {
+            padding: 6px 14px; font-size: 0.72rem; font-weight: 800;
+            cursor: pointer; border: none; background: none;
+            font-family: 'Manrope', sans-serif; color: var(--muted);
+            border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s;
+        }
+        .img-tab.active { color: var(--dark); border-bottom-color: var(--dark); }
+        .img-tab-panel { display: none; }
+        .img-tab-panel.active { display: block; }
+        .img-tab-panel input,
+        .img-tab-panel textarea {
+            width: 100%;
+            font-family: 'Manrope', sans-serif;
+            font-size: 0.8rem;
+            padding: 8px 10px;
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            outline: none;
+            box-sizing: border-box;
+            margin-bottom: 8px;
+        }
+        .img-insert-file { margin-bottom: 8px; }
+        .img-insert-confirm {
+            padding: 7px 16px; font-family: 'Manrope', sans-serif;
+            font-size: 0.75rem; font-weight: 800; cursor: pointer;
+            background: var(--dark); color: #fff; border: none; border-radius: 3px;
+            transition: background 0.15s;
+        }
+        .img-insert-confirm:hover { background: var(--red); }
+
+        /* Home panel article-picker */
+        .home-panel-article-card {
+            background: #fff;
+            border: 2px solid transparent;
+            border-radius: 4px;
+            overflow: hidden;
+            cursor: grab;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s, opacity 0.15s;
+            user-select: none;
+        }
+        .home-panel-article-card:active { cursor: grabbing; }
+        .home-panel-article-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.1); transform: translateY(-2px); }
+        .home-panel-article-card.is-dragging { opacity: 0.35; }
+        .home-panel-article-card.drag-over { border-color: var(--red); transform: scale(1.04); box-shadow: 0 8px 24px rgba(230,57,70,0.2); }
+        .hpac-img { width: 100%; aspect-ratio: 4/5; object-fit: cover; display: block; }
+        .hpac-img-ph { width: 100%; aspect-ratio: 4/5; background: var(--grey); display: flex; align-items: center; justify-content: center; color: #ccc; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; }
+        .hpac-body { padding: 10px 12px 12px; }
+        .hpac-pos { display: inline-block; font-size: 0.6rem; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; color: #fff; background: var(--red); padding: 2px 6px; border-radius: 2px; margin-bottom: 6px; }
+        .hpac-title { font-size: 0.78rem; font-weight: 700; line-height: 1.35; margin-bottom: 4px; }
+        .hpac-date { font-size: 0.68rem; color: var(--muted); margin-bottom: 4px; }
+        .hpac-contrib { font-size: 0.65rem; color: var(--muted); font-weight: 600; }
+        .hpac-drag-hint { margin-top: 8px; font-size: 0.62rem; color: #ccc; display: flex; align-items: center; gap: 5px; }
+        .hpac-actions { display: flex; gap: 6px; margin-top: 8px; }
+        .hpac-btn { flex: 1; font-size: 0.68rem; font-weight: 700; color: #aaa; background: none; border: 1px solid var(--border); border-radius: 2px; padding: 5px 8px; cursor: pointer; transition: all 0.2s; font-family: 'Manrope', sans-serif; }
+        .hpac-btn-edit:hover { background: var(--dark); color: #fff; border-color: var(--dark); }
+        .hpac-btn-rem:hover { background: var(--red); color: #fff; border-color: var(--red); }
+        .add-article-btn {
+            font-size: 0.78rem; font-weight: 700; font-family: 'Manrope', sans-serif;
+            background: none; border: 1.5px dashed var(--border); color: var(--muted);
+            padding: 10px 20px; cursor: pointer; border-radius: 4px;
+            transition: all 0.2s; margin-bottom: 14px;
+        }
+        .add-article-btn:hover { border-color: var(--dark); color: var(--dark); }
+
+        /* Article picker modal */
+        .picker-modal-overlay {
+            display: none;
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.45);
+            z-index: 500;
+            align-items: center;
+            justify-content: center;
+        }
+        .picker-modal-overlay.open { display: flex; }
+        .picker-modal {
+            background: #fff;
+            border-radius: 6px;
+            width: 700px;
+            max-width: 95vw;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 24px 60px rgba(0,0,0,0.25);
+        }
+        .picker-modal-header {
+            padding: 18px 22px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+        }
+        .picker-modal-title { font-size: 0.95rem; font-weight: 900; }
+        .picker-modal-close {
+            background: none; border: none; font-size: 1.4rem; cursor: pointer;
+            color: var(--muted); line-height: 1; padding: 0 4px;
+        }
+        .picker-modal-close:hover { color: var(--dark); }
+        .picker-modal-search {
+            padding: 14px 22px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+        .picker-modal-search input,
+        .picker-modal-search select {
+            font-family: 'Manrope', sans-serif;
+            font-size: 0.8rem;
+            padding: 7px 10px;
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            outline: none;
+        }
+        .picker-modal-search input { flex: 1; }
+        .picker-modal-list { padding: 14px 22px; overflow-y: auto; flex: 1; }
+        .picker-item {
+            display: flex; align-items: center; gap: 12px;
+            padding: 10px 12px; border: 1px solid var(--border);
+            border-radius: 4px; margin-bottom: 8px;
+            cursor: pointer; transition: all 0.15s;
+        }
+        .picker-item:hover { border-color: var(--dark); background: var(--grey); }
+        .picker-item-img {
+            width: 56px; height: 56px; object-fit: cover;
+            border-radius: 3px; flex-shrink: 0; background: #e0e0e0;
+        }
+        .picker-item-info { flex: 1; }
+        .picker-item-title { font-size: 0.82rem; font-weight: 700; }
+        .picker-item-meta { font-size: 0.7rem; color: var(--muted); margin-top: 2px; }
+        .picker-empty { text-align: center; padding: 40px; color: var(--muted); font-size: 0.82rem; font-weight: 600; }
+
+        /* Editor bottom actions */
+        .editor-actions-bar {
+            display: flex; gap: 10px; align-items: center;
+            padding: 20px 0 0;
+            border-top: 1px solid var(--border);
+            margin-top: 24px;
+        }
     </style>
 </head>
 <body>
@@ -459,6 +889,24 @@
             </div>
         </div>
 
+        <!-- L1: Blog Articles (collapsible) -->
+        <div class="sidebar-section">
+            <div class="nav-l1" id="l1-blog" onclick="toggleL1('l1-blog', 'l2-blog')">
+                Blog Articles
+                <svg class="nav-arrow open" id="arrow-blog" viewBox="0 0 10 10" fill="none">
+                    <path d="M3 2L7 5L3 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div class="nav-l2-group open" id="l2-blog">
+                <div class="nav-l2" id="nav-blog-list" onclick="activatePanel('panel-blog-list', 'nav-blog-list')">
+                    <span class="nav-l2-dot"></span> All Articles
+                </div>
+                <div class="nav-l2" id="nav-blog-editor" onclick="openNewArticleEditor()">
+                    <span class="nav-l2-dot"></span> New Article
+                </div>
+            </div>
+        </div>
+
     </nav>
 
     <!-- ---- PANELS AREA ---- -->
@@ -477,15 +925,17 @@
             <h2>Select a section to edit</h2>
             <p>Choose any item from the left menu to start managing your content.</p>
             <div class="cms-landing-hint">
-                <div class="cms-landing-hint-item"><span>Home page</span> → Edit banner card ordering</div>
+                <div class="cms-landing-hint-item"><span>Home page</span> → Edit article card ordering</div>
                 <div class="cms-landing-hint-item"><span>Contributor list</span> → Add, edit &amp; reorder contributors</div>
+                <div class="cms-landing-hint-item"><span>Blog Articles</span> → Create &amp; manage blog articles</div>
             </div>
         </div>
 
         <!-- ======================================================= PANEL: MOST POPULAR -->
         <div class="cms-panel" id="panel-popular">
             <h2 class="panel-title">Most Popular</h2>
-            <p class="panel-sub">Drag cards to reorder — top banner carousel on the homepage</p>
+            <p class="panel-sub">Drag cards to reorder — Most Popular carousel on the homepage</p>
+            <button class="add-article-btn" onclick="openArticlePicker('popular')">+ Add Article</button>
             <div class="banner-list" id="list-popular"></div>
         </div>
 
@@ -493,6 +943,7 @@
         <div class="cms-panel" id="panel-men">
             <h2 class="panel-title">Men</h2>
             <p class="panel-sub">Drag cards to reorder — Men section carousel on the homepage</p>
+            <button class="add-article-btn" onclick="openArticlePicker('men')">+ Add Article</button>
             <div class="banner-list" id="list-men"></div>
         </div>
 
@@ -500,6 +951,7 @@
         <div class="cms-panel" id="panel-women">
             <h2 class="panel-title">Women</h2>
             <p class="panel-sub">Drag cards to reorder — Women section carousel on the homepage</p>
+            <button class="add-article-btn" onclick="openArticlePicker('women')">+ Add Article</button>
             <div class="banner-list" id="list-women"></div>
         </div>
 
@@ -579,141 +1031,241 @@
             <div class="contrib-grid" id="contrib-grid"></div>
         </div>
 
+        <!-- ======================================================= PANEL: BLOG LIST -->
+        <div class="cms-panel" id="panel-blog-list">
+            <h2 class="panel-title">All Articles</h2>
+            <p class="panel-sub">Create and manage blog articles</p>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+                <button class="btn btn-save" style="background:var(--dark);" onclick="openNewArticleEditor()">+ New Article</button>
+            </div>
+            <div class="article-search-bar">
+                <input type="text" id="bl-search" placeholder="Search by title…" oninput="renderBlogList()">
+                <select id="bl-filter-type" onchange="renderBlogList()">
+                    <option value="">All types</option>
+                    <option value="men">Men</option>
+                    <option value="women">Women</option>
+                </select>
+                <select id="bl-filter-contrib" onchange="renderBlogList()">
+                    <option value="">All contributors</option>
+                </select>
+            </div>
+            <div class="article-grid" id="blog-article-grid"></div>
+        </div>
+
+        <!-- ======================================================= PANEL: BLOG EDITOR -->
+        <div class="cms-panel" id="panel-blog-editor">
+            <h2 class="panel-title" id="editor-panel-title">New Article</h2>
+            <p class="panel-sub">Create or edit a blog article</p>
+
+            <!-- Metadata -->
+            <div class="editor-meta-grid">
+                <div class="form-group">
+                    <label for="ed-title">Article Title *</label>
+                    <input type="text" id="ed-title" placeholder="e.g. Building the ultimate physique">
+                </div>
+                <div class="form-group">
+                    <label for="ed-date">Date</label>
+                    <input type="text" id="ed-date" placeholder="e.g. May 10, 2026">
+                </div>
+                <div class="form-group">
+                    <label for="ed-hero">Hero Image (URL or paste Base64)</label>
+                    <input type="text" id="ed-hero" placeholder="https://… or data:image/…"
+                        onpaste="handleHeroImagePaste(event)">
+                </div>
+                <div class="form-group">
+                    <label for="ed-contrib">Contributor</label>
+                    <select id="ed-contrib">
+                        <option value="">— None —</option>
+                    </select>
+                </div>
+                <div class="form-group full">
+                    <label>Publish to</label>
+                    <div style="display:flex;gap:20px;margin-top:6px;">
+                        <label style="display:flex;align-items:center;gap:6px;font-size:0.82rem;font-weight:600;text-transform:none;letter-spacing:0;color:var(--dark);">
+                            <input type="checkbox" id="ed-pub-popular"> Most Popular
+                        </label>
+                        <label style="display:flex;align-items:center;gap:6px;font-size:0.82rem;font-weight:600;text-transform:none;letter-spacing:0;color:var(--dark);">
+                            <input type="checkbox" id="ed-pub-men"> Men
+                        </label>
+                        <label style="display:flex;align-items:center;gap:6px;font-size:0.82rem;font-weight:600;text-transform:none;letter-spacing:0;color:var(--dark);">
+                            <input type="checkbox" id="ed-pub-women"> Women
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mode toggle -->
+            <div class="mode-toggle-bar">
+                <button class="mode-btn active" id="mode-btn-component" onclick="switchEditorMode('component')">Component Editor</button>
+                <button class="mode-btn" id="mode-btn-normal" onclick="switchEditorMode('normal')">Normal Editor</button>
+            </div>
+
+            <!-- ---- COMPONENT EDITOR ---- -->
+            <div class="component-editor active" id="component-editor">
+                <div class="block-palette">
+                    <div class="palette-label">Add block</div>
+                    <button class="palette-btn" onclick="addBlock('header')">📰 Article Header</button>
+                    <button class="palette-btn" onclick="addBlock('stats')">📊 Quick Stats</button>
+                    <button class="palette-btn" onclick="addBlock('content')">🖼 Content Block</button>
+                    <button class="palette-btn" onclick="addBlock('pullquote')">💬 Pull Quote</button>
+                    <button class="palette-btn" onclick="addBlock('routine')">🏋 Routine</button>
+                    <button class="palette-btn" onclick="addBlock('social')">📱 Social Media</button>
+                </div>
+                <div class="blocks-list" id="blocks-list">
+                    <div style="padding:30px;text-align:center;color:#ccc;font-size:0.78rem;font-weight:700;border:1.5px dashed var(--border);border-radius:4px;" id="blocks-empty-hint">
+                        Add blocks from the palette to build your article layout
+                    </div>
+                </div>
+            </div>
+
+            <!-- ---- NORMAL EDITOR ---- -->
+            <div class="normal-editor" id="normal-editor">
+                <!-- Image insert panel -->
+                <div class="image-insert-panel" id="img-insert-panel">
+                    <div class="img-tabs">
+                        <button class="img-tab active" onclick="switchImgTab('url')">URL</button>
+                        <button class="img-tab" onclick="switchImgTab('paste')">Paste / Base64</button>
+                        <button class="img-tab" onclick="switchImgTab('upload')">Upload</button>
+                    </div>
+                    <div class="img-tab-panel active" id="imgtab-url">
+                        <input type="text" id="img-url-input" placeholder="https://example.com/image.jpg">
+                        <button class="img-insert-confirm" onclick="insertImageFromUrl()">Insert Image</button>
+                    </div>
+                    <div class="img-tab-panel" id="imgtab-paste">
+                        <textarea id="img-paste-input" rows="3" placeholder="Paste image or base64 string here…"
+                            onpaste="handleEditorImagePaste(event)"></textarea>
+                        <button class="img-insert-confirm" onclick="insertImageFromPaste()">Insert Image</button>
+                    </div>
+                    <div class="img-tab-panel" id="imgtab-upload">
+                        <input type="file" accept="image/*" class="img-insert-file" id="img-file-input" onchange="handleEditorImageFile(event)">
+                        <button class="img-insert-confirm" onclick="insertImageFromFile()">Insert Image</button>
+                    </div>
+                </div>
+                <div class="editor-toolbar">
+                    <button class="toolbar-btn" onclick="execFmt('bold')" title="Bold"><b>B</b></button>
+                    <button class="toolbar-btn" onclick="execFmt('italic')" title="Italic"><i>I</i></button>
+                    <div class="toolbar-sep"></div>
+                    <button class="toolbar-btn" onclick="execBlock('H2')" title="Heading 2">H2</button>
+                    <button class="toolbar-btn" onclick="execBlock('H3')" title="Heading 3">H3</button>
+                    <button class="toolbar-btn" onclick="execBlock('P')" title="Paragraph">¶</button>
+                    <div class="toolbar-sep"></div>
+                    <button class="toolbar-btn" onclick="execFmt('insertUnorderedList')" title="Bullet list">• List</button>
+                    <button class="toolbar-btn" onclick="execFmt('insertOrderedList')" title="Numbered list">1. List</button>
+                    <div class="toolbar-sep"></div>
+                    <button class="toolbar-btn" onclick="toggleImgPanel()" title="Insert image">🖼 Image</button>
+                </div>
+                <div class="editor-body" id="normal-editor-body" contenteditable="true"
+                    data-placeholder="Start writing your article here…"
+                    onpaste="handleEditorBodyPaste(event)"></div>
+            </div>
+
+            <!-- Save/Cancel -->
+            <div class="editor-actions-bar">
+                <button class="btn btn-save" onclick="saveArticleEditor()">Save Article</button>
+                <button class="btn btn-reset" onclick="cancelArticleEditor()">Cancel</button>
+                <span class="form-err" id="editor-err">Please enter an article title.</span>
+            </div>
+        </div>
+
     </div><!-- /cms-panels -->
-</div><!-- /cms-layout -->
+
+    <!-- ======================================================= ARTICLE PICKER MODAL -->
+    <div class="picker-modal-overlay" id="picker-modal-overlay">
+        <div class="picker-modal">
+            <div class="picker-modal-header">
+                <span class="picker-modal-title" id="picker-modal-title">Add Article</span>
+                <button class="picker-modal-close" onclick="closeArticlePicker()">×</button>
+            </div>
+            <div class="picker-modal-search">
+                <input type="text" id="picker-search" placeholder="Search by title…" oninput="renderPickerList()">
+                <select id="picker-filter-type" onchange="renderPickerList()">
+                    <option value="">All types</option>
+                    <option value="men">Men</option>
+                    <option value="women">Women</option>
+                </select>
+                <select id="picker-filter-contrib" onchange="renderPickerList()">
+                    <option value="">All contributors</option>
+                </select>
+            </div>
+            <div class="picker-modal-list" id="picker-modal-list"></div>
+        </div>
+    </div>
 
 <script>
-    const STORAGE_KEY = 'aestheticLegacyCMS';
-
-    const bannerData = {
-        popular: [
-            { img: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=400', title: 'Building the ultimate physique.', date: 'Sep 4, 2021' },
-            { img: 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&q=80&w=400', title: 'Nutrition tips for max growth.', date: 'Sep 4, 2021' },
-            { img: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400', title: 'Mastering the perfect form.', date: 'Sep 4, 2021' },
-            { img: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&q=80&w=400', title: 'Cardio vs Weightlifting.', date: 'Sep 4, 2021' },
-            { img: 'https://images.unsplash.com/photo-1526506159807-1a52701b22e1?auto=format&fit=crop&q=80&w=400', title: 'Advanced recovery tactics.', date: 'Sep 5, 2021' },
-            { img: 'https://images.unsplash.com/photo-1594381898411-846e7d193883?auto=format&fit=crop&q=80&w=400', title: 'Mental resilience in sports.', date: 'Sep 6, 2021' },
-            { img: 'https://images.unsplash.com/photo-1608667508764-33cf0726b13a?auto=format&fit=crop&q=80&w=400', title: 'Protein supplements guide.', date: 'Sep 7, 2021' },
-            { img: 'https://images.unsplash.com/photo-1574680093668-0782e2cb658e?auto=format&fit=crop&q=80&w=400', title: 'Optimizing sleep for athletes.', date: 'Sep 8, 2021' }
-        ],
-        women: [
-            { img: 'https://images.unsplash.com/photo-1608667508764-33cf0726b13a?auto=format&fit=crop&q=80&w=400', title: 'Core strengthening guide.', date: 'Sep 4, 2021' },
-            { img: 'https://images.unsplash.com/photo-1594381898411-846e7d193883?auto=format&fit=crop&q=80&w=400', title: 'HIIT workouts to maximize.', date: 'Sep 4, 2021' },
-            { img: 'https://images.unsplash.com/photo-1574680093668-0782e2cb658e?auto=format&fit=crop&q=80&w=400', title: 'Yoga flows for recovery.', date: 'Sep 4, 2021' },
-            { img: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&q=80&w=400', title: 'Nutrition for active women.', date: 'Sep 4, 2021' }
-        ],
-        men: [
-            { img: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=400', title: 'Best compound movements.', date: 'Sep 4, 2021' },
-            { img: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400', title: 'Overcoming training plateaus.', date: 'Sep 4, 2021' },
-            { img: 'https://images.unsplash.com/photo-1526506159807-1a52701b22e1?auto=format&fit=crop&q=80&w=400', title: 'Pre-workout breakdown.', date: 'Sep 4, 2021' },
-            { img: 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&q=80&w=400', title: 'Arm day specialized routine.', date: 'Sep 4, 2021' }
-        ]
-    };
-
-    // ---- Drag state ----
-    let dragSrc = null;
-
-    function makeDraggable(card) {
-        card.addEventListener('dragstart', function(e) {
-            dragSrc = this;
-            e.dataTransfer.effectAllowed = 'move';
-            this.classList.add('is-dragging');
-        });
-        card.addEventListener('dragend', function() {
-            this.classList.remove('is-dragging');
-            document.querySelectorAll('.banner-card').forEach(c => c.classList.remove('drag-over'));
-        });
-        card.addEventListener('dragover', function(e) {
-            e.preventDefault();
-            e.dataTransfer.dropEffect = 'move';
-        });
-        card.addEventListener('dragenter', function(e) {
-            e.preventDefault();
-            if (this !== dragSrc) this.classList.add('drag-over');
-        });
-        card.addEventListener('dragleave', function() {
-            this.classList.remove('drag-over');
-        });
-        card.addEventListener('drop', function(e) {
-            e.stopPropagation();
-            e.preventDefault();
-            this.classList.remove('drag-over');
-            if (!dragSrc || dragSrc === this) return;
-            if (dragSrc.parentNode !== this.parentNode) return;
-
-            const parent = this.parentNode;
-            const cards = Array.from(parent.querySelectorAll('.banner-card'));
-            const srcIdx = cards.indexOf(dragSrc);
-            const tgtIdx = cards.indexOf(this);
-
-            if (srcIdx < tgtIdx) {
-                parent.insertBefore(dragSrc, this.nextSibling);
-            } else {
-                parent.insertBefore(dragSrc, this);
-            }
-            refreshPositionLabels(parent);
-        });
+    // ================================================================
+    //  UTILITY
+    // ================================================================
+    function escapeHtml(str) {
+        return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+    function escapeAttr(str) {
+        return String(str).replace(/"/g,'&quot;');
     }
 
-    function refreshPositionLabels(listEl) {
-        listEl.querySelectorAll('.card-pos').forEach((el, i) => {
-            el.textContent = '#' + (i + 1);
-        });
+    // ================================================================
+    //  ARTICLES — DATA LAYER
+    // ================================================================
+    var ARTICLES_KEY  = 'aestheticLegacyArticles';
+    var HOME_ORDER_KEY = 'aestheticLegacyCMSOrder';
+
+    function getArticles() {
+        var saved = localStorage.getItem(ARTICLES_KEY);
+        if (saved) { try { return JSON.parse(saved); } catch(e) {} }
+        return [];
+    }
+    function saveArticles(arr) {
+        localStorage.setItem(ARTICLES_KEY, JSON.stringify(arr));
+    }
+    function generateArticleId() {
+        return 'art-' + Date.now() + '-' + Math.floor(Math.random() * 10000);
+    }
+    function getArticleById(id) {
+        return getArticles().find(function(a) { return a.id === id; }) || null;
     }
 
-    function createCard(sectionKey, origIdx, position) {
-        const data = bannerData[sectionKey][origIdx];
-        const card = document.createElement('div');
-        card.className = 'banner-card';
-        card.draggable = true;
-        card.dataset.section = sectionKey;
-        card.dataset.origIdx = origIdx;
-        card.innerHTML =
-            '<img class="card-img" src="' + data.img + '" alt="' + escapeAttr(data.title) + '" loading="lazy">' +
-            '<div class="card-body">' +
-                '<span class="card-pos">#' + (position + 1) + '</span>' +
-                '<div class="card-title">' + escapeHtml(data.title) + '</div>' +
-                '<div class="card-date">' + escapeHtml(data.date) + '</div>' +
-                '<div class="card-hint">' +
-                    '<svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">' +
-                        '<circle cx="2" cy="2" r="1.5" fill="#ccc"/>' +
-                        '<circle cx="8" cy="2" r="1.5" fill="#ccc"/>' +
-                        '<circle cx="2" cy="8" r="1.5" fill="#ccc"/>' +
-                        '<circle cx="8" cy="8" r="1.5" fill="#ccc"/>' +
-                    '</svg>' +
-                    'drag to reorder' +
-                '</div>' +
-            '</div>';
-        makeDraggable(card);
-        return card;
+    // Home order per section — arrays of article IDs
+    function getHomeOrder() {
+        var saved = localStorage.getItem(HOME_ORDER_KEY);
+        if (saved) { try { return JSON.parse(saved); } catch(e) {} }
+        return buildDefaultHomeOrder();
     }
-
-    function renderSection(sectionKey, listId, order) {
-        const list = document.getElementById(listId);
-        list.innerHTML = '';
-        order.forEach(function(origIdx, pos) {
-            list.appendChild(createCard(sectionKey, origIdx, pos));
-        });
+    function saveHomeOrder(order) {
+        localStorage.setItem(HOME_ORDER_KEY, JSON.stringify(order));
     }
-
-    function getInitialOrder() {
-        var saved = localStorage.getItem(STORAGE_KEY);
-        if (saved) {
-            try { return JSON.parse(saved); } catch(e) {}
-        }
+    function buildDefaultHomeOrder() {
+        var articles = getArticles().slice().sort(function(a,b){ return b.createdAt - a.createdAt; });
         return {
-            popular: bannerData.popular.map(function(_, i) { return i; }),
-            women:   bannerData.women.map(function(_, i) { return i; }),
-            men:     bannerData.men.map(function(_, i) { return i; })
+            popular: articles.filter(function(a){ return a.publishedTo && a.publishedTo.mostPopular; }).map(function(a){ return a.id; }),
+            men:     articles.filter(function(a){ return a.publishedTo && a.publishedTo.men; }).map(function(a){ return a.id; }),
+            women:   articles.filter(function(a){ return a.publishedTo && a.publishedTo.women; }).map(function(a){ return a.id; })
         };
     }
-
-    function getOrder(listId) {
-        return Array.from(document.querySelectorAll('#' + listId + ' .banner-card'))
-            .map(function(card) { return parseInt(card.dataset.origIdx, 10); });
+    function syncHomeOrderOnSave(article) {
+        // After saving an article, update homeOrder to reflect publishedTo changes
+        var order = getHomeOrder();
+        ['popular','men','women'].forEach(function(section) {
+            var flag = section === 'popular' ? 'mostPopular' : section;
+            var inSection = order[section].indexOf(article.id) >= 0;
+            var shouldBe  = !!(article.publishedTo && article.publishedTo[flag]);
+            if (shouldBe && !inSection) {
+                order[section].unshift(article.id);
+            } else if (!shouldBe && inSection) {
+                order[section] = order[section].filter(function(id){ return id !== article.id; });
+            }
+        });
+        saveHomeOrder(order);
+    }
+    function removeArticleFromHomeOrder(articleId) {
+        var order = getHomeOrder();
+        order.popular = order.popular.filter(function(id){ return id !== articleId; });
+        order.men     = order.men.filter(function(id){ return id !== articleId; });
+        order.women   = order.women.filter(function(id){ return id !== articleId; });
+        saveHomeOrder(order);
     }
 
-    // ---- Contributors data ----
+    // ================================================================
+    //  CONTRIBUTORS DATA
+    // ================================================================
     var CONTRIBUTORS_KEY     = 'aestheticLegacyContributors';
     var CONTRIB_MEN_ORDER    = 'aestheticLegacyContribMenOrder';
     var CONTRIB_WOMEN_ORDER  = 'aestheticLegacyContribWomenOrder';
@@ -754,7 +1306,788 @@
         localStorage.setItem(CONTRIB_WOMEN_ORDER, JSON.stringify(womenOrder));
     }
 
-    // ---- Contributor tabs ----
+    function getContribName(idx) {
+        if (idx === null || idx === undefined || idx === '' || isNaN(parseInt(idx,10))) return '';
+        var c = contributors[parseInt(idx,10)];
+        return c ? c.name : '';
+    }
+    function getContribType(idx) {
+        if (idx === null || idx === undefined || idx === '' || isNaN(parseInt(idx,10))) return '';
+        var c = contributors[parseInt(idx,10)];
+        return c ? c.type : '';
+    }
+
+    function populateContribDropdowns() {
+        var selects = [document.getElementById('ed-contrib'), document.getElementById('bl-filter-contrib'), document.getElementById('picker-filter-contrib')];
+        selects.forEach(function(sel) {
+            if (!sel) return;
+            var val = sel.value;
+            var isFilter = sel.id !== 'ed-contrib';
+            sel.innerHTML = isFilter ? '<option value="">All contributors</option>' : '<option value="">— None —</option>';
+            contributors.forEach(function(c, i) {
+                var opt = document.createElement('option');
+                opt.value = i;
+                opt.textContent = c.name + ' (' + c.type + ')';
+                sel.appendChild(opt);
+            });
+            sel.value = val;
+        });
+    }
+
+    // ================================================================
+    //  HOME PANELS — article-picker approach
+    // ================================================================
+    var homeDragSrc = null;
+    var homeDragSection = null;
+
+    function renderHomePanel(section) {
+        var listId = 'list-' + section;
+        var list = document.getElementById(listId);
+        if (!list) return;
+        list.innerHTML = '';
+        var order = getHomeOrder();
+        var ids = order[section] || [];
+        var articles = getArticles();
+        ids.forEach(function(id, pos) {
+            var art = articles.find(function(a){ return a.id === id; });
+            if (!art) return;
+            var card = document.createElement('div');
+            card.className = 'home-panel-article-card';
+            card.draggable = true;
+            card.dataset.artId = id;
+            card.dataset.section = section;
+            card.dataset.pos = pos;
+            var imgHtml = art.heroImage
+                ? '<img class="hpac-img" src="' + escapeAttr(art.heroImage) + '" alt="">'
+                : '<div class="hpac-img-ph">No image</div>';
+            var contribName = getContribName(art.contributorIdx);
+            card.innerHTML =
+                imgHtml +
+                '<div class="hpac-body">' +
+                    '<span class="hpac-pos">#' + (pos + 1) + '</span>' +
+                    '<div class="hpac-title">' + escapeHtml(art.title || 'Untitled') + '</div>' +
+                    '<div class="hpac-date">' + escapeHtml(art.date || '') + '</div>' +
+                    (contribName ? '<div class="hpac-contrib">' + escapeHtml(contribName) + '</div>' : '') +
+                    '<div class="hpac-drag-hint">' +
+                        '<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><circle cx="2" cy="2" r="1.5" fill="#ccc"/><circle cx="8" cy="2" r="1.5" fill="#ccc"/><circle cx="2" cy="8" r="1.5" fill="#ccc"/><circle cx="8" cy="8" r="1.5" fill="#ccc"/></svg>' +
+                        'drag to reorder' +
+                    '</div>' +
+                    '<div class="hpac-actions">' +
+                        '<button class="hpac-btn hpac-btn-edit" onclick="editArticleFromPanel(\'' + escapeAttr(id) + '\')">Edit</button>' +
+                        '<button class="hpac-btn hpac-btn-rem" onclick="removeArticleFromPanel(\'' + escapeAttr(section) + '\',\'' + escapeAttr(id) + '\')">Remove</button>' +
+                    '</div>' +
+                '</div>';
+            makeHomePanelDraggable(card);
+            list.appendChild(card);
+        });
+    }
+
+    function makeHomePanelDraggable(card) {
+        card.addEventListener('dragstart', function(e) {
+            homeDragSrc = this;
+            homeDragSection = this.dataset.section;
+            e.dataTransfer.effectAllowed = 'move';
+            this.classList.add('is-dragging');
+        });
+        card.addEventListener('dragend', function() {
+            this.classList.remove('is-dragging');
+            document.querySelectorAll('.home-panel-article-card').forEach(function(c){ c.classList.remove('drag-over'); });
+            homeDragSrc = null; homeDragSection = null;
+        });
+        card.addEventListener('dragover', function(e){ e.preventDefault(); e.dataTransfer.dropEffect = 'move'; });
+        card.addEventListener('dragenter', function(e){ e.preventDefault(); if (this !== homeDragSrc) this.classList.add('drag-over'); });
+        card.addEventListener('dragleave', function(){ this.classList.remove('drag-over'); });
+        card.addEventListener('drop', function(e) {
+            e.stopPropagation(); e.preventDefault();
+            this.classList.remove('drag-over');
+            if (!homeDragSrc || homeDragSrc === this) return;
+            if (this.dataset.section !== homeDragSrc.dataset.section) return;
+            var section = this.dataset.section;
+            var order = getHomeOrder();
+            var ids = order[section];
+            var srcIdx = parseInt(homeDragSrc.dataset.pos, 10);
+            var tgtIdx = parseInt(this.dataset.pos, 10);
+            ids.splice(tgtIdx, 0, ids.splice(srcIdx, 1)[0]);
+            order[section] = ids;
+            saveHomeOrder(order);
+            renderHomePanel(section);
+        });
+    }
+
+    function removeArticleFromPanel(section, id) {
+        if (!confirm('Remove this article from the ' + section + ' section?')) return;
+        var order = getHomeOrder();
+        order[section] = order[section].filter(function(i){ return i !== id; });
+        saveHomeOrder(order);
+        renderHomePanel(section);
+    }
+
+    function editArticleFromPanel(id) {
+        openArticleEditor(id);
+    }
+
+    // ================================================================
+    //  ARTICLE PICKER MODAL
+    // ================================================================
+    var pickerSection = null;
+
+    function openArticlePicker(section) {
+        pickerSection = section;
+        var title = section === 'popular' ? 'Most Popular' : (section.charAt(0).toUpperCase() + section.slice(1));
+        document.getElementById('picker-modal-title').textContent = 'Add Article to ' + title;
+        document.getElementById('picker-search').value = '';
+        document.getElementById('picker-filter-type').value = '';
+        populateContribDropdowns();
+        renderPickerList();
+        document.getElementById('picker-modal-overlay').classList.add('open');
+    }
+
+    function closeArticlePicker() {
+        document.getElementById('picker-modal-overlay').classList.remove('open');
+        pickerSection = null;
+    }
+
+    document.getElementById('picker-modal-overlay').addEventListener('click', function(e) {
+        if (e.target === this) closeArticlePicker();
+    });
+
+    function renderPickerList() {
+        var container = document.getElementById('picker-modal-list');
+        var search = (document.getElementById('picker-search').value || '').toLowerCase();
+        var filterType = document.getElementById('picker-filter-type').value;
+        var filterContrib = document.getElementById('picker-filter-contrib').value;
+        var order = getHomeOrder();
+        var alreadyIn = pickerSection ? (order[pickerSection] || []) : [];
+        var articles = getArticles().filter(function(a) {
+            if (alreadyIn.indexOf(a.id) >= 0) return false;
+            if (search && !(a.title || '').toLowerCase().includes(search)) return false;
+            if (filterType) {
+                var ct = getContribType(a.contributorIdx);
+                if (ct !== filterType) return false;
+            }
+            if (filterContrib !== '' && String(a.contributorIdx) !== filterContrib) return false;
+            return true;
+        }).sort(function(a,b){ return b.createdAt - a.createdAt; });
+
+        container.innerHTML = '';
+        if (!articles.length) {
+            container.innerHTML = '<div class="picker-empty">No matching articles found.</div>';
+            return;
+        }
+        articles.forEach(function(art) {
+            var item = document.createElement('div');
+            item.className = 'picker-item';
+            var imgEl = art.heroImage
+                ? '<img class="picker-item-img" src="' + escapeAttr(art.heroImage) + '" alt="">'
+                : '<div class="picker-item-img" style="display:flex;align-items:center;justify-content:center;color:#ccc;font-size:0.65rem;font-weight:700;">No image</div>';
+            var contrib = getContribName(art.contributorIdx);
+            item.innerHTML =
+                imgEl +
+                '<div class="picker-item-info">' +
+                    '<div class="picker-item-title">' + escapeHtml(art.title || 'Untitled') + '</div>' +
+                    '<div class="picker-item-meta">' + escapeHtml(art.date || '') + (contrib ? ' · ' + escapeHtml(contrib) : '') + '</div>' +
+                '</div>';
+            item.addEventListener('click', function() {
+                addArticleToSection(art.id);
+            });
+            container.appendChild(item);
+        });
+    }
+
+    function addArticleToSection(articleId) {
+        if (!pickerSection) return;
+        var order = getHomeOrder();
+        if (order[pickerSection].indexOf(articleId) < 0) {
+            order[pickerSection].push(articleId);
+            saveHomeOrder(order);
+        }
+        renderHomePanel(pickerSection);
+        closeArticlePicker();
+    }
+
+    // ================================================================
+    //  BLOG LIST PANEL
+    // ================================================================
+    function renderBlogList() {
+        var grid = document.getElementById('blog-article-grid');
+        if (!grid) return;
+        var search = (document.getElementById('bl-search').value || '').toLowerCase();
+        var filterType = document.getElementById('bl-filter-type').value;
+        var filterContrib = document.getElementById('bl-filter-contrib').value;
+        var articles = getArticles().filter(function(a) {
+            if (search && !(a.title || '').toLowerCase().includes(search)) return false;
+            if (filterType) {
+                var ct = getContribType(a.contributorIdx);
+                if (ct !== filterType) return false;
+            }
+            if (filterContrib !== '' && String(a.contributorIdx) !== filterContrib) return false;
+            return true;
+        }).sort(function(a,b){ return b.createdAt - a.createdAt; });
+
+        grid.innerHTML = '';
+        if (!articles.length) {
+            grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#ccc;font-size:0.82rem;font-weight:700;">No articles yet — click "+ New Article" to create one.</div>';
+            return;
+        }
+        articles.forEach(function(art) {
+            var card = document.createElement('div');
+            card.className = 'article-card-cms';
+            var imgEl = art.heroImage
+                ? '<img class="article-card-cms-img" src="' + escapeAttr(art.heroImage) + '" alt="">'
+                : '<div class="article-card-cms-img-placeholder">No image</div>';
+            var contrib = getContribName(art.contributorIdx);
+            var badges = '';
+            if (art.publishedTo) {
+                if (art.publishedTo.mostPopular) badges += '<span class="art-badge popular">Popular</span>';
+                if (art.publishedTo.men)         badges += '<span class="art-badge men">Men</span>';
+                if (art.publishedTo.women)       badges += '<span class="art-badge women">Women</span>';
+            }
+            card.innerHTML =
+                imgEl +
+                '<div class="article-card-cms-body">' +
+                    '<div class="article-card-cms-title">' + escapeHtml(art.title || 'Untitled') + '</div>' +
+                    '<div class="article-card-cms-date">' + escapeHtml(art.date || '') + '</div>' +
+                    (contrib ? '<div class="article-card-cms-contrib">By ' + escapeHtml(contrib) + '</div>' : '') +
+                    (badges ? '<div class="article-card-cms-badges">' + badges + '</div>' : '') +
+                    '<div class="article-card-cms-actions">' +
+                        '<button class="article-card-cms-btn article-card-cms-btn-edit" onclick="openArticleEditor(\'' + escapeAttr(art.id) + '\')">Edit</button>' +
+                        '<button class="article-card-cms-btn article-card-cms-btn-del" onclick="deleteArticle(\'' + escapeAttr(art.id) + '\')">Delete</button>' +
+                    '</div>' +
+                '</div>';
+            grid.appendChild(card);
+        });
+    }
+
+    function deleteArticle(id) {
+        var art = getArticleById(id);
+        if (!art) return;
+        if (!confirm('Delete article "' + (art.title || 'Untitled') + '"? This cannot be undone.')) return;
+        var articles = getArticles().filter(function(a){ return a.id !== id; });
+        saveArticles(articles);
+        removeArticleFromHomeOrder(id);
+        renderBlogList();
+        ['popular','men','women'].forEach(renderHomePanel);
+    }
+
+    // ================================================================
+    //  BLOG ARTICLE EDITOR
+    // ================================================================
+    var editorArticleId = null;  // null = new article
+    var editorMode = 'component';
+    var blockItems = [];  // [{id, type, fields:{}}, ...]
+    var blockDragSrc = null;
+    var savedNormalSelection = null;
+    var pendingImageSrc = null;
+
+    function openNewArticleEditor() {
+        editorArticleId = null;
+        editorMode = 'component';
+        blockItems = [];
+        activatePanel('panel-blog-editor', 'nav-blog-editor');
+        document.getElementById('editor-panel-title').textContent = 'New Article';
+        document.getElementById('ed-title').value = '';
+        document.getElementById('ed-date').value = new Date().toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
+        document.getElementById('ed-hero').value = '';
+        populateContribDropdowns();
+        document.getElementById('ed-contrib').value = '';
+        document.getElementById('ed-pub-popular').checked = false;
+        document.getElementById('ed-pub-men').checked = false;
+        document.getElementById('ed-pub-women').checked = false;
+        document.getElementById('editor-err').classList.remove('show');
+        switchEditorMode('component');
+        renderBlocks();
+        document.getElementById('normal-editor-body').innerHTML = '';
+    }
+
+    function openArticleEditor(id) {
+        var art = getArticleById(id);
+        if (!art) return;
+        editorArticleId = id;
+        editorMode = art.editorMode || 'component';
+        blockItems = (art.blocks || []).map(function(b, i) {
+            return { id: 'blk-' + Date.now() + '-' + i, type: b.type, fields: Object.assign({}, b) };
+        });
+        activatePanel('panel-blog-editor', 'nav-blog-editor');
+        document.getElementById('editor-panel-title').textContent = 'Edit Article';
+        document.getElementById('ed-title').value = art.title || '';
+        document.getElementById('ed-date').value = art.date || '';
+        document.getElementById('ed-hero').value = art.heroImage || '';
+        populateContribDropdowns();
+        document.getElementById('ed-contrib').value = art.contributorIdx !== null && art.contributorIdx !== undefined ? art.contributorIdx : '';
+        document.getElementById('ed-pub-popular').checked = !!(art.publishedTo && art.publishedTo.mostPopular);
+        document.getElementById('ed-pub-men').checked = !!(art.publishedTo && art.publishedTo.men);
+        document.getElementById('ed-pub-women').checked = !!(art.publishedTo && art.publishedTo.women);
+        document.getElementById('editor-err').classList.remove('show');
+        switchEditorMode(editorMode);
+        renderBlocks();
+        document.getElementById('normal-editor-body').innerHTML = art.normalContent || '';
+    }
+
+    function saveArticleEditor() {
+        var title = document.getElementById('ed-title').value.trim();
+        if (!title) {
+            document.getElementById('editor-err').classList.add('show');
+            return;
+        }
+        document.getElementById('editor-err').classList.remove('show');
+        var contribVal = document.getElementById('ed-contrib').value;
+        var contribIdx = (contribVal !== '' && !isNaN(parseInt(contribVal,10))) ? parseInt(contribVal,10) : null;
+        var art = {
+            id:           editorArticleId || generateArticleId(),
+            title:        title,
+            date:         document.getElementById('ed-date').value.trim(),
+            heroImage:    document.getElementById('ed-hero').value.trim(),
+            contributorIdx: contribIdx,
+            publishedTo: {
+                mostPopular: document.getElementById('ed-pub-popular').checked,
+                men:         document.getElementById('ed-pub-men').checked,
+                women:       document.getElementById('ed-pub-women').checked
+            },
+            editorMode:   editorMode,
+            createdAt:    editorArticleId ? (getArticleById(editorArticleId) || {}).createdAt || Date.now() : Date.now(),
+            blocks:       blockItems.map(function(b){ return Object.assign({type: b.type}, b.fields); }),
+            normalContent: document.getElementById('normal-editor-body').innerHTML
+        };
+        var articles = getArticles();
+        var idx = articles.findIndex(function(a){ return a.id === art.id; });
+        if (idx >= 0) articles[idx] = art; else articles.push(art);
+        saveArticles(articles);
+        syncHomeOrderOnSave(art);
+        editorArticleId = art.id;
+        document.getElementById('editor-panel-title').textContent = 'Edit Article';
+        ['popular','men','women'].forEach(renderHomePanel);
+        renderBlogList();
+        showStatus('✓ Article saved!', 'success');
+    }
+
+    function cancelArticleEditor() {
+        activatePanel('panel-blog-list', 'nav-blog-list');
+        renderBlogList();
+    }
+
+    function handleHeroImagePaste(e) {
+        var items = (e.clipboardData || e.originalEvent.clipboardData).items;
+        for (var i = 0; i < items.length; i++) {
+            if (items[i].type.indexOf('image') >= 0) {
+                e.preventDefault();
+                var reader = new FileReader();
+                reader.onload = function(ev) {
+                    document.getElementById('ed-hero').value = ev.target.result;
+                };
+                reader.readAsDataURL(items[i].getAsFile());
+                return;
+            }
+        }
+    }
+
+    // ================================================================
+    //  EDITOR MODE TOGGLE
+    // ================================================================
+    function switchEditorMode(mode) {
+        editorMode = mode;
+        document.getElementById('mode-btn-component').classList.toggle('active', mode === 'component');
+        document.getElementById('mode-btn-normal').classList.toggle('active', mode === 'normal');
+        document.getElementById('component-editor').classList.toggle('active', mode === 'component');
+        document.getElementById('normal-editor').classList.toggle('active', mode === 'normal');
+    }
+
+    // ================================================================
+    //  COMPONENT EDITOR — BLOCKS
+    // ================================================================
+    function addBlock(type) {
+        var defaults = {
+            header:    { type:'header',    title:'', date:'', langVn:'', langEn:'' },
+            stats:     { type:'stats',     heading:'Quick Stats', items:['','',''] },
+            content:   { type:'content',   image:'', imageAlt:'', heading:'', paragraphs:[''] },
+            pullquote: { type:'pullquote', text:'' },
+            routine:   { type:'routine',   title:'Weekly Routine', days:[{name:'Monday', exercises:['']}] },
+            social:    { type:'social',    facebook:'', twitter:'', youtube:'', instagram:'', website:'' }
+        };
+        blockItems.push({ id: 'blk-' + Date.now(), type: type, fields: Object.assign({}, defaults[type]) });
+        renderBlocks();
+        // scroll last block into view
+        var list = document.getElementById('blocks-list');
+        if (list && list.lastElementChild) list.lastElementChild.scrollIntoView({behavior:'smooth', block:'nearest'});
+    }
+
+    function removeBlock(blockId) {
+        blockItems = blockItems.filter(function(b){ return b.id !== blockId; });
+        renderBlocks();
+    }
+
+    function collectBlockFields(blockId) {
+        var blk = blockItems.find(function(b){ return b.id === blockId; });
+        if (!blk) return;
+        var el = document.getElementById('block-' + blockId);
+        if (!el) return;
+        if (blk.type === 'header') {
+            blk.fields.title  = el.querySelector('[data-f="title"]').value;
+            blk.fields.date   = el.querySelector('[data-f="date"]').value;
+            blk.fields.langVn = el.querySelector('[data-f="langVn"]').value;
+            blk.fields.langEn = el.querySelector('[data-f="langEn"]').value;
+        } else if (blk.type === 'stats') {
+            blk.fields.heading = el.querySelector('[data-f="heading"]').value;
+            blk.fields.items = Array.from(el.querySelectorAll('[data-f="item"]')).map(function(i){ return i.value; });
+        } else if (blk.type === 'content') {
+            blk.fields.image      = el.querySelector('[data-f="image"]').value;
+            blk.fields.imageAlt   = el.querySelector('[data-f="imageAlt"]').value;
+            blk.fields.heading    = el.querySelector('[data-f="heading"]').value;
+            blk.fields.paragraphs = Array.from(el.querySelectorAll('[data-f="para"]')).map(function(i){ return i.value; });
+        } else if (blk.type === 'pullquote') {
+            blk.fields.text = el.querySelector('[data-f="text"]').value;
+        } else if (blk.type === 'routine') {
+            blk.fields.title = el.querySelector('[data-f="routineTitle"]').value;
+            blk.fields.days = Array.from(el.querySelectorAll('[data-day]')).map(function(d) {
+                return {
+                    name: d.querySelector('[data-f="dayName"]').value,
+                    exercises: Array.from(d.querySelectorAll('[data-f="exercise"]')).map(function(e){ return e.value; })
+                };
+            });
+        } else if (blk.type === 'social') {
+            ['facebook','twitter','youtube','instagram','website'].forEach(function(k) {
+                blk.fields[k] = el.querySelector('[data-f="' + k + '"]').value;
+            });
+        }
+    }
+
+    function renderBlocks() {
+        var list = document.getElementById('blocks-list');
+        var emptyHint = document.getElementById('blocks-empty-hint');
+        list.innerHTML = '';
+        if (!blockItems.length) {
+            list.appendChild(emptyHint || (function(){
+                var d = document.createElement('div');
+                d.id = 'blocks-empty-hint';
+                d.style.cssText = 'padding:30px;text-align:center;color:#ccc;font-size:0.78rem;font-weight:700;border:1.5px dashed var(--border);border-radius:4px;';
+                d.textContent = 'Add blocks from the palette to build your article layout';
+                return d;
+            })());
+            return;
+        }
+        blockItems.forEach(function(blk, pos) {
+            var item = createBlockElement(blk, pos);
+            list.appendChild(item);
+        });
+    }
+
+    var typeLabels = {
+        header:'Article Header', stats:'Quick Stats', content:'Content Block',
+        pullquote:'Pull Quote', routine:'Routine', social:'Social Media'
+    };
+
+    function createBlockElement(blk, pos) {
+        var item = document.createElement('div');
+        item.className = 'block-item';
+        item.id = 'block-' + blk.id;
+        item.draggable = true;
+        item.dataset.blkId = blk.id;
+        item.dataset.pos = pos;
+
+        var fieldsHtml = buildBlockFieldsHtml(blk);
+        item.innerHTML =
+            '<div class="block-header" onclick="toggleBlockCollapse(\'' + blk.id + '\')">' +
+                '<span class="block-drag-handle" onclick="event.stopPropagation()" title="Drag to reorder">' +
+                    '<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="3" cy="3" r="1.5" fill="#aaa"/><circle cx="9" cy="3" r="1.5" fill="#aaa"/><circle cx="3" cy="9" r="1.5" fill="#aaa"/><circle cx="9" cy="9" r="1.5" fill="#aaa"/></svg>' +
+                '</span>' +
+                '<span class="block-type-label">' + escapeHtml(typeLabels[blk.type] || blk.type) + '</span>' +
+                '<button class="block-remove-btn" onclick="event.stopPropagation();removeBlock(\'' + blk.id + '\')">✕ Remove</button>' +
+                '<svg class="block-collapse-arrow open" id="arrow-blk-' + blk.id + '" viewBox="0 0 10 10" fill="none"><path d="M3 2L7 5L3 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+            '</div>' +
+            '<div class="block-fields open" id="fields-' + blk.id + '">' + fieldsHtml + '</div>';
+
+        makeBlockDraggable(item);
+        return item;
+    }
+
+    function buildBlockFieldsHtml(blk) {
+        var f = blk.fields;
+        if (blk.type === 'header') {
+            return '<div class="form-group"><label>Title</label><input data-f="title" value="' + escapeAttr(f.title||'') + '" placeholder="Article title"></div>' +
+                   '<div class="block-fields-row">' +
+                   '<div class="form-group"><label>Date</label><input data-f="date" value="' + escapeAttr(f.date||'') + '" placeholder="May 10, 2026"></div>' +
+                   '<div class="form-group"><label>VN Title</label><input data-f="langVn" value="' + escapeAttr(f.langVn||'') + '" placeholder="Vietnamese title"></div>' +
+                   '<div class="form-group"><label>EN Title</label><input data-f="langEn" value="' + escapeAttr(f.langEn||'') + '" placeholder="English title"></div>' +
+                   '</div>';
+        }
+        if (blk.type === 'stats') {
+            var itemsHtml = (f.items||['','']).map(function(it,i){
+                return '<div class="dynamic-list-item">' +
+                    '<input data-f="item" value="' + escapeAttr(it) + '" placeholder="Stat item">' +
+                    '<button class="dynamic-list-remove" onclick="removeStatItem(\'' + blk.id + '\',' + i + ')">×</button>' +
+                '</div>';
+            }).join('');
+            return '<div class="form-group"><label>Section Heading</label><input data-f="heading" value="' + escapeAttr(f.heading||'Quick Stats') + '"></div>' +
+                   '<div class="dynamic-list" id="stat-list-' + blk.id + '">' + itemsHtml + '</div>' +
+                   '<button class="add-dynamic-btn" onclick="addStatItem(\'' + blk.id + '\')">+ Add stat</button>';
+        }
+        if (blk.type === 'content') {
+            var parasHtml = (f.paragraphs||['']).map(function(p,i){
+                return '<div class="dynamic-list-item">' +
+                    '<textarea data-f="para" rows="3" placeholder="Paragraph text…">' + escapeHtml(p) + '</textarea>' +
+                    '<button class="dynamic-list-remove" onclick="removeParaItem(\'' + blk.id + '\',' + i + ')">×</button>' +
+                '</div>';
+            }).join('');
+            return '<div class="form-group"><label>Image URL / Base64</label><input data-f="image" value="' + escapeAttr(f.image||'') + '" placeholder="https://… or paste base64" onpaste="handleBlockImagePaste(event,\'' + blk.id + '\')"></div>' +
+                   '<div class="form-group"><label>Image Alt Text</label><input data-f="imageAlt" value="' + escapeAttr(f.imageAlt||'') + '" placeholder="Describe the image"></div>' +
+                   '<div class="form-group"><label>Sub-heading</label><input data-f="heading" value="' + escapeAttr(f.heading||'') + '" placeholder="Section subheading"></div>' +
+                   '<div class="form-group"><label>Paragraphs</label>' +
+                   '<div class="dynamic-list" id="para-list-' + blk.id + '">' + parasHtml + '</div>' +
+                   '<button class="add-dynamic-btn" onclick="addParaItem(\'' + blk.id + '\')">+ Add paragraph</button></div>';
+        }
+        if (blk.type === 'pullquote') {
+            return '<div class="form-group"><label>Quote Text</label><textarea data-f="text" rows="3" placeholder="Inspiring quote…">' + escapeHtml(f.text||'') + '</textarea></div>';
+        }
+        if (blk.type === 'routine') {
+            var daysHtml = (f.days||[{name:'Monday',exercises:['']}]).map(function(d,di){
+                var exHtml = (d.exercises||['']).map(function(ex,ei){
+                    return '<div class="dynamic-list-item">' +
+                        '<input data-f="exercise" value="' + escapeAttr(ex) + '" placeholder="e.g. Squats 4x12">' +
+                        '<button class="dynamic-list-remove" onclick="removeExercise(\'' + blk.id + '\',' + di + ',' + ei + ')">×</button>' +
+                    '</div>';
+                }).join('');
+                return '<div class="day-block" data-day="' + di + '">' +
+                    '<div class="day-block-header">' +
+                        '<input data-f="dayName" value="' + escapeAttr(d.name||'') + '" placeholder="Day name">' +
+                        '<button class="dynamic-list-remove" onclick="removeDay(\'' + blk.id + '\',' + di + ')">× Day</button>' +
+                    '</div>' +
+                    '<div class="dynamic-list" id="ex-list-' + blk.id + '-' + di + '">' + exHtml + '</div>' +
+                    '<button class="add-dynamic-btn" onclick="addExercise(\'' + blk.id + '\',' + di + ')">+ Add exercise</button>' +
+                '</div>';
+            }).join('');
+            return '<div class="form-group"><label>Routine Title</label><input data-f="routineTitle" value="' + escapeAttr(f.title||'Weekly Routine') + '"></div>' +
+                   '<div id="days-list-' + blk.id + '">' + daysHtml + '</div>' +
+                   '<button class="add-dynamic-btn" onclick="addDay(\'' + blk.id + '\')">+ Add day</button>';
+        }
+        if (blk.type === 'social') {
+            return ['facebook','twitter','youtube','instagram','website'].map(function(k) {
+                return '<div class="form-group"><label>' + k.charAt(0).toUpperCase() + k.slice(1) + ' URL</label>' +
+                       '<input data-f="' + k + '" value="' + escapeAttr(f[k]||'') + '" placeholder="https://"></div>';
+            }).join('');
+        }
+        return '';
+    }
+
+    function toggleBlockCollapse(blkId) {
+        var fields = document.getElementById('fields-' + blkId);
+        var arrow  = document.getElementById('arrow-blk-' + blkId);
+        var isOpen = fields.classList.contains('open');
+        if (isOpen) collectBlockFields(blkId);
+        fields.classList.toggle('open', !isOpen);
+        if (arrow) arrow.classList.toggle('open', !isOpen);
+    }
+
+    // Dynamic list helpers — collect before mutate then re-render
+    function addStatItem(blkId) {
+        collectBlockFields(blkId);
+        var blk = blockItems.find(function(b){ return b.id === blkId; });
+        if (blk) blk.fields.items.push('');
+        renderBlocks();
+    }
+    function removeStatItem(blkId, idx) {
+        collectBlockFields(blkId);
+        var blk = blockItems.find(function(b){ return b.id === blkId; });
+        if (blk) blk.fields.items.splice(idx, 1);
+        renderBlocks();
+    }
+    function addParaItem(blkId) {
+        collectBlockFields(blkId);
+        var blk = blockItems.find(function(b){ return b.id === blkId; });
+        if (blk) blk.fields.paragraphs.push('');
+        renderBlocks();
+    }
+    function removeParaItem(blkId, idx) {
+        collectBlockFields(blkId);
+        var blk = blockItems.find(function(b){ return b.id === blkId; });
+        if (blk) blk.fields.paragraphs.splice(idx, 1);
+        renderBlocks();
+    }
+    function addDay(blkId) {
+        collectBlockFields(blkId);
+        var blk = blockItems.find(function(b){ return b.id === blkId; });
+        if (blk) blk.fields.days.push({name:'', exercises:['']});
+        renderBlocks();
+    }
+    function removeDay(blkId, di) {
+        collectBlockFields(blkId);
+        var blk = blockItems.find(function(b){ return b.id === blkId; });
+        if (blk) blk.fields.days.splice(di, 1);
+        renderBlocks();
+    }
+    function addExercise(blkId, di) {
+        collectBlockFields(blkId);
+        var blk = blockItems.find(function(b){ return b.id === blkId; });
+        if (blk && blk.fields.days[di]) blk.fields.days[di].exercises.push('');
+        renderBlocks();
+    }
+    function removeExercise(blkId, di, ei) {
+        collectBlockFields(blkId);
+        var blk = blockItems.find(function(b){ return b.id === blkId; });
+        if (blk && blk.fields.days[di]) blk.fields.days[di].exercises.splice(ei, 1);
+        renderBlocks();
+    }
+    function handleBlockImagePaste(e, blkId) {
+        var items = (e.clipboardData || e.originalEvent.clipboardData).items;
+        for (var i = 0; i < items.length; i++) {
+            if (items[i].type.indexOf('image') >= 0) {
+                e.preventDefault();
+                var reader = new FileReader();
+                var file = items[i].getAsFile();
+                (function(blkIdInner){
+                    reader.onload = function(ev) {
+                        collectBlockFields(blkIdInner);
+                        var blk = blockItems.find(function(b){ return b.id === blkIdInner; });
+                        if (blk) blk.fields.image = ev.target.result;
+                        renderBlocks();
+                    };
+                })(blkId);
+                reader.readAsDataURL(file);
+                return;
+            }
+        }
+    }
+
+    // Block drag-to-reorder
+    function makeBlockDraggable(el) {
+        el.addEventListener('dragstart', function(e) {
+            blockDragSrc = this;
+            e.dataTransfer.effectAllowed = 'move';
+            this.classList.add('is-dragging');
+        });
+        el.addEventListener('dragend', function() {
+            this.classList.remove('is-dragging');
+            document.querySelectorAll('.block-item').forEach(function(b){ b.classList.remove('drag-over'); });
+            blockDragSrc = null;
+        });
+        el.addEventListener('dragover', function(e){ e.preventDefault(); e.dataTransfer.dropEffect = 'move'; });
+        el.addEventListener('dragenter', function(e){ e.preventDefault(); if (this !== blockDragSrc) this.classList.add('drag-over'); });
+        el.addEventListener('dragleave', function(){ this.classList.remove('drag-over'); });
+        el.addEventListener('drop', function(e) {
+            e.stopPropagation(); e.preventDefault();
+            this.classList.remove('drag-over');
+            if (!blockDragSrc || blockDragSrc === this) return;
+            // collect all fields before reorder
+            blockItems.forEach(function(b){ collectBlockFields(b.id); });
+            var srcPos = parseInt(blockDragSrc.dataset.pos, 10);
+            var tgtPos = parseInt(this.dataset.pos, 10);
+            blockItems.splice(tgtPos, 0, blockItems.splice(srcPos, 1)[0]);
+            renderBlocks();
+        });
+    }
+
+    // ================================================================
+    //  NORMAL EDITOR
+    // ================================================================
+    function execFmt(cmd) {
+        document.getElementById('normal-editor-body').focus();
+        document.execCommand(cmd, false, null);
+    }
+    function execBlock(tag) {
+        document.getElementById('normal-editor-body').focus();
+        document.execCommand('formatBlock', false, tag);
+    }
+    function toggleImgPanel() {
+        var panel = document.getElementById('img-insert-panel');
+        panel.classList.toggle('open');
+        if (panel.classList.contains('open')) {
+            // Save selection so we can restore it when inserting
+            var sel = window.getSelection();
+            if (sel && sel.rangeCount > 0) savedNormalSelection = sel.getRangeAt(0).cloneRange();
+        }
+    }
+    function switchImgTab(tab) {
+        ['url','paste','upload'].forEach(function(t) {
+            document.getElementById('imgtab-' + t).classList.toggle('active', t === tab);
+        });
+        document.querySelectorAll('.img-tab').forEach(function(btn, i) {
+            btn.classList.toggle('active', ['url','paste','upload'][i] === tab);
+        });
+    }
+    function restoreSelectionAndInsert(src) {
+        var body = document.getElementById('normal-editor-body');
+        body.focus();
+        var sel = window.getSelection();
+        if (savedNormalSelection) {
+            sel.removeAllRanges();
+            sel.addRange(savedNormalSelection);
+        }
+        var img = document.createElement('img');
+        img.src = src;
+        img.style.cssText = 'width:100%;border-radius:2px;margin-bottom:14px;display:block;';
+        if (sel && sel.rangeCount > 0) {
+            var range = sel.getRangeAt(0);
+            range.deleteContents();
+            range.insertNode(img);
+            range.setStartAfter(img);
+            range.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(range);
+        } else {
+            body.appendChild(img);
+        }
+        document.getElementById('img-insert-panel').classList.remove('open');
+        savedNormalSelection = null;
+        pendingImageSrc = null;
+    }
+    function insertImageFromUrl() {
+        var src = document.getElementById('img-url-input').value.trim();
+        if (!src) return;
+        restoreSelectionAndInsert(src);
+        document.getElementById('img-url-input').value = '';
+    }
+    function handleEditorImagePaste(e) {
+        var items = (e.clipboardData || e.originalEvent.clipboardData).items;
+        for (var i = 0; i < items.length; i++) {
+            if (items[i].type.indexOf('image') >= 0) {
+                e.preventDefault();
+                var reader = new FileReader();
+                reader.onload = function(ev) {
+                    pendingImageSrc = ev.target.result;
+                    document.getElementById('img-paste-input').value = ev.target.result;
+                };
+                reader.readAsDataURL(items[i].getAsFile());
+                return;
+            }
+        }
+    }
+    function insertImageFromPaste() {
+        var src = pendingImageSrc || document.getElementById('img-paste-input').value.trim();
+        if (!src) return;
+        restoreSelectionAndInsert(src);
+        document.getElementById('img-paste-input').value = '';
+        pendingImageSrc = null;
+    }
+    function handleEditorImageFile(e) {
+        var file = e.target.files[0];
+        if (!file) return;
+        var reader = new FileReader();
+        reader.onload = function(ev) { pendingImageSrc = ev.target.result; };
+        reader.readAsDataURL(file);
+    }
+    function insertImageFromFile() {
+        if (!pendingImageSrc) return;
+        restoreSelectionAndInsert(pendingImageSrc);
+        document.getElementById('img-file-input').value = '';
+        pendingImageSrc = null;
+    }
+    function handleEditorBodyPaste(e) {
+        var items = (e.clipboardData || e.originalEvent.clipboardData).items;
+        for (var i = 0; i < items.length; i++) {
+            if (items[i].type.indexOf('image') >= 0) {
+                e.preventDefault();
+                var reader = new FileReader();
+                var file = items[i].getAsFile();
+                reader.onload = function(ev) {
+                    restoreSelectionAndInsert(ev.target.result);
+                };
+                reader.readAsDataURL(file);
+                return;
+            }
+        }
+    }
+
+    // ================================================================
+    //  CONTRIBUTOR TABS & GRID
+    // ================================================================
     var activeContribTab = 'all';
 
     function setContribTab(tab) {
@@ -765,7 +2098,6 @@
         renderContributors();
     }
 
-    // ---- Contributor render ----
     var contribDragSrc = null;
 
     function getDisplayList() {
@@ -807,7 +2139,6 @@
         });
     }
 
-    // ---- Contributor drag ----
     function makeContribDraggable(card) {
         card.addEventListener('dragstart', function(e) {
             contribDragSrc = this;
@@ -850,7 +2181,9 @@
         }
     }
 
-    // ---- Contributor CRUD ----
+    // ================================================================
+    //  CONTRIBUTOR CRUD
+    // ================================================================
     var editContribIdx = null;
 
     function editContributor(ci) {
@@ -882,6 +2215,7 @@
         womenOrder = womenOrder.filter(function(i) { return i !== ci; }).map(function(i) { return i > ci ? i - 1 : i; });
         saveContributors();
         renderContributors();
+        populateContribDropdowns();
     }
 
     function openContribForm() {
@@ -934,12 +2268,15 @@
         }
         saveContributors();
         renderContributors();
+        populateContribDropdowns();
         closeContribForm();
     }
 
     document.getElementById('add-contrib-toggle').addEventListener('click', openContribForm);
 
-    // ---- Sidebar navigation ----
+    // ================================================================
+    //  SIDEBAR NAVIGATION
+    // ================================================================
     var activePanelId = null;
     var activeNavId   = null;
 
@@ -959,38 +2296,37 @@
         var nav   = document.getElementById(navId);   if (nav)   nav.classList.add('active');
         activePanelId = panelId;
         activeNavId   = navId;
+        // Refresh content when navigating to these panels
+        if (panelId === 'panel-blog-list') {
+            populateContribDropdowns();
+            renderBlogList();
+        }
     }
 
-    // ---- Save & Reset ----
+    // ================================================================
+    //  SAVE & RESET
+    // ================================================================
     function saveCMS() {
-        var orders = {
-            popular: getOrder('list-popular'),
-            women:   getOrder('list-women'),
-            men:     getOrder('list-men')
-        };
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
+        // collect all current block fields before saving
+        blockItems.forEach(function(b){ collectBlockFields(b.id); });
         saveContributors();
+        // homeOrder is saved on every panel interaction; ensure it's current
         showStatus('✓ Saved! Reload the website to see changes.', 'success');
     }
 
     function resetCMS() {
-        if (!confirm('Reset all banner orders and contributors to default? This will clear your saved configuration.')) return;
-        localStorage.removeItem(STORAGE_KEY);
+        if (!confirm('Reset all orders, articles, and contributors to default? This cannot be undone.')) return;
+        localStorage.removeItem(HOME_ORDER_KEY);
+        localStorage.removeItem(ARTICLES_KEY);
         localStorage.removeItem(CONTRIBUTORS_KEY);
         localStorage.removeItem(CONTRIB_MEN_ORDER);
         localStorage.removeItem(CONTRIB_WOMEN_ORDER);
         contributors = DEFAULT_CONTRIBUTORS.slice();
         menOrder   = loadGenderOrder(CONTRIB_MEN_ORDER,   'men');
         womenOrder = loadGenderOrder(CONTRIB_WOMEN_ORDER, 'women');
-        var defaults = {
-            popular: bannerData.popular.map(function(_, i) { return i; }),
-            women:   bannerData.women.map(function(_, i) { return i; }),
-            men:     bannerData.men.map(function(_, i) { return i; })
-        };
-        renderSection('popular', 'list-popular', defaults.popular);
-        renderSection('women',   'list-women',   defaults.women);
-        renderSection('men',     'list-men',     defaults.men);
+        ['popular','men','women'].forEach(renderHomePanel);
         renderContributors();
+        renderBlogList();
         showStatus('✓ Reset to default.', 'info');
     }
 
@@ -1002,20 +2338,14 @@
         el._t = setTimeout(function() { el.textContent = ''; }, 4000);
     }
 
-    function escapeHtml(str) {
-        return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    }
-    function escapeAttr(str) {
-        return String(str).replace(/"/g,'&quot;');
-    }
-
-    // ---- Init ----
-    var initialOrder = getInitialOrder();
-    renderSection('popular', 'list-popular', initialOrder.popular);
-    renderSection('women',   'list-women',   initialOrder.women);
-    renderSection('men',     'list-men',     initialOrder.men);
+    // ================================================================
+    //  INIT
+    // ================================================================
+    populateContribDropdowns();
+    ['popular','men','women'].forEach(renderHomePanel);
     renderContributors();
 </script>
+
 
 </body>
 </html>

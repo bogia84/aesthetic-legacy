@@ -879,13 +879,74 @@
                 });
             }
 
-            // --- Section 3: Articles Swiper Integration ---
+            // --- Section 3: Populate Articles from localStorage then init Swiper ---
+            (function populateArticleCarousel() {
+                var ARTICLES_KEY = 'aestheticLegacyArticles';
+                var params = new URLSearchParams(window.location.search);
+                var idx = parseInt(params.get('index'), 10);
+                var articlesSection = document.querySelector('.contributor-articles-section');
+                var swiperWrapper = document.querySelector('.article-swiper .swiper-wrapper');
+                if (!swiperWrapper || !articlesSection) return;
+
+                var articles;
+                try { articles = JSON.parse(localStorage.getItem(ARTICLES_KEY) || '[]'); } catch(e) { articles = []; }
+
+                var contribArticles = articles.filter(function(a) {
+                    return !isNaN(idx) && a.contributorIdx === idx;
+                }).sort(function(a, b) { return b.createdAt - a.createdAt; });
+
+                if (contribArticles.length === 0) {
+                    articlesSection.style.display = 'none';
+                    return;
+                }
+
+                // Clear hardcoded placeholder slides
+                swiperWrapper.innerHTML = '';
+
+                contribArticles.forEach(function(art) {
+                    var slide = document.createElement('div');
+                    slide.className = 'swiper-slide';
+
+                    var link = document.createElement('a');
+                    link.href = 'blog_tmp.html?id=' + encodeURIComponent(art.id);
+                    link.style.cssText = 'text-decoration:none;display:block;height:100%;';
+
+                    var card = document.createElement('div');
+                    card.className = 'article-card';
+                    card.style.cssText = 'position:relative;overflow:hidden;border-radius:4px;height:320px;cursor:pointer;';
+
+                    var img = document.createElement('img');
+                    img.src = art.heroImage || '';
+                    img.alt = art.title || '';
+                    img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.4s ease;';
+
+                    var overlay = document.createElement('div');
+                    overlay.style.cssText = 'position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.75) 0%,transparent 55%);display:flex;flex-direction:column;justify-content:flex-end;padding:20px 16px;';
+
+                    var h4 = document.createElement('h4');
+                    h4.textContent = art.title || 'Untitled';
+                    h4.style.cssText = 'margin:0 0 6px;font-size:0.85rem;font-weight:700;color:#fff;line-height:1.35;letter-spacing:0.02em;';
+
+                    var dateSpan = document.createElement('span');
+                    dateSpan.textContent = art.date || '';
+                    dateSpan.style.cssText = 'font-size:0.72rem;color:rgba(255,255,255,0.7);font-weight:600;letter-spacing:0.03em;';
+
+                    overlay.appendChild(h4);
+                    overlay.appendChild(dateSpan);
+                    card.appendChild(img);
+                    card.appendChild(overlay);
+                    link.appendChild(card);
+                    slide.appendChild(link);
+                    swiperWrapper.appendChild(slide);
+                });
+            })();
+
             const articleSwiperElement = document.querySelector('.article-swiper');
             if (articleSwiperElement) {
                 new Swiper('.article-swiper', {
                     slidesPerView: 1,
                     spaceBetween: 20,
-                    loop: true,
+                    loop: document.querySelectorAll('.article-swiper .swiper-slide').length > 1,
                     navigation: {
                         nextEl: '.next-article-arrow',
                         prevEl: '.prev-article-arrow',
