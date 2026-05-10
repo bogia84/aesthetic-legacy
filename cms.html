@@ -625,9 +625,7 @@
         .day-block-header { display: flex; gap: 6px; align-items: center; margin-bottom: 8px; }
         .day-block-header input { flex: 1; }
 
-        /* Normal editor */
-        .normal-editor { display: none; }
-        .normal-editor.active { display: block; }
+        /* Normal editor — layout handled by live-preview pane CSS block below */
         .editor-toolbar {
             display: flex;
             gap: 4px;
@@ -825,6 +823,86 @@
             border-top: 1px solid var(--border);
             margin-top: 24px;
         }
+
+        /* ---- Live preview pane ---- */
+        .live-preview-pane {
+            flex: 0 0 36%;
+            min-width: 260px;
+            max-height: calc(100vh - 140px);
+            overflow-y: auto;
+            position: sticky;
+            top: 10px;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            align-self: flex-start;
+        }
+        .preview-pane-label {
+            font-size: 0.63rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--muted);
+            padding: 9px 14px 8px;
+            border-bottom: 1px solid var(--border);
+            background: var(--grey);
+            border-radius: 4px 4px 0 0;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+        .live-preview-content {
+            padding: 14px;
+            font-family: 'Manrope', sans-serif;
+            font-size: 0.82rem;
+            line-height: 1.6;
+            color: var(--dark);
+        }
+        .preview-placeholder {
+            text-align: center;
+            color: #ccc;
+            font-size: 0.73rem;
+            font-weight: 700;
+            padding: 36px 16px;
+        }
+        /* Normal editor side-by-side */
+        .normal-editor { display: none; }
+        .normal-editor.active { display: flex; gap: 20px; align-items: flex-start; }
+        .normal-editor-left { flex: 1; min-width: 0; }
+        /* Preview article block mini-styles */
+        .pr-hero { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block;
+            border-radius: 3px; margin-bottom: 10px; background: var(--grey); }
+        .pr-meta { font-size: 0.68rem; color: var(--muted); font-weight: 600; margin-bottom: 4px; }
+        .pr-title { font-size: 0.97rem; font-weight: 900; line-height: 1.3; margin-bottom: 6px; }
+        .pr-contrib { font-size: 0.68rem; color: var(--muted); font-weight: 600; margin-bottom: 10px; }
+        .pr-block { margin-bottom: 12px; }
+        .pr-block-head { font-size: 0.58rem; font-weight: 900; text-transform: uppercase;
+            letter-spacing: 0.08em; color: #bbb; margin-bottom: 5px; }
+        .pr-header-title { font-size: 0.9rem; font-weight: 900; line-height: 1.3; }
+        .pr-header-date { font-size: 0.68rem; color: var(--muted); margin-top: 2px; }
+        .pr-stats-heading { font-weight: 800; font-size: 0.8rem; margin-bottom: 4px; }
+        .pr-stats-list { list-style: none; padding: 0; margin: 0; }
+        .pr-stats-list li { font-size: 0.75rem; padding: 3px 0; border-bottom: 1px solid var(--border); }
+        .pr-content-img { width: 100%; border-radius: 3px; margin-bottom: 6px; display: block; }
+        .pr-content-heading { font-weight: 800; font-size: 0.84rem; margin-bottom: 3px; }
+        .pr-content-para { font-size: 0.75rem; line-height: 1.5; color: #555; margin-bottom: 3px; }
+        .pr-pullquote { border-left: 3px solid var(--red); padding: 7px 10px; margin: 0;
+            font-style: italic; font-size: 0.82rem; font-weight: 600;
+            background: var(--grey); border-radius: 0 3px 3px 0; }
+        .pr-routine-title { font-weight: 800; font-size: 0.82rem; margin-bottom: 5px; }
+        .pr-day { margin-bottom: 5px; }
+        .pr-day-name { font-size: 0.7rem; font-weight: 800; margin-bottom: 2px; }
+        .pr-day-exercises { list-style: disc; padding-left: 14px; margin: 0; }
+        .pr-day-exercises li { font-size: 0.7rem; color: #555; }
+        .pr-social { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 4px; }
+        .pr-social a { font-size: 0.62rem; font-weight: 700; background: var(--dark);
+            color: #fff; padding: 2px 7px; border-radius: 2px; text-decoration: none; }
+        .pr-divider { border: none; border-top: 1px solid var(--border); margin: 8px 0; }
+        .pr-normal-body { font-family: 'Manrope', sans-serif; font-size: 0.82rem; line-height: 1.6; }
+        .pr-normal-body img { max-width: 100%; border-radius: 2px; display: block; margin-bottom: 8px; }
+        /* Preview button */
+        .btn-preview { background: #2d7ef7; color: #fff; }
+        .btn-preview:hover { background: #1a5ecb; }
     </style>
 </head>
 <body>
@@ -1116,52 +1194,67 @@
                         Add blocks from the palette to build your article layout
                     </div>
                 </div>
+                <div class="live-preview-pane" id="live-preview-pane">
+                    <div class="preview-pane-label">Live Preview</div>
+                    <div class="live-preview-content" id="live-preview-content">
+                        <div class="preview-placeholder">Add blocks to see a preview</div>
+                    </div>
+                </div>
             </div>
 
             <!-- ---- NORMAL EDITOR ---- -->
             <div class="normal-editor" id="normal-editor">
-                <!-- Image insert panel -->
-                <div class="image-insert-panel" id="img-insert-panel">
-                    <div class="img-tabs">
-                        <button class="img-tab active" onclick="switchImgTab('url')">URL</button>
-                        <button class="img-tab" onclick="switchImgTab('paste')">Paste / Base64</button>
-                        <button class="img-tab" onclick="switchImgTab('upload')">Upload</button>
+                <div class="normal-editor-left">
+                    <!-- Image insert panel -->
+                    <div class="image-insert-panel" id="img-insert-panel">
+                        <div class="img-tabs">
+                            <button class="img-tab active" onclick="switchImgTab('url')">URL</button>
+                            <button class="img-tab" onclick="switchImgTab('paste')">Paste / Base64</button>
+                            <button class="img-tab" onclick="switchImgTab('upload')">Upload</button>
+                        </div>
+                        <div class="img-tab-panel active" id="imgtab-url">
+                            <input type="text" id="img-url-input" placeholder="https://example.com/image.jpg">
+                            <button class="img-insert-confirm" onclick="insertImageFromUrl()">Insert Image</button>
+                        </div>
+                        <div class="img-tab-panel" id="imgtab-paste">
+                            <textarea id="img-paste-input" rows="3" placeholder="Paste image or base64 string here…"
+                                onpaste="handleEditorImagePaste(event)"></textarea>
+                            <button class="img-insert-confirm" onclick="insertImageFromPaste()">Insert Image</button>
+                        </div>
+                        <div class="img-tab-panel" id="imgtab-upload">
+                            <input type="file" accept="image/*" class="img-insert-file" id="img-file-input" onchange="handleEditorImageFile(event)">
+                            <button class="img-insert-confirm" onclick="insertImageFromFile()">Insert Image</button>
+                        </div>
                     </div>
-                    <div class="img-tab-panel active" id="imgtab-url">
-                        <input type="text" id="img-url-input" placeholder="https://example.com/image.jpg">
-                        <button class="img-insert-confirm" onclick="insertImageFromUrl()">Insert Image</button>
+                    <div class="editor-toolbar">
+                        <button class="toolbar-btn" onclick="execFmt('bold')" title="Bold"><b>B</b></button>
+                        <button class="toolbar-btn" onclick="execFmt('italic')" title="Italic"><i>I</i></button>
+                        <div class="toolbar-sep"></div>
+                        <button class="toolbar-btn" onclick="execBlock('H2')" title="Heading 2">H2</button>
+                        <button class="toolbar-btn" onclick="execBlock('H3')" title="Heading 3">H3</button>
+                        <button class="toolbar-btn" onclick="execBlock('P')" title="Paragraph">¶</button>
+                        <div class="toolbar-sep"></div>
+                        <button class="toolbar-btn" onclick="execFmt('insertUnorderedList')" title="Bullet list">• List</button>
+                        <button class="toolbar-btn" onclick="execFmt('insertOrderedList')" title="Numbered list">1. List</button>
+                        <div class="toolbar-sep"></div>
+                        <button class="toolbar-btn" onclick="toggleImgPanel()" title="Insert image">🖼 Image</button>
                     </div>
-                    <div class="img-tab-panel" id="imgtab-paste">
-                        <textarea id="img-paste-input" rows="3" placeholder="Paste image or base64 string here…"
-                            onpaste="handleEditorImagePaste(event)"></textarea>
-                        <button class="img-insert-confirm" onclick="insertImageFromPaste()">Insert Image</button>
-                    </div>
-                    <div class="img-tab-panel" id="imgtab-upload">
-                        <input type="file" accept="image/*" class="img-insert-file" id="img-file-input" onchange="handleEditorImageFile(event)">
-                        <button class="img-insert-confirm" onclick="insertImageFromFile()">Insert Image</button>
+                    <div class="editor-body" id="normal-editor-body" contenteditable="true"
+                        data-placeholder="Start writing your article here…"
+                        onpaste="handleEditorBodyPaste(event)"></div>
+                </div>
+                <div class="live-preview-pane" id="normal-preview-pane">
+                    <div class="preview-pane-label">Live Preview</div>
+                    <div class="live-preview-content" id="normal-preview-content">
+                        <div class="preview-placeholder">Start writing to see a preview</div>
                     </div>
                 </div>
-                <div class="editor-toolbar">
-                    <button class="toolbar-btn" onclick="execFmt('bold')" title="Bold"><b>B</b></button>
-                    <button class="toolbar-btn" onclick="execFmt('italic')" title="Italic"><i>I</i></button>
-                    <div class="toolbar-sep"></div>
-                    <button class="toolbar-btn" onclick="execBlock('H2')" title="Heading 2">H2</button>
-                    <button class="toolbar-btn" onclick="execBlock('H3')" title="Heading 3">H3</button>
-                    <button class="toolbar-btn" onclick="execBlock('P')" title="Paragraph">¶</button>
-                    <div class="toolbar-sep"></div>
-                    <button class="toolbar-btn" onclick="execFmt('insertUnorderedList')" title="Bullet list">• List</button>
-                    <button class="toolbar-btn" onclick="execFmt('insertOrderedList')" title="Numbered list">1. List</button>
-                    <div class="toolbar-sep"></div>
-                    <button class="toolbar-btn" onclick="toggleImgPanel()" title="Insert image">🖼 Image</button>
-                </div>
-                <div class="editor-body" id="normal-editor-body" contenteditable="true"
-                    data-placeholder="Start writing your article here…"
-                    onpaste="handleEditorBodyPaste(event)"></div>
             </div>
 
             <!-- Save/Cancel -->
             <div class="editor-actions-bar">
                 <button class="btn btn-save" onclick="saveArticleEditor()">Save Article</button>
+                <button class="btn btn-preview" onclick="previewInNewTab()">Preview</button>
                 <button class="btn btn-reset" onclick="cancelArticleEditor()">Cancel</button>
                 <span class="form-err" id="editor-err">Please enter an article title.</span>
             </div>
@@ -1768,6 +1861,7 @@
             var item = createBlockElement(blk, pos);
             list.appendChild(item);
         });
+        scheduleLivePreview();
     }
 
     var typeLabels = {
@@ -2086,6 +2180,136 @@
     }
 
     // ================================================================
+    //  LIVE PREVIEW
+    // ================================================================
+    var _previewTimer = null;
+
+    function scheduleLivePreview() {
+        clearTimeout(_previewTimer);
+        _previewTimer = setTimeout(renderLivePreview, 120);
+    }
+
+    function renderLivePreview() {
+        if (editorMode === 'normal') {
+            renderNormalPreview();
+        } else {
+            renderComponentPreview();
+        }
+    }
+
+    function renderComponentPreview() {
+        var pane = document.getElementById('live-preview-content');
+        if (!pane) return;
+        // Sync latest field values before rendering
+        blockItems.forEach(function(b) { collectBlockFields(b.id); });
+
+        var title      = (document.getElementById('ed-title') || {}).value || '';
+        var date       = (document.getElementById('ed-date')  || {}).value || '';
+        var heroUrl    = (document.getElementById('ed-hero')  || {}).value || '';
+        var contribSel = document.getElementById('ed-contrib');
+        var contribName = '';
+        if (contribSel && contribSel.value !== '') {
+            var idx = parseInt(contribSel.value, 10);
+            if (!isNaN(idx)) contribName = getContribName(idx);
+        }
+
+        if (!title && !heroUrl && !blockItems.length) {
+            pane.innerHTML = '<div class="preview-placeholder">Add blocks to see a preview</div>';
+            return;
+        }
+
+        var html = '';
+        if (heroUrl) {
+            html += '<img class="pr-hero" src="' + escapeHtml(heroUrl) + '" alt="' + escapeHtml(title) + '" onerror="this.style.display=\'none\'">';
+        }
+        if (date)        html += '<div class="pr-meta">' + escapeHtml(date) + '</div>';
+        if (title)       html += '<div class="pr-title">' + escapeHtml(title) + '</div>';
+        if (contribName) html += '<div class="pr-contrib">By ' + escapeHtml(contribName) + '</div>';
+
+        blockItems.forEach(function(blk) {
+            var f = blk.fields;
+            html += '<hr class="pr-divider"><div class="pr-block">';
+            html += '<div class="pr-block-head">' + escapeHtml(typeLabels[blk.type] || blk.type) + '</div>';
+
+            if (blk.type === 'header') {
+                if (f.title) html += '<div class="pr-header-title">' + escapeHtml(f.title) + '</div>';
+                if (f.date)  html += '<div class="pr-header-date">' + escapeHtml(f.date) + '</div>';
+            } else if (blk.type === 'stats') {
+                if (f.heading) html += '<div class="pr-stats-heading">' + escapeHtml(f.heading) + '</div>';
+                var items = (f.items || []).filter(Boolean);
+                if (items.length) {
+                    html += '<ul class="pr-stats-list">';
+                    items.forEach(function(it) { html += '<li>' + escapeHtml(it) + '</li>'; });
+                    html += '</ul>';
+                }
+            } else if (blk.type === 'content') {
+                if (f.image) html += '<img class="pr-content-img" src="' + escapeHtml(f.image) + '" alt="' + escapeHtml(f.imageAlt || '') + '" onerror="this.style.display=\'none\'">';
+                if (f.heading) html += '<div class="pr-content-heading">' + escapeHtml(f.heading) + '</div>';
+                (f.paragraphs || []).filter(Boolean).forEach(function(p) {
+                    html += '<p class="pr-content-para">' + escapeHtml(p) + '</p>';
+                });
+            } else if (blk.type === 'pullquote') {
+                if (f.text) html += '<blockquote class="pr-pullquote">' + escapeHtml(f.text) + '</blockquote>';
+            } else if (blk.type === 'routine') {
+                if (f.title) html += '<div class="pr-routine-title">' + escapeHtml(f.title) + '</div>';
+                (f.days || []).forEach(function(day) {
+                    html += '<div class="pr-day"><div class="pr-day-name">' + escapeHtml(day.name || '') + '</div>';
+                    var exs = (day.exercises || []).filter(Boolean);
+                    if (exs.length) {
+                        html += '<ul class="pr-day-exercises">';
+                        exs.forEach(function(ex) { html += '<li>' + escapeHtml(ex) + '</li>'; });
+                        html += '</ul>';
+                    }
+                    html += '</div>';
+                });
+            } else if (blk.type === 'social') {
+                html += '<div class="pr-social">';
+                ['facebook','twitter','youtube','instagram','website'].forEach(function(k) {
+                    if (f[k]) html += '<a href="' + escapeHtml(f[k]) + '" target="_blank" rel="noopener">' + k.charAt(0).toUpperCase() + k.slice(1) + '</a>';
+                });
+                html += '</div>';
+            }
+            html += '</div>';
+        });
+
+        pane.innerHTML = html;
+    }
+
+    function renderNormalPreview() {
+        var body = document.getElementById('normal-editor-body');
+        var pane = document.getElementById('normal-preview-content');
+        if (!body || !pane) return;
+        var content = body.innerHTML.trim();
+        pane.innerHTML = content
+            ? '<div class="pr-normal-body">' + content + '</div>'
+            : '<div class="preview-placeholder">Start writing to see a preview</div>';
+    }
+
+    // ================================================================
+    //  PREVIEW IN NEW TAB
+    // ================================================================
+    function previewInNewTab() {
+        blockItems.forEach(function(b) { collectBlockFields(b.id); });
+        var contribSel = document.getElementById('ed-contrib');
+        var contribIdx = (contribSel && contribSel.value !== '' && !isNaN(parseInt(contribSel.value, 10)))
+            ? parseInt(contribSel.value, 10) : null;
+        var draft = {
+            id:             editorArticleId || ('preview-' + Date.now()),
+            title:          (document.getElementById('ed-title') || {}).value || '',
+            date:           (document.getElementById('ed-date')  || {}).value || '',
+            heroImage:      (document.getElementById('ed-hero')  || {}).value || '',
+            contributorIdx: contribIdx,
+            publishedTo:    { mostPopular: false, men: false, women: false },
+            editorMode:     editorMode,
+            createdAt:      Date.now(),
+            blocks:         blockItems.map(function(b) { return Object.assign({ type: b.type }, b.fields); }),
+            normalContent:  (document.getElementById('normal-editor-body') || {}).innerHTML || ''
+        };
+        localStorage.setItem('aestheticLegacyPreviewDraft', JSON.stringify(draft));
+        window.open('blog_tmp.html?preview=1', '_blank');
+    }
+
+    // ================================================================
     //  CONTRIBUTOR TABS & GRID
     // ================================================================
     var activeContribTab = 'all';
@@ -2344,6 +2568,24 @@
     populateContribDropdowns();
     ['popular','men','women'].forEach(renderHomePanel);
     renderContributors();
+
+    // Live preview: hook meta field changes
+    ['ed-title','ed-date','ed-hero'].forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) el.addEventListener('input', scheduleLivePreview);
+    });
+    ['ed-contrib','ed-pub-popular','ed-pub-men','ed-pub-women'].forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) el.addEventListener('change', scheduleLivePreview);
+    });
+    // Live preview: hook block field changes via event delegation
+    document.getElementById('blocks-list').addEventListener('input', function(e) {
+        var blkEl = e.target.closest('[data-blk-id]');
+        if (blkEl) collectBlockFields(blkEl.dataset.blkId);
+        scheduleLivePreview();
+    });
+    // Live preview: hook normal editor body
+    document.getElementById('normal-editor-body').addEventListener('input', scheduleLivePreview);
 </script>
 
 

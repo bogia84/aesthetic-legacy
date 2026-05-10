@@ -1112,12 +1112,30 @@
         // ---- read data ----
         var params = new URLSearchParams(window.location.search);
         var articleId = params.get('id');
-        if (!articleId) return; // no id → show static template
+        var isPreview = params.get('preview') === '1';
+        var articles = [];
+        var article = null;
 
-        var articles;
-        try { articles = JSON.parse(localStorage.getItem(ARTICLES_KEY) || '[]'); } catch(e) { articles = []; }
-        var article = articles.find(function(a) { return a.id === articleId; });
-        if (!article) return; // article not found → show static template
+        if (isPreview) {
+            // Preview mode: load draft written by CMS "Preview" button
+            try {
+                article = JSON.parse(localStorage.getItem('aestheticLegacyPreviewDraft') || 'null');
+                localStorage.removeItem('aestheticLegacyPreviewDraft');
+            } catch(e) { article = null; }
+            // Also load saved articles for sidebar/popular sections
+            try { articles = JSON.parse(localStorage.getItem(ARTICLES_KEY) || '[]'); } catch(e) { articles = []; }
+            if (!article) return;
+            // Show draft banner
+            var _banner = document.createElement('div');
+            _banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;background:#2d7ef7;color:#fff;text-align:center;font-size:0.78rem;font-weight:700;padding:8px;letter-spacing:0.05em;';
+            _banner.textContent = 'DRAFT PREVIEW — This article has not been published';
+            document.body.appendChild(_banner);
+        } else {
+            if (!articleId) return; // no id → show static template
+            try { articles = JSON.parse(localStorage.getItem(ARTICLES_KEY) || '[]'); } catch(e) { articles = []; }
+            article = articles.find(function(a) { return a.id === articleId; });
+            if (!article) return; // article not found → show static template
+        }
 
         var contributors;
         try { contributors = JSON.parse(localStorage.getItem(CONTRIBUTORS_KEY) || 'null') || DEFAULT_CONTRIBUTORS; } catch(e) { contributors = DEFAULT_CONTRIBUTORS; }
