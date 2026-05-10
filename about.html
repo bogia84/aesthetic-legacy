@@ -29,20 +29,26 @@
 
         /* --- HEADER (SYNCED WITH HOME PAGE) --- */
         header {
-            position: absolute; /* Matches home page style */
+            position: absolute;
             top: 40px;
             left: 10%;
             width: 80%; 
             display: flex;
             justify-content: space-between;
             align-items: center;
-            z-index: 1000; 
+            z-index: 1000;
+            background: #fff;
+            padding: 15px 30px;
+            border-radius: 4px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
         
         .logo { font-weight: 900; font-size: 1.2rem; display: flex; align-items: center; gap: 10px; text-transform: uppercase;}
         
         nav { display: flex; font-size: 0.9rem; font-weight: 600; text-transform: uppercase; }
-        nav a { text-decoration: none; color: var(--text-dark); margin-left: 20px;}
+        nav a { text-decoration: none; color: var(--text-dark); margin-left: 20px; transition: color 0.3s ease;}
+        nav a:hover { color: var(--primary-red); }
+        nav a.active { color: var(--primary-red); }
         
         .hamburger { display: none; cursor: pointer; color: var(--text-dark); padding: 5px;}
 
@@ -310,8 +316,10 @@
                 flex-direction: row; 
                 justify-content: space-between; 
                 top: 0; 
-                margin-bottom: 0px; /* Reduced to pull title up */
+                margin-bottom: 20px;
                 padding: 15px 5%;
+                border-radius: 0;
+                box-shadow: none;
             }
             .logo span { display: none; } 
             
