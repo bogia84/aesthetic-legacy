@@ -203,6 +203,53 @@
       "bio": "",
       "socialLinks": {},
       "newsItems": []
+    },
+    {
+      "name": "TEST neew",
+      "role": "test",
+      "type": "men",
+      "img": "https://mdfitness.vn/4725841D002D6361/C4F50711C3FDA43A4725859B0012ADC5/$File/phong-tap-gym.jpg",
+      "avatar": "https://mdfitness.vn/4725841D002D6361/C4F50711C3FDA43A4725859B0012ADC5/$File/phong-tap-gym.jpg",
+      "bg": "https://mdfitness.vn/4725841D002D6361/C4F50711C3FDA43A4725859B0012ADC5/$File/phong-tap-gym.jpg",
+      "stats": [
+        "1111",
+        "1111",
+        "1111",
+        "1111"
+      ],
+      "bio": "",
+      "socialLinks": {
+        "facebook": {
+          "enabled": true,
+          "url": ""
+        },
+        "youtube": {
+          "enabled": true,
+          "url": ""
+        },
+        "instagram": {
+          "enabled": false,
+          "url": ""
+        },
+        "linkedin": {
+          "enabled": false,
+          "url": ""
+        },
+        "twitter": {
+          "enabled": false,
+          "url": ""
+        },
+        "tiktok": {
+          "enabled": false,
+          "url": ""
+        }
+      },
+      "newsItems": [
+        null,
+        null,
+        null,
+        null
+      ]
     }
   ],
   "menOrder": [
@@ -211,7 +258,8 @@
     4,
     6,
     8,
-    10
+    10,
+    12
   ],
   "womenOrder": [
     1,
