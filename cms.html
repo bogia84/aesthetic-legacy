@@ -2646,6 +2646,8 @@
             }
         });
     });
+
+    function editContributor(ci) {
         var c = contributors[ci]; if (!c) return;
         editContribIdx = ci;
         document.getElementById('cf-name').value   = c.name   || '';
