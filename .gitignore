@@ -1,0 +1,4 @@
+node_modules/
+
+# GitHub token — never commit
+js/config.js

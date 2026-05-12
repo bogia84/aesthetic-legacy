@@ -1001,6 +1001,12 @@
     </style>
 </head>
 <body>
+<!-- CMS loading overlay -->
+<div id="cms-loading-overlay" style="position:fixed;inset:0;background:rgba(255,255,255,0.95);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;">
+    <div style="width:36px;height:36px;border:3px solid #e63946;border-top-color:transparent;border-radius:50%;animation:spin 0.7s linear infinite;"></div>
+    <div style="font-family:Manrope,sans-serif;font-weight:700;color:#111;font-size:0.9rem;">Loading data from GitHub…</div>
+</div>
+<style>@keyframes spin{to{transform:rotate(360deg)}}</style>
 
 <header class="cms-header">
     <div class="header-left">
@@ -1478,6 +1484,8 @@
         </div>
     </div>
 
+<script src="js/config.js"></script>
+<script src="js/github-storage.js"></script>
 <script>
     // ================================================================
     //  UTILITY
@@ -1490,34 +1498,28 @@
     }
 
     // ================================================================
-    //  ARTICLES — DATA LAYER
+    //  ARTICLES — DATA LAYER  (in-memory cache + GitHub backend)
     // ================================================================
-    var ARTICLES_KEY  = 'aestheticLegacyArticles';
-    var HOME_ORDER_KEY = 'aestheticLegacyCMSOrder';
+    var _articles  = [];
+    var _homeOrder = { popular: [], men: [], women: [] };
 
-    function getArticles() {
-        var saved = localStorage.getItem(ARTICLES_KEY);
-        if (saved) { try { return JSON.parse(saved); } catch(e) {} }
-        return [];
-    }
+    function getArticles() { return _articles; }
     function saveArticles(arr) {
-        localStorage.setItem(ARTICLES_KEY, JSON.stringify(arr));
+        _articles = arr;
+        ghStorage.saveArticles(arr).catch(function(e) { showStatus('⚠ Save failed: ' + e.message, 'error'); });
     }
     function generateArticleId() {
         return 'art-' + Date.now() + '-' + Math.floor(Math.random() * 10000);
     }
     function getArticleById(id) {
-        return getArticles().find(function(a) { return a.id === id; }) || null;
+        return _articles.find(function(a) { return a.id === id; }) || null;
     }
 
     // Home order per section — arrays of article IDs
-    function getHomeOrder() {
-        var saved = localStorage.getItem(HOME_ORDER_KEY);
-        if (saved) { try { return JSON.parse(saved); } catch(e) {} }
-        return buildDefaultHomeOrder();
-    }
+    function getHomeOrder() { return _homeOrder; }
     function saveHomeOrder(order) {
-        localStorage.setItem(HOME_ORDER_KEY, JSON.stringify(order));
+        _homeOrder = order;
+        ghStorage.saveHomeOrder(order).catch(function(e) { showStatus('⚠ Save failed: ' + e.message, 'error'); });
     }
     function buildDefaultHomeOrder() {
         var articles = getArticles().slice().sort(function(a,b){ return b.createdAt - a.createdAt; });
@@ -1528,7 +1530,6 @@
         };
     }
     function syncHomeOrderOnSave(article) {
-        // After saving an article, update homeOrder to reflect publishedTo changes
         var order = getHomeOrder();
         ['popular','men','women'].forEach(function(section) {
             var flag = section === 'popular' ? 'mostPopular' : section;
@@ -1551,11 +1552,8 @@
     }
 
     // ================================================================
-    //  CONTRIBUTORS DATA
+    //  CONTRIBUTORS DATA  (in-memory, seeded from GitHub during init)
     // ================================================================
-    var CONTRIBUTORS_KEY     = 'aestheticLegacyContributors';
-    var CONTRIB_MEN_ORDER    = 'aestheticLegacyContribMenOrder';
-    var CONTRIB_WOMEN_ORDER  = 'aestheticLegacyContribWomenOrder';
 
     const DEFAULT_CONTRIBUTORS = [
         { name: "Jeremy Buendia", role: "Men's Physique Champion", type: "men", img: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&q=80&w=800", bg: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&q=80&w=1920", avatar: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&q=80&w=200", stats: ["Physique type", "Training years", "Casual approach", "Specialisation"] },
@@ -1572,25 +1570,13 @@
         { name: "Esther Howard", role: "Dance Fitness Coach", type: "women", img: "https://images.unsplash.com/photo-1579703473489-02ebcb7de488?auto=format&fit=crop&q=80&w=800", bg: "https://images.unsplash.com/photo-1579703473489-02ebcb7de488?auto=format&fit=crop&q=80&w=1920", avatar: "https://images.unsplash.com/photo-1579703473489-02ebcb7de488?auto=format&fit=crop&q=80&w=200", stats: ["Cardio", "5 Years", "High energy", "Zumba"] }
     ];
 
-    var contributors = (function() {
-        var saved = localStorage.getItem(CONTRIBUTORS_KEY);
-        if (saved) { try { return JSON.parse(saved); } catch(e) {} }
-        return DEFAULT_CONTRIBUTORS.slice();
-    })();
-
-    function loadGenderOrder(key, gender) {
-        var saved = localStorage.getItem(key);
-        if (saved) { try { return JSON.parse(saved); } catch(e) {} }
-        return contributors.reduce(function(acc, c, i) { if (c.type === gender) acc.push(i); return acc; }, []);
-    }
-
-    var menOrder   = loadGenderOrder(CONTRIB_MEN_ORDER,   'men');
-    var womenOrder = loadGenderOrder(CONTRIB_WOMEN_ORDER, 'women');
+    var contributors = DEFAULT_CONTRIBUTORS.slice();
+    var menOrder   = contributors.reduce(function(acc,c,i){ if(c.type==='men') acc.push(i); return acc; },[]);
+    var womenOrder = contributors.reduce(function(acc,c,i){ if(c.type==='women') acc.push(i); return acc; },[]);
 
     function saveContributors() {
-        localStorage.setItem(CONTRIBUTORS_KEY, JSON.stringify(contributors));
-        localStorage.setItem(CONTRIB_MEN_ORDER,   JSON.stringify(menOrder));
-        localStorage.setItem(CONTRIB_WOMEN_ORDER, JSON.stringify(womenOrder));
+        ghStorage.saveContributors(contributors, menOrder, womenOrder)
+            .catch(function(e) { showStatus('⚠ Save failed: ' + e.message, 'error'); });
     }
 
     function getContribName(idx) {
@@ -2624,8 +2610,7 @@
 
     function resolveArticleById(id) {
         if (!id) return null;
-        var all = JSON.parse(localStorage.getItem('aestheticLegacyArticles') || '[]');
-        return all.find(function(a) { return String(a.id) === String(id); }) || null;
+        return _articles.find(function(a) { return String(a.id) === String(id); }) || null;
     }
 
     // Wire up news id inputs: auto-detect internal vs external URL
@@ -2854,27 +2839,28 @@
     //  SAVE & RESET
     // ================================================================
     function saveCMS() {
-        // collect all current block fields before saving
         blockItems.forEach(function(b){ collectBlockFields(b.id); });
         saveContributors();
-        // homeOrder is saved on every panel interaction; ensure it's current
-        showStatus('✓ Saved! Reload the website to see changes.', 'success');
+        showStatus('✓ Saving to GitHub…', 'info');
     }
 
     function resetCMS() {
         if (!confirm('Reset all orders, articles, and contributors to default? This cannot be undone.')) return;
-        localStorage.removeItem(HOME_ORDER_KEY);
-        localStorage.removeItem(ARTICLES_KEY);
-        localStorage.removeItem(CONTRIBUTORS_KEY);
-        localStorage.removeItem(CONTRIB_MEN_ORDER);
-        localStorage.removeItem(CONTRIB_WOMEN_ORDER);
+        _articles  = [];
+        _homeOrder = { popular: [], men: [], women: [] };
         contributors = DEFAULT_CONTRIBUTORS.slice();
-        menOrder   = loadGenderOrder(CONTRIB_MEN_ORDER,   'men');
-        womenOrder = loadGenderOrder(CONTRIB_WOMEN_ORDER, 'women');
+        menOrder   = contributors.reduce(function(acc,c,i){ if(c.type==='men') acc.push(i); return acc; },[]);
+        womenOrder = contributors.reduce(function(acc,c,i){ if(c.type==='women') acc.push(i); return acc; },[]);
+        Promise.all([
+            ghStorage.saveArticles(_articles),
+            ghStorage.saveHomeOrder(_homeOrder),
+            ghStorage.saveContributors(contributors, menOrder, womenOrder)
+        ]).then(function() {
+            showStatus('✓ Reset to default.', 'info');
+        }).catch(function(e) { showStatus('⚠ Reset failed: ' + e.message, 'error'); });
         ['popular','men','women'].forEach(renderHomePanel);
         renderContributors();
         renderBlogList();
-        showStatus('✓ Reset to default.', 'info');
     }
 
     function showStatus(msg, type) {
@@ -2886,29 +2872,50 @@
     }
 
     // ================================================================
-    //  INIT
+    //  INIT  (async — load data from GitHub then render)
     // ================================================================
-    populateContribDropdowns();
-    ['popular','men','women'].forEach(renderHomePanel);
-    renderContributors();
+    (function initCMSData() {
+        var overlay = document.getElementById('cms-loading-overlay');
+        Promise.all([
+            ghStorage.getArticles(),
+            ghStorage.getHomeOrder(),
+            ghStorage.getContributors()
+        ]).then(function(results) {
+            _articles  = results[0];
+            _homeOrder = results[1];
+            var cd = results[2];
+            contributors = (cd.contributors && cd.contributors.length) ? cd.contributors : DEFAULT_CONTRIBUTORS.slice();
+            menOrder   = (cd.menOrder   && cd.menOrder.length)   ? cd.menOrder   : contributors.reduce(function(acc,c,i){ if(c.type==='men') acc.push(i); return acc; },[]);
+            womenOrder = (cd.womenOrder && cd.womenOrder.length) ? cd.womenOrder : contributors.reduce(function(acc,c,i){ if(c.type==='women') acc.push(i); return acc; },[]);
 
-    // Live preview: hook meta field changes
-    ['ed-title','ed-date','ed-hero'].forEach(function(id) {
-        var el = document.getElementById(id);
-        if (el) el.addEventListener('input', scheduleLivePreview);
-    });
-    ['ed-contrib','ed-pub-popular','ed-pub-men','ed-pub-women'].forEach(function(id) {
-        var el = document.getElementById(id);
-        if (el) el.addEventListener('change', scheduleLivePreview);
-    });
-    // Live preview: hook block field changes via event delegation
-    document.getElementById('blocks-list').addEventListener('input', function(e) {
-        var blkEl = e.target.closest('[data-blk-id]');
-        if (blkEl) collectBlockFields(blkEl.dataset.blkId);
-        scheduleLivePreview();
-    });
-    // Live preview: hook normal editor body
-    document.getElementById('normal-editor-body').addEventListener('input', scheduleLivePreview);
+            if (overlay) overlay.style.display = 'none';
+
+            populateContribDropdowns();
+            ['popular','men','women'].forEach(renderHomePanel);
+            renderContributors();
+
+            // Live preview: hook meta field changes
+            ['ed-title','ed-date','ed-hero'].forEach(function(id) {
+                var el = document.getElementById(id);
+                if (el) el.addEventListener('input', scheduleLivePreview);
+            });
+            ['ed-contrib','ed-pub-popular','ed-pub-men','ed-pub-women'].forEach(function(id) {
+                var el = document.getElementById(id);
+                if (el) el.addEventListener('change', scheduleLivePreview);
+            });
+            // Live preview: hook block field changes via event delegation
+            document.getElementById('blocks-list').addEventListener('input', function(e) {
+                var blkEl = e.target.closest('[data-blk-id]');
+                if (blkEl) collectBlockFields(blkEl.dataset.blkId);
+                scheduleLivePreview();
+            });
+            // Live preview: hook normal editor body
+            document.getElementById('normal-editor-body').addEventListener('input', scheduleLivePreview);
+
+        }).catch(function(e) {
+            if (overlay) overlay.innerHTML = '<div style="text-align:center;padding:40px;"><p style="color:#e63946;font-weight:700;">⚠ Failed to load data from GitHub</p><p style="margin-top:8px;color:#555;font-size:0.9rem;">' + e.message + '</p><p style="margin-top:12px;color:#555;font-size:0.85rem;">Check your token in js/config.js and make sure the repo is accessible.</p></div>';
+        });
+    })();
 </script>
 
     <!-- Live Preview Drawer -->

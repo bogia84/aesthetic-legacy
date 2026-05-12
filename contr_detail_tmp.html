@@ -802,10 +802,11 @@
 
     <!-- Include Swiper JS -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/github-storage.js"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", async function() {
             // --- Dynamic Contributor Population ---
-            const CONTRIBUTORS_KEY = 'aestheticLegacyContributors';
             const DEFAULT_CONTRIBUTORS = [
                 { name: "Jeremy Buendia", role: "Men's Physique Champion", type: "men", img: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&q=80&w=800", bg: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&q=80&w=1920", avatar: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&q=80&w=200", stats: ["Physique type", "Training years", "Casual approach", "Specialisation"], bio: "" },
                 { name: "Aminova Inna", role: "Yoga Instructor", type: "women", img: "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&q=80&w=800", bg: "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&q=80&w=1920", avatar: "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&q=80&w=200", stats: ["Flexibility", "8 Years", "Mindfulness", "Vinyasa"], bio: "" },
@@ -821,11 +822,16 @@
                 { name: "Esther Howard", role: "Dance Fitness Coach", type: "women", img: "https://images.unsplash.com/photo-1579703473489-02ebcb7de488?auto=format&fit=crop&q=80&w=800", bg: "https://images.unsplash.com/photo-1579703473489-02ebcb7de488?auto=format&fit=crop&q=80&w=1920", avatar: "https://images.unsplash.com/photo-1579703473489-02ebcb7de488?auto=format&fit=crop&q=80&w=200", stats: ["Cardio", "5 Years", "High energy", "Zumba"], bio: "" }
             ];
 
-            (function populateContributor() {
-                var saved = localStorage.getItem(CONTRIBUTORS_KEY);
-                var contributors = DEFAULT_CONTRIBUTORS;
-                if (saved) { try { contributors = JSON.parse(saved); } catch(e) {} }
+            // Fetch all data from GitHub upfront
+            var ghResults = await Promise.all([
+                ghStorage.getContributors(),
+                ghStorage.getArticles()
+            ]).catch(function() { return [{ contributors: [] }, []]; });
+            var contribData = ghResults[0];
+            var allArticles = ghResults[1];
+            var contributors = (contribData.contributors && contribData.contributors.length) ? contribData.contributors : DEFAULT_CONTRIBUTORS;
 
+            (function populateContributor() {
                 var params = new URLSearchParams(window.location.search);
                 var idx = parseInt(params.get('index'), 10);
                 var c = (!isNaN(idx) && contributors[idx]) ? contributors[idx] : contributors[0];
@@ -904,9 +910,6 @@
                     var grid = document.getElementById('detail-newspaper-grid');
                     if (!grid) return;
                     var newsItems = c.newsItems || [];
-                    var ARTICLES_KEY = 'aestheticLegacyArticles';
-                    var allArticles = [];
-                    try { allArticles = JSON.parse(localStorage.getItem(ARTICLES_KEY) || '[]'); } catch(e) {}
 
                     var validItems = [];
                     newsItems.forEach(function(item) {
@@ -956,17 +959,13 @@
 
             // --- Section 3: Populate Articles from localStorage then init Swiper ---
             (function populateArticleCarousel() {
-                var ARTICLES_KEY = 'aestheticLegacyArticles';
                 var params = new URLSearchParams(window.location.search);
                 var idx = parseInt(params.get('index'), 10);
                 var articlesSection = document.querySelector('.contributor-articles-section');
                 var swiperWrapper = document.querySelector('.article-swiper .swiper-wrapper');
                 if (!swiperWrapper || !articlesSection) return;
 
-                var articles;
-                try { articles = JSON.parse(localStorage.getItem(ARTICLES_KEY) || '[]'); } catch(e) { articles = []; }
-
-                var contribArticles = articles.filter(function(a) {
+                var contribArticles = allArticles.filter(function(a) {
                     return !isNaN(idx) && a.contributorIdx === idx;
                 }).sort(function(a, b) { return b.createdAt - a.createdAt; });
 

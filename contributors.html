@@ -389,6 +389,8 @@
             .footer-logo-container svg { max-width: 80%; margin-bottom: 25px; }
         }
     </style>
+<script src="js/config.js"></script>
+<script src="js/github-storage.js"></script>
 </head>
 <body>
 
@@ -529,7 +531,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", async function() {
             
             // --- Mobile Menu ---
             const hamburger = document.getElementById('hamburger-menu');
@@ -540,7 +542,7 @@
                 });
             }
 
-            // --- Section 2: Interactive Gallery Data (localStorage-backed) ---
+            // --- Section 2: Interactive Gallery Data (GitHub-backed) ---
             const DEFAULT_CONTRIBUTORS = [
                 { name: "Jeremy Buendia", role: "Men's Physique Champion", type: "men", img: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&q=80&w=800", bg: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&q=80&w=1920", avatar: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&q=80&w=200", stats: ["Physique type", "Training years", "Casual approach", "Specialisation"] },
                 { name: "Aminova Inna", role: "Yoga Instructor", type: "women", img: "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&q=80&w=800", bg: "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&q=80&w=1920", avatar: "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&q=80&w=200", stats: ["Flexibility", "8 Years", "Mindfulness", "Vinyasa"] },
@@ -556,13 +558,8 @@
                 { name: "Esther Howard", role: "Dance Fitness Coach", type: "women", img: "https://images.unsplash.com/photo-1579703473489-02ebcb7de488?auto=format&fit=crop&q=80&w=800", bg: "https://images.unsplash.com/photo-1579703473489-02ebcb7de488?auto=format&fit=crop&q=80&w=1920", avatar: "https://images.unsplash.com/photo-1579703473489-02ebcb7de488?auto=format&fit=crop&q=80&w=200", stats: ["Cardio", "5 Years", "High energy", "Zumba"] }
             ];
 
-            function getContributors() {
-                var saved = localStorage.getItem('aestheticLegacyContributors');
-                if (saved) { try { return JSON.parse(saved); } catch(e) {} }
-                return DEFAULT_CONTRIBUTORS;
-            }
-
-            var allContributors = getContributors();
+            var contribData = await ghStorage.getContributors().catch(function(){ return { contributors: [] }; });
+            var allContributors = (contribData.contributors && contribData.contributors.length) ? contribData.contributors : DEFAULT_CONTRIBUTORS;
             var contributorsData = allContributors;
 
             const track = document.getElementById('avatar-track');

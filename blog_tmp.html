@@ -613,6 +613,8 @@
             .popular-grid { grid-template-columns: 1fr; }
         }
     </style>
+<script src="js/config.js"></script>
+<script src="js/github-storage.js"></script>
 </head>
 <body>
 
@@ -1085,11 +1087,7 @@
          DYNAMIC ARTICLE POPULATION — reads ?id= from URL
          ================================================================ -->
     <script>
-    (function() {
-        var ARTICLES_KEY    = 'aestheticLegacyArticles';
-        var CONTRIBUTORS_KEY = 'aestheticLegacyContributors';
-        var HOME_ORDER_KEY  = 'aestheticLegacyCMSOrder';
-
+    (async function() {
         // ---- helpers ----
         function esc(str) { return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
         function escAttr(str) { return String(str || '').replace(/"/g,'&quot;'); }
@@ -1113,32 +1111,47 @@
         var params = new URLSearchParams(window.location.search);
         var articleId = params.get('id');
         var isPreview = params.get('preview') === '1';
-        var articles = [];
-        var article = null;
 
+        // Preview draft is ephemeral — kept in localStorage, not GitHub
+        var previewDraft = null;
         if (isPreview) {
-            // Preview mode: load draft written by CMS "Preview" button
             try {
-                article = JSON.parse(localStorage.getItem('aestheticLegacyPreviewDraft') || 'null');
+                previewDraft = JSON.parse(localStorage.getItem('aestheticLegacyPreviewDraft') || 'null');
                 localStorage.removeItem('aestheticLegacyPreviewDraft');
-            } catch(e) { article = null; }
-            // Also load saved articles for sidebar/popular sections
-            try { articles = JSON.parse(localStorage.getItem(ARTICLES_KEY) || '[]'); } catch(e) { articles = []; }
-            if (!article) return;
+            } catch(e) {}
+            if (!previewDraft) return;
+        } else {
+            if (!articleId) return; // no id → show static template
+        }
+
+        // Fetch all persistent data from GitHub
+        var ghResults;
+        try {
+            ghResults = await Promise.all([
+                ghStorage.getArticles(),
+                ghStorage.getContributors(),
+                ghStorage.getHomeOrder()
+            ]);
+        } catch(e) { return; }
+
+        var articles    = ghResults[0];
+        var contribData = ghResults[1];
+        var homeOrder   = ghResults[2];
+        var contributors = (contribData.contributors && contribData.contributors.length) ? contribData.contributors : DEFAULT_CONTRIBUTORS;
+
+        var article;
+        if (isPreview) {
+            article = previewDraft;
             // Show draft banner
             var _banner = document.createElement('div');
             _banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;background:#2d7ef7;color:#fff;text-align:center;font-size:0.78rem;font-weight:700;padding:8px;letter-spacing:0.05em;';
             _banner.textContent = 'DRAFT PREVIEW — This article has not been published';
             document.body.appendChild(_banner);
         } else {
-            if (!articleId) return; // no id → show static template
-            try { articles = JSON.parse(localStorage.getItem(ARTICLES_KEY) || '[]'); } catch(e) { articles = []; }
             article = articles.find(function(a) { return a.id === articleId; });
             if (!article) return; // article not found → show static template
         }
 
-        var contributors;
-        try { contributors = JSON.parse(localStorage.getItem(CONTRIBUTORS_KEY) || 'null') || DEFAULT_CONTRIBUTORS; } catch(e) { contributors = DEFAULT_CONTRIBUTORS; }
         var contrib = (article.contributorIdx !== null && article.contributorIdx !== undefined) ? contributors[article.contributorIdx] : null;
 
         // ---- page title ----
@@ -1198,8 +1211,6 @@
         // ---- MOST POPULAR SECTION ----
         var popularSection = document.querySelector('.most-popular-section');
         if (popularSection) {
-            var homeOrder;
-            try { homeOrder = JSON.parse(localStorage.getItem(HOME_ORDER_KEY) || 'null'); } catch(e) { homeOrder = null; }
             var popularIds = homeOrder ? (homeOrder.popular || []) : [];
             var popularArticles = popularIds.map(function(id) {
                 return articles.find(function(a) { return a.id === id; });

@@ -431,13 +431,12 @@
 
 </div>
 
+<script src="js/config.js"></script>
+<script src="js/github-storage.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
 <script>
-    // --- CMS: Render articles from localStorage into homepage carousels ---
+    // --- CMS: Render articles from GitHub into homepage carousels ---
     (function() {
-        var ARTICLES_KEY  = 'aestheticLegacyArticles';
-        var HOME_ORDER_KEY = 'aestheticLegacyCMSOrder';
-
         function escapeHtml(s) {
             return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
         }
@@ -468,19 +467,16 @@
             slides.forEach(function(art) { wrapper.appendChild(buildSlide(art)); });
         }
 
-        try {
-            var rawOrder    = localStorage.getItem(HOME_ORDER_KEY);
-            var rawArticles = localStorage.getItem(ARTICLES_KEY);
-            if (!rawOrder || !rawArticles) return;
-            var order    = JSON.parse(rawOrder);
-            var articles = JSON.parse(rawArticles);
+        Promise.all([ghStorage.getArticles(), ghStorage.getHomeOrder()]).then(function(results) {
+            var articles = results[0];
+            var order    = results[1];
             if (!order || !articles || !articles.length) return;
             var map = {};
             articles.forEach(function(a) { map[a.id] = a; });
             populateSection('swiper-popular', order.popular, map);
             populateSection('swiper-women',  order.women,   map);
             populateSection('swiper-men',    order.men,     map);
-        } catch(e) {}
+        }).catch(function() {});
     })();
 
     // --- Swiper Init ---
