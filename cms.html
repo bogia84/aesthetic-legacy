@@ -2876,11 +2876,36 @@
     // ================================================================
     (function initCMSData() {
         var overlay = document.getElementById('cms-loading-overlay');
-        Promise.all([
-            ghStorage.getArticles(),
-            ghStorage.getHomeOrder(),
-            ghStorage.getContributors()
-        ]).then(function(results) {
+
+        function showOverlayError(msg) {
+            if (!overlay) return;
+            overlay.innerHTML = '<div style="text-align:center;padding:40px;max-width:480px;font-family:Manrope,sans-serif;">' +
+                '<p style="color:#e63946;font-weight:700;font-size:1rem;margin-bottom:12px;">⚠ Could not load data from GitHub</p>' +
+                '<p style="color:#555;font-size:0.88rem;margin-bottom:10px;">' + msg + '</p>' +
+                '<p style="color:#555;font-size:0.82rem;margin-bottom:20px;">Open <code>js/config.js</code> and set your GitHub PAT (needs Contents: Read &amp; Write).</p>' +
+                '<button onclick="location.reload()" style="padding:10px 24px;background:#e63946;color:#fff;border:none;border-radius:4px;font-weight:700;cursor:pointer;font-size:0.9rem;">Retry</button></div>';
+        }
+
+        // Show error after 12 s if GitHub never responds
+        var loadTimer = setTimeout(function() {
+            showOverlayError('Request timed out. Check that your token in js/config.js is valid and has Contents read/write permission.');
+        }, 12000);
+
+        var p;
+        try {
+            p = Promise.all([
+                ghStorage.getArticles(),
+                ghStorage.getHomeOrder(),
+                ghStorage.getContributors()
+            ]);
+        } catch (syncErr) {
+            clearTimeout(loadTimer);
+            showOverlayError(syncErr.message);
+            return;
+        }
+
+        p.then(function(results) {
+            clearTimeout(loadTimer);
             _articles  = results[0];
             _homeOrder = results[1];
             var cd = results[2];
@@ -2913,7 +2938,8 @@
             document.getElementById('normal-editor-body').addEventListener('input', scheduleLivePreview);
 
         }).catch(function(e) {
-            if (overlay) overlay.innerHTML = '<div style="text-align:center;padding:40px;"><p style="color:#e63946;font-weight:700;">⚠ Failed to load data from GitHub</p><p style="margin-top:8px;color:#555;font-size:0.9rem;">' + e.message + '</p><p style="margin-top:12px;color:#555;font-size:0.85rem;">Check your token in js/config.js and make sure the repo is accessible.</p></div>';
+            clearTimeout(loadTimer);
+            showOverlayError(e.message);
         });
     })();
 </script>

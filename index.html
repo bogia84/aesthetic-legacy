@@ -464,7 +464,7 @@
             var date  = art.date  || '';
             var slide = document.createElement('div');
             slide.className = 'swiper-slide';
-            slide.innerHTML = '<a href="' + escapeHtml('blog_tmp.html?id=' + encodeURIComponent(art.id)) + '" style="text-decoration:none;display:block;">' +
+            slide.innerHTML = '<a href="' + escapeHtml('blog_tmp.html?id=' + encodeURIComponent(art.id)) + '" style="text-decoration:none;display:block;height:100%;">' +
                 '<img src="' + escapeHtml(img) + '" alt="' + escapeHtml(title) + '">' +
                 '<div class="slide-content"><div class="text-bg"><p>' + escapeHtml(title) + '</p><span>' + escapeHtml(date) + '</span></div></div></a>';
             return slide;
