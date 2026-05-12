@@ -18,23 +18,6 @@
       "newsItems": []
     },
     {
-      "name": "Aminova Inna",
-      "role": "Yoga Instructor",
-      "type": "women",
-      "img": "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&q=80&w=800",
-      "bg": "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&q=80&w=1920",
-      "avatar": "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&q=80&w=200",
-      "stats": [
-        "Flexibility",
-        "8 Years",
-        "Mindfulness",
-        "Vinyasa"
-      ],
-      "bio": "",
-      "socialLinks": {},
-      "newsItems": []
-    },
-    {
       "name": "Kathryn Murphy",
       "role": "Bodybuilder Pro",
       "type": "men",
@@ -46,6 +29,23 @@
         "12 Years",
         "Strict approach",
         "Heavy lifting"
+      ],
+      "bio": "",
+      "socialLinks": {},
+      "newsItems": []
+    },
+    {
+      "name": "Aminova Inna",
+      "role": "Yoga Instructor",
+      "type": "women",
+      "img": "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&q=80&w=800",
+      "bg": "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&q=80&w=1920",
+      "avatar": "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&q=80&w=200",
+      "stats": [
+        "Flexibility",
+        "8 Years",
+        "Mindfulness",
+        "Vinyasa"
       ],
       "bio": "",
       "socialLinks": {},
@@ -254,7 +254,7 @@
   ],
   "menOrder": [
     0,
-    2,
+    1,
     4,
     6,
     8,
@@ -262,7 +262,7 @@
     12
   ],
   "womenOrder": [
-    1,
+    2,
     3,
     5,
     7,
