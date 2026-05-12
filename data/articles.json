@@ -1,1 +1,18 @@
-[]
+[
+  {
+    "id": "art-1778611253486-3248",
+    "title": "TEST 1",
+    "date": "May 13, 2026",
+    "heroImage": "",
+    "contributorIdx": 1,
+    "publishedTo": {
+      "mostPopular": false,
+      "men": false,
+      "women": true
+    },
+    "editorMode": "component",
+    "createdAt": 1778611253486,
+    "blocks": [],
+    "normalContent": ""
+  }
+]
