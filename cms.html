@@ -1506,7 +1506,7 @@
     function getArticles() { return _articles; }
     function saveArticles(arr) {
         _articles = arr;
-        ghStorage.saveArticles(arr).catch(function(e) { showStatus('⚠ Save failed: ' + e.message, 'error'); });
+        return ghStorage.saveArticles(arr);
     }
     function generateArticleId() {
         return 'art-' + Date.now() + '-' + Math.floor(Math.random() * 10000);
@@ -1519,7 +1519,7 @@
     function getHomeOrder() { return _homeOrder; }
     function saveHomeOrder(order) {
         _homeOrder = order;
-        ghStorage.saveHomeOrder(order).catch(function(e) { showStatus('⚠ Save failed: ' + e.message, 'error'); });
+        return ghStorage.saveHomeOrder(order);
     }
     function buildDefaultHomeOrder() {
         var articles = getArticles().slice().sort(function(a,b){ return b.createdAt - a.createdAt; });
@@ -1541,7 +1541,7 @@
                 order[section] = order[section].filter(function(id){ return id !== article.id; });
             }
         });
-        saveHomeOrder(order);
+        return saveHomeOrder(order);
     }
     function removeArticleFromHomeOrder(articleId) {
         var order = getHomeOrder();
@@ -1575,8 +1575,7 @@
     var womenOrder = contributors.reduce(function(acc,c,i){ if(c.type==='women') acc.push(i); return acc; },[]);
 
     function saveContributors() {
-        ghStorage.saveContributors(contributors, menOrder, womenOrder)
-            .catch(function(e) { showStatus('⚠ Save failed: ' + e.message, 'error'); });
+        return ghStorage.saveContributors(contributors, menOrder, womenOrder);
     }
 
     function getContribName(idx) {
@@ -1924,13 +1923,16 @@
         var articles = getArticles();
         var idx = articles.findIndex(function(a){ return a.id === art.id; });
         if (idx >= 0) articles[idx] = art; else articles.push(art);
-        saveArticles(articles);
-        syncHomeOrderOnSave(art);
+        showStatus('Saving…', 'info');
+        Promise.all([saveArticles(articles), syncHomeOrderOnSave(art)]).then(function() {
+            showStatus('✓ Article saved!', 'success');
+        }).catch(function(e) {
+            showStatus('⚠ Save failed: ' + e.message, 'error');
+        });
         editorArticleId = art.id;
         document.getElementById('editor-panel-title').textContent = 'Edit Article';
         ['popular','men','women'].forEach(renderHomePanel);
         renderBlogList();
-        showStatus('✓ Article saved!', 'success');
     }
 
     function cancelArticleEditor() {
@@ -2840,8 +2842,16 @@
     // ================================================================
     function saveCMS() {
         blockItems.forEach(function(b){ collectBlockFields(b.id); });
-        saveContributors();
-        showStatus('✓ Saving to GitHub…', 'info');
+        showStatus('Saving…', 'info');
+        Promise.all([
+            ghStorage.saveArticles(_articles),
+            ghStorage.saveHomeOrder(_homeOrder),
+            ghStorage.saveContributors(contributors, menOrder, womenOrder)
+        ]).then(function() {
+            showStatus('✓ Saved to GitHub!', 'success');
+        }).catch(function(e) {
+            showStatus('⚠ Save failed: ' + e.message, 'error');
+        });
     }
 
     function resetCMS() {

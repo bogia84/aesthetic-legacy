@@ -48,7 +48,7 @@
      * Returns parsed JS value, or null on 404.
      */
     function ghGet(filePath) {
-        return fetch(apiUrl(filePath), { headers: headers() })
+        return fetch(apiUrl(filePath), { headers: headers(), cache: 'no-store' })
             .then(function(res) {
                 if (res.status === 404) return null;
                 if (!res.ok) throw new Error('GitHub GET failed: ' + res.status + ' ' + filePath);
@@ -98,7 +98,7 @@
         if (sha !== undefined) {
             return doWrite(sha);
         }
-        return fetch(apiUrl(filePath), { headers: headers() })
+        return fetch(apiUrl(filePath), { headers: headers(), cache: 'no-store' })
             .then(function(res) {
                 if (res.status === 404) return null;
                 if (!res.ok) throw new Error('GitHub SHA fetch failed: ' + res.status);
