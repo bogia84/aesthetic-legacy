@@ -1,23 +1,6 @@
 {
   "contributors": [
     {
-      "name": "Jeremy Buendia",
-      "role": "Men's Physique Champion",
-      "type": "men",
-      "img": "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&q=80&w=800",
-      "bg": "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&q=80&w=1920",
-      "avatar": "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&q=80&w=200",
-      "stats": [
-        "Physique type",
-        "Training years",
-        "Casual approach",
-        "Specialisation"
-      ],
-      "bio": "",
-      "socialLinks": {},
-      "newsItems": []
-    },
-    {
       "name": "Kathryn Murphy",
       "role": "Bodybuilder Pro",
       "type": "men",
@@ -29,6 +12,23 @@
         "12 Years",
         "Strict approach",
         "Heavy lifting"
+      ],
+      "bio": "",
+      "socialLinks": {},
+      "newsItems": []
+    },
+    {
+      "name": "Jeremy Buendia",
+      "role": "Men's Physique Champion",
+      "type": "men",
+      "img": "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&q=80&w=800",
+      "bg": "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&q=80&w=1920",
+      "avatar": "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&q=80&w=200",
+      "stats": [
+        "Physique type",
+        "Training years",
+        "Casual approach",
+        "Specialisation"
       ],
       "bio": "",
       "socialLinks": {},
