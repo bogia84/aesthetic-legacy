@@ -1160,16 +1160,25 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="cf-img">Card Image URL</label>
-                        <input type="url" id="cf-img" placeholder="https://...">
+                        <label for="cf-img">Card Image <span style="font-weight:400;text-transform:none;letter-spacing:0">(URL or paste image)</span></label>
+                        <input type="text" id="cf-img" placeholder="https://... or paste an image"
+                            oninput="refreshContribPreview('cf-img','cf-img-preview')"
+                            onpaste="handleContribImagePaste(event,'cf-img','cf-img-preview')">
+                        <img id="cf-img-preview" src="" alt="" style="display:none;margin-top:6px;max-height:80px;max-width:100%;border:1px solid #e0e0e0;object-fit:cover;">
                     </div>
                     <div class="form-group">
-                        <label for="cf-avatar">Avatar URL</label>
-                        <input type="url" id="cf-avatar" placeholder="https://... (optional)">
+                        <label for="cf-avatar">Avatar <span style="font-weight:400;text-transform:none;letter-spacing:0">(URL or paste image, optional)</span></label>
+                        <input type="text" id="cf-avatar" placeholder="https://... or paste an image"
+                            oninput="refreshContribPreview('cf-avatar','cf-avatar-preview')"
+                            onpaste="handleContribImagePaste(event,'cf-avatar','cf-avatar-preview')">
+                        <img id="cf-avatar-preview" src="" alt="" style="display:none;margin-top:6px;max-height:80px;max-width:100%;border:1px solid #e0e0e0;object-fit:cover;">
                     </div>
                     <div class="form-group">
-                        <label for="cf-bg">Background URL</label>
-                        <input type="url" id="cf-bg" placeholder="https://... (optional)">
+                        <label for="cf-bg">Background <span style="font-weight:400;text-transform:none;letter-spacing:0">(URL or paste image, optional)</span></label>
+                        <input type="text" id="cf-bg" placeholder="https://... or paste an image"
+                            oninput="refreshContribPreview('cf-bg','cf-bg-preview')"
+                            onpaste="handleContribImagePaste(event,'cf-bg','cf-bg-preview')">
+                        <img id="cf-bg-preview" src="" alt="" style="display:none;margin-top:6px;max-height:80px;max-width:100%;border:1px solid #e0e0e0;object-fit:cover;">
                     </div>
                     <div class="form-group">
                         <label for="cf-stat1">Stat 1</label>
@@ -1955,6 +1964,35 @@
         }
     }
 
+    function handleContribImagePaste(e, fieldId, previewId) {
+        var items = (e.clipboardData || e.originalEvent.clipboardData).items;
+        for (var i = 0; i < items.length; i++) {
+            if (items[i].type.indexOf('image') >= 0) {
+                e.preventDefault();
+                var reader = new FileReader();
+                reader.onload = function(ev) {
+                    document.getElementById(fieldId).value = ev.target.result;
+                    refreshContribPreview(fieldId, previewId);
+                };
+                reader.readAsDataURL(items[i].getAsFile());
+                return;
+            }
+        }
+    }
+
+    function refreshContribPreview(fieldId, previewId) {
+        var val = document.getElementById(fieldId).value.trim();
+        var img = document.getElementById(previewId);
+        if (!img) return;
+        if (val) {
+            img.src = val;
+            img.style.display = 'block';
+        } else {
+            img.src = '';
+            img.style.display = 'none';
+        }
+    }
+
     // ================================================================
     //  EDITOR MODE TOGGLE
     // ================================================================
@@ -2643,6 +2681,9 @@
         document.getElementById('cf-img').value    = c.img    || '';
         document.getElementById('cf-avatar').value = c.avatar || '';
         document.getElementById('cf-bg').value     = c.bg     || '';
+        refreshContribPreview('cf-img',    'cf-img-preview');
+        refreshContribPreview('cf-avatar', 'cf-avatar-preview');
+        refreshContribPreview('cf-bg',     'cf-bg-preview');
         document.getElementById('cf-stat1').value  = (c.stats && c.stats[0]) || '';
         document.getElementById('cf-stat2').value  = (c.stats && c.stats[1]) || '';
         document.getElementById('cf-stat3').value  = (c.stats && c.stats[2]) || '';
@@ -2720,6 +2761,9 @@
         ['cf-name','cf-role','cf-img','cf-avatar','cf-bg','cf-stat1','cf-stat2','cf-stat3','cf-stat4','cf-bio'].forEach(function(id) {
             document.getElementById(id).value = '';
         });
+        refreshContribPreview('cf-img',    'cf-img-preview');
+        refreshContribPreview('cf-avatar', 'cf-avatar-preview');
+        refreshContribPreview('cf-bg',     'cf-bg-preview');
         document.getElementById('cf-type').value = 'men';
         // Reset social links
         ['facebook','youtube','instagram','linkedin','twitter','tiktok'].forEach(function(p) {
