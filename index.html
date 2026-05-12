@@ -476,30 +476,29 @@
             populateSection('swiper-popular', order.popular, map);
             populateSection('swiper-women',  order.women,   map);
             populateSection('swiper-men',    order.men,     map);
+
+            // Init Swiper AFTER slides are inserted into the DOM
+            new Swiper('.swiper-popular', {
+                spaceBetween: 20,
+                navigation: { nextEl: '.pop-next', prevEl: '.pop-prev' },
+                breakpoints: {
+                    320: { slidesPerView: 1.5 },
+                    768: { slidesPerView: 3.2 },
+                    1024: { slidesPerView: 4.5 }
+                }
+            });
+
+            var splitConfig = {
+                spaceBetween: 20,
+                breakpoints: {
+                    320: { enabled: false },
+                    768: { enabled: true, slidesPerView: 2.2 }
+                }
+            };
+            new Swiper('.swiper-women', Object.assign({}, splitConfig, { navigation: { nextEl: '.wom-next', prevEl: '.wom-prev' } }));
+            new Swiper('.swiper-men',   Object.assign({}, splitConfig, { navigation: { nextEl: '.men-next', prevEl: '.men-prev' } }));
         }).catch(function() {});
     })();
-
-    // --- Swiper Init ---
-    new Swiper('.swiper-popular', {
-        spaceBetween: 20,
-        navigation: { nextEl: '.pop-next', prevEl: '.pop-prev' },
-        breakpoints: {
-            320: { slidesPerView: 1.5 },
-            768: { slidesPerView: 3.2 },
-            1024: { slidesPerView: 4.5 } 
-        }
-    });
-
-    const splitConfig = {
-        spaceBetween: 20,
-        breakpoints: {
-            320: { enabled: false }, 
-            768: { enabled: true, slidesPerView: 2.2 } 
-        }
-    };
-
-    new Swiper('.swiper-women', { ...splitConfig, navigation: { nextEl: '.wom-next', prevEl: '.wom-prev' } });
-    new Swiper('.swiper-men', { ...splitConfig, navigation: { nextEl: '.men-next', prevEl: '.men-prev' } });
 
     // --- Mobile Menu Toggle ---
     const hamburger = document.getElementById('hamburger-menu');
