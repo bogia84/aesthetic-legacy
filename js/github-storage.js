@@ -19,14 +19,28 @@
     // SHA cache so we don't need to fetch before every write
     var _shaCache = {};
 
+    // Public repo info — not secret, safe to hardcode
+    var OWNER     = 'bogia84';
+    var REPO      = 'aesthetic-legacy';
+    var BRANCH    = 'main';
+    var TOKEN_KEY = 'aestheticLegacyGHToken';
+
+    // Token: config.js (local dev) takes priority, else localStorage (GitHub Pages)
+    function getToken() {
+        if (global.GITHUB_CONFIG && global.GITHUB_CONFIG.token) {
+            return global.GITHUB_CONFIG.token;
+        }
+        return localStorage.getItem(TOKEN_KEY) || '';
+    }
+
     function apiUrl(path) {
-        var cfg = global.GITHUB_CONFIG;
-        return BASE + '/repos/' + cfg.owner + '/' + cfg.repo + '/contents/' + path + '?ref=' + cfg.branch;
+        var cfg = global.GITHUB_CONFIG || {};
+        return BASE + '/repos/' + (cfg.owner || OWNER) + '/' + (cfg.repo || REPO) + '/contents/' + path + '?ref=' + (cfg.branch || BRANCH);
     }
 
     function headers() {
         return {
-            'Authorization': 'Bearer ' + global.GITHUB_CONFIG.token,
+            'Authorization': 'Bearer ' + getToken(),
             'Accept': 'application/vnd.github+json',
             'X-GitHub-Api-Version': '2022-11-28'
         };
@@ -77,7 +91,7 @@
             var body = {
                 message: commitMessage || 'Update ' + filePath,
                 content: content,
-                branch: global.GITHUB_CONFIG.branch
+                branch: (global.GITHUB_CONFIG && global.GITHUB_CONFIG.branch) || BRANCH
             };
             if (sha) body.sha = sha;
             return fetch(apiUrl(filePath), {
@@ -157,7 +171,9 @@
         getHomeOrder:     getHomeOrder,
         saveHomeOrder:    saveHomeOrder,
         getContributors:  getContributors,
-        saveContributors: saveContributors
+        saveContributors: saveContributors,
+        setToken:  function(t) { localStorage.setItem(TOKEN_KEY, t); _shaCache = {}; },
+        hasToken:  function()  { return !!getToken(); }
     };
 
 })(window);
