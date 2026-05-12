@@ -87,6 +87,18 @@
         var content = b64encode(JSON.stringify(value, null, 2));
         var sha = _shaCache[filePath];
 
+        function fetchFreshSha() {
+            return fetch(apiUrl(filePath), { headers: headers(), cache: 'no-store' })
+                .then(function(res) {
+                    if (!res.ok && res.status !== 404) throw new Error('GitHub SHA fetch failed: ' + res.status);
+                    return res.status === 404 ? null : res.json();
+                })
+                .then(function(data) {
+                    _shaCache[filePath] = data ? data.sha : null;
+                    return _shaCache[filePath];
+                });
+        }
+
         function doWrite(sha) {
             var body = {
                 message: commitMessage || 'Update ' + filePath,
@@ -99,6 +111,12 @@
                 headers: Object.assign({ 'Content-Type': 'application/json' }, headers()),
                 body: JSON.stringify(body)
             }).then(function(res) {
+                if (res.status === 409) {
+                    // SHA conflict — re-fetch the real current SHA and retry once
+                    return fetchFreshSha().then(function(freshSha) {
+                        return doWrite(freshSha);
+                    });
+                }
                 if (!res.ok) return res.text().then(function(t) { throw new Error('GitHub PUT failed: ' + res.status + ' — ' + t); });
                 return res.json();
             }).then(function(data) {
