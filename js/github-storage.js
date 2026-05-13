@@ -71,6 +71,15 @@
             .then(function(data) {
                 if (!data) return null;
                 _shaCache[filePath] = data.sha;
+                // Files > 1 MB: GitHub returns encoding:'none' and empty content.
+                // Fall back to the raw download URL in that case.
+                if (data.encoding === 'none' || !data.content) {
+                    return fetch(data.download_url, { cache: 'no-store' })
+                        .then(function(r) {
+                            if (!r.ok) throw new Error('Raw download failed: ' + r.status + ' ' + filePath);
+                            return r.json();
+                        });
+                }
                 try {
                     return JSON.parse(b64decode(data.content.replace(/\n/g, '')));
                 } catch(e) {
