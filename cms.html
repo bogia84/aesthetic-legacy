@@ -2844,7 +2844,12 @@
             contributors.push(data);
             if (type === 'men') menOrder.push(newIdx); else womenOrder.push(newIdx);
         }
-        saveContributors();
+        showStatus('Saving…', 'info');
+        saveContributors().then(function() {
+            showStatus('✓ Contributor saved!', 'success');
+        }).catch(function(e) {
+            showStatus('⚠ Save failed: ' + e.message, 'error');
+        });
         renderContributors();
         populateContribDropdowns();
         closeContribForm();
