@@ -1043,13 +1043,14 @@
         .hl-section.women-section .hl-preview { background: #EC262D; }
         .hl-section.men-section .hl-preview { background: #f0f0f0; }
         .hl-preview-svg {
-            position: absolute; height: 100%; width: auto; left: 0; top: 0;
+            position: absolute; height: 100%; width: auto;
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
             opacity: 0.5; z-index: 1; pointer-events: none; display: block;
         }
-        .hl-preview-img-wrap { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 2; }
+        .hl-preview-img-wrap { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 2; overflow: visible; }
         .hl-preview-graphic {
-            max-height: 100%; max-width: 100%; object-fit: contain; cursor: grab;
-            user-select: none; display: block; position: relative;
+            height: 100%; width: auto; max-width: none; object-fit: contain; cursor: grab;
+            user-select: none; display: block; position: relative; flex-shrink: 0;
         }
         .hl-preview-graphic:active { cursor: grabbing; }
         .hl-preview-placeholder { color: rgba(255,255,255,0.35); font-size: 0.72rem; font-weight: 700; text-align: center; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); }
