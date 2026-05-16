@@ -191,6 +191,17 @@
         }, 'CMS: update contributors');
     }
 
+    function getHomeLayout() {
+        return ghGet('data/home-layout.json').then(function(data) {
+            if (data && typeof data === 'object') return data;
+            return { womenImage: null, womenImagePos: { x: 0, y: 0 }, menImage: null, menImagePos: { x: 0, y: 0 } };
+        });
+    }
+
+    function saveHomeLayout(layout) {
+        return ghPut('data/home-layout.json', layout, 'CMS: update home layout');
+    }
+
     // Expose on window
     global.ghStorage = {
         getArticles:      getArticles,
@@ -199,6 +210,8 @@
         saveHomeOrder:    saveHomeOrder,
         getContributors:  getContributors,
         saveContributors: saveContributors,
+        getHomeLayout:    getHomeLayout,
+        saveHomeLayout:   saveHomeLayout,
         setToken:  function(t) { localStorage.setItem(TOKEN_KEY, t); _shaCache = {}; },
         hasToken:  function()  { return !!getToken(); }
     };

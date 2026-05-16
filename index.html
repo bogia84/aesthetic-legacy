@@ -479,19 +479,35 @@
             slides.forEach(function(art) { wrapper.appendChild(buildSlide(art)); });
             return true;
         }
-        Promise.all([ghStorage.getArticles(), ghStorage.getHomeOrder()]).then(function(results) {
+        Promise.all([ghStorage.getArticles(), ghStorage.getHomeOrder(), ghStorage.getHomeLayout()]).then(function(results) {
             var articles = results[0];
             var order    = results[1];
-            if (!order || !articles || !articles.length) return;
-            var map = {};
-            articles.forEach(function(a) { map[a.id] = a; });
-            var p = replaceSection('swiper-popular', order.popular, map);
-            var w = replaceSection('swiper-women',   order.women,   map);
-            var m = replaceSection('swiper-men',     order.men,     map);
-            // Destroy + reinit only where slides were replaced so Swiper remeasures correctly
-            if (p) { popularSwiper.destroy(true, true); popularSwiper = new Swiper('.swiper-popular', popularConfig); }
-            if (w) { womenSwiper.destroy(true, true);   womenSwiper   = new Swiper('.swiper-women',   womenConfig); }
-            if (m) { menSwiper.destroy(true, true);     menSwiper     = new Swiper('.swiper-men',     menConfig); }
+            var layout   = results[2];
+            if (order && articles && articles.length) {
+                var map = {};
+                articles.forEach(function(a) { map[a.id] = a; });
+                var p = replaceSection('swiper-popular', order.popular, map);
+                var w = replaceSection('swiper-women',   order.women,   map);
+                var m = replaceSection('swiper-men',     order.men,     map);
+                if (p) { popularSwiper.destroy(true, true); popularSwiper = new Swiper('.swiper-popular', popularConfig); }
+                if (w) { womenSwiper.destroy(true, true);   womenSwiper   = new Swiper('.swiper-women',   womenConfig); }
+                if (m) { menSwiper.destroy(true, true);     menSwiper     = new Swiper('.swiper-men',     menConfig); }
+            }
+            // Apply home layout images + positions
+            if (layout) {
+                var womenGraphic = document.querySelector('.block-women .split-graphic');
+                var menGraphic   = document.querySelector('.block-men .split-graphic');
+                if (womenGraphic && layout.womenImage) {
+                    womenGraphic.src = layout.womenImage;
+                    var wp = layout.womenImagePos || { x: 0, y: 0 };
+                    womenGraphic.style.transform = 'translate(' + (wp.x || 0) + 'px, ' + (wp.y || 0) + 'px)';
+                }
+                if (menGraphic && layout.menImage) {
+                    menGraphic.src = layout.menImage;
+                    var mp = layout.menImagePos || { x: 0, y: 0 };
+                    menGraphic.style.transform = 'translate(' + (mp.x || 0) + 'px, ' + (mp.y || 0) + 'px)';
+                }
+            }
         }).catch(function() {});
     })();
 

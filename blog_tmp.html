@@ -168,15 +168,25 @@
             transition: all 0.2s ease;
         }
 
+        .btn-vn,
+        .btn-eng {
+            background: #f4f4f4;
+            color: #888;
+        }
+
+        .btn-vn.active,
+        .btn-eng.active {
+            background: #282828;
+            color: #fff;
+        }
+
         .btn-vn {
-            background: #fff;
-            color: #111;
             border-right: 1px solid #D1D1D1 !important;
         }
 
-        .btn-eng {
-            background: #282828;
-            color: #fff;
+        .lang-disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
         }
 
         .article-header-block h1 {
@@ -1061,25 +1071,7 @@
                 });
             }
 
-            // --- Language Switcher Functionality ---
-            const btnVn = document.querySelector('.btn-vn');
-            const btnEng = document.querySelector('.btn-eng');
-
-            if (btnVn && btnEng) {
-                btnVn.addEventListener('click', function() {
-                    btnVn.style.background = '#282828';
-                    btnVn.style.color = '#fff';
-                    btnEng.style.background = '#fff';
-                    btnEng.style.color = '#111';
-                });
-
-                btnEng.addEventListener('click', function() {
-                    btnEng.style.background = '#282828';
-                    btnEng.style.color = '#fff';
-                    btnVn.style.background = '#fff';
-                    btnVn.style.color = '#111';
-                });
-            }
+            // --- Language Switcher Functionality handled by switchArticleLang() ---
         });
     </script>
 
@@ -1153,6 +1145,9 @@
         }
 
         var contrib = (article.contributorIdx !== null && article.contributorIdx !== undefined) ? contributors[article.contributorIdx] : null;
+
+        // Expose article globally for language switcher
+        window._articleData = article;
 
         // ---- page title ----
         document.title = (article.title || 'Article') + ' | Aesthetic Legacy';
@@ -1304,10 +1299,14 @@
             dateSpan.textContent = blk.date || article.date || '';
             var langDiv = document.createElement('div');
             langDiv.className = 'lang-switcher';
-            langDiv.innerHTML = '<button class="btn-vn">' + esc(blk.langVn || 'VN') + '</button><button class="btn-eng">' + esc(blk.langEn || 'ENG') + '</button>';
+            var hasEn = !!(article.blocksEn && article.blocksEn.length || article.normalContentEn);
+            langDiv.innerHTML =
+                '<button class="btn-vn active" onclick="switchArticleLang(\'vn\')">VN</button>' +
+                '<button class="btn-eng' + (hasEn ? '' : ' lang-disabled') + '" onclick="switchArticleLang(\'en\')"' + (hasEn ? '' : ' disabled') + '>EN</button>';
             meta.appendChild(dateSpan);
             meta.appendChild(langDiv);
             var h1 = document.createElement('h1');
+            h1.id = 'article-main-title';
             h1.textContent = blk.title || article.title || '';
             div.appendChild(meta);
             div.appendChild(h1);
@@ -1435,6 +1434,89 @@
         }
 
     })();
-    </script>
-</body>
-</html>
+
+    // ================================================================
+    //  LANGUAGE SWITCHER  (global — called by VN/EN buttons in articles)
+    // ================================================================
+    var _currentArticleLang = 'vn';
+
+    function switchArticleLang(lang) {
+        var article = (function(){
+            try { return JSON.parse(localStorage.getItem('aestheticLegacyPreviewDraft')) || {}; } catch(e) { return {}; }
+        })();
+        // Try to get the live article object from the page context
+        if (window._articleData) article = window._articleData;
+        _currentArticleLang = lang;
+        // Update button states
+        document.querySelectorAll('.btn-vn, .btn-eng').forEach(function(btn) {
+            btn.classList.remove('active');
+        });
+        if (lang === 'vn') {
+            document.querySelectorAll('.btn-vn').forEach(function(b){ b.classList.add('active'); });
+        } else {
+            document.querySelectorAll('.btn-eng').forEach(function(b){ b.classList.add('active'); });
+        }
+        // Update h1 title
+        var h1 = document.getElementById('article-main-title');
+        if (h1) {
+            h1.textContent = (lang === 'en' && article.titleEn) ? article.titleEn : (article.title || h1.textContent);
+        }
+        // Re-render body
+        var mainContent = document.querySelector('.blog-main-content');
+        if (!mainContent) return;
+        if (article.editorMode === 'normal') {
+            var wrapper = mainContent.querySelector('.normal-content-body');
+            if (!wrapper) { wrapper = document.createElement('div'); wrapper.className = 'normal-content-body'; wrapper.style.cssText = 'font-family:inherit;line-height:1.75;color:#282828;'; mainContent.insertBefore(wrapper, mainContent.firstChild); }
+            wrapper.innerHTML = (lang === 'en' && article.normalContentEn) ? article.normalContentEn : (article.normalContent || '');
+        } else {
+            // Component mode: re-render blocks
+            var blocks = lang === 'en' && article.blocksEn && article.blocksEn.length ? article.blocksEn : (article.blocks || []);
+            var existing = mainContent.querySelectorAll('.quick-stats-block,.article-content-block,.article-pull-quote,.routine-block,.social-media-block');
+            existing.forEach(function(el){ el.remove(); });
+            // Re-add non-header blocks (header h1 already updated above)
+            var frag = document.createDocumentFragment();
+            blocks.forEach(function(blk) {
+                if (blk.type === 'header') return; // header already in DOM with updated h1
+                // We need access to buildBlockElement — it's defined inside the IIFE, so we rebuild inline
+                var el = _buildBlockFallback(blk);
+                if (el) frag.appendChild(el);
+            });
+            mainContent.appendChild(frag);
+        }
+    }
+
+    // Minimal block builder for switchArticleLang (outside IIFE)
+    function _buildBlockFallback(blk) {
+        if (blk.type === 'stats') {
+            var d = document.createElement('div'); d.className = 'quick-stats-block';
+            var h = document.createElement('h2'); h.className = 'quick-stats-title'; h.textContent = blk.heading||'Quick Stats:'; d.appendChild(h);
+            var ul = document.createElement('ul'); ul.className = 'stats-list';
+            (blk.items||[]).forEach(function(it){ var li=document.createElement('li');li.textContent=it;ul.appendChild(li); });
+            d.appendChild(ul); return d;
+        }
+        if (blk.type === 'content') {
+            var d = document.createElement('div'); d.className = 'article-content-block';
+            if (blk.image){ var img=document.createElement('img');img.src=blk.image;img.alt=blk.imageAlt||'';img.className='article-inline-image';d.appendChild(img); }
+            if (blk.heading){ var h3=document.createElement('h3');h3.className='article-subheading';h3.textContent=blk.heading;d.appendChild(h3); }
+            (blk.paragraphs||[]).forEach(function(p){ if(!p)return;var para=document.createElement('p');para.className='article-paragraph';para.textContent=p;d.appendChild(para); });
+            return d;
+        }
+        if (blk.type === 'pullquote') {
+            var d = document.createElement('div'); d.className = 'article-pull-quote';
+            var p = document.createElement('p'); p.className = 'pull-quote-text'; p.textContent = blk.text||'';
+            d.appendChild(p); return d;
+        }
+        if (blk.type === 'routine') {
+            var d = document.createElement('div'); d.className = 'routine-block';
+            var h2 = document.createElement('h2'); h2.className = 'routine-main-title'; h2.textContent = blk.title||'Full Routine:'; d.appendChild(h2);
+            (blk.days||[]).forEach(function(day) {
+                var db=document.createElement('div');db.className='routine-day';
+                var dn=document.createElement('h3');dn.className='routine-day-title';dn.textContent=day.name||'';db.appendChild(dn);
+                var ul=document.createElement('ul');ul.className='routine-exercises-list';
+                (day.exercises||[]).forEach(function(ex){ var li=document.createElement('li');li.textContent=ex;ul.appendChild(li); });
+                db.appendChild(ul);d.appendChild(db);
+            });
+            return d;
+        }
+        return null;
+    }

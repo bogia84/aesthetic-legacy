@@ -998,6 +998,106 @@
         /* Preview button */
         .btn-preview { background: #2d7ef7; color: #fff; }
         .btn-preview:hover { background: #1a5ecb; }
+
+        /* ---- IMAGE WIDGET ---- */
+        .img-widget { display: flex; flex-direction: column; }
+        .img-widget-dropzone {
+            border: 2px dashed var(--border); border-radius: 4px 4px 0 0;
+            min-height: 76px; display: flex; flex-direction: column; align-items: center;
+            justify-content: center; background: var(--grey); cursor: pointer;
+            transition: border-color 0.2s, background 0.2s; overflow: hidden;
+            text-align: center; padding: 10px; gap: 6px;
+        }
+        .img-widget-dropzone.drag-over { border-color: var(--red); background: #fff0f0; }
+        .img-widget-dropzone-hint { font-size: 0.68rem; font-weight: 700; color: #bbb; pointer-events: none; }
+        .img-widget-preview { max-height: 80px; max-width: 100%; border-radius: 3px; display: none; object-fit: cover; }
+        .img-widget-tabs { display: flex; border: 1px solid var(--border); border-top: none; background: #fff; }
+        .img-widget-tab {
+            flex: 1; padding: 6px 4px; font-family: 'Manrope', sans-serif; font-size: 0.7rem;
+            font-weight: 800; cursor: pointer; border: none; background: none; color: var(--muted);
+            border-bottom: 2px solid transparent; transition: all 0.15s; text-align: center;
+        }
+        .img-widget-tab.active { color: var(--dark); border-bottom-color: var(--dark); background: var(--grey); }
+        .img-widget-panes { border: 1px solid var(--border); border-top: none; border-radius: 0 0 4px 4px; padding: 10px; background: #fff; }
+        .img-widget-pane { display: none; flex-direction: column; gap: 6px; }
+        .img-widget-pane.active { display: flex; }
+        .img-widget-pane input[type="text"],
+        .img-widget-pane textarea {
+            width: 100%; font-family: 'Manrope', sans-serif; font-size: 0.78rem;
+            padding: 7px 9px; border: 1px solid var(--border); border-radius: 3px;
+            outline: none; box-sizing: border-box; resize: none;
+        }
+        .img-widget-pane input[type="text"]:focus,
+        .img-widget-pane textarea:focus { border-color: var(--dark); }
+        .img-widget-pane input[type="file"] { font-size: 0.78rem; display: block; }
+        .img-widget-upload-hint { font-size: 0.65rem; color: #aaa; }
+
+        /* ---- HOME LAYOUT PANEL ---- */
+        .hl-sections { display: flex; gap: 24px; margin-top: 4px; }
+        .hl-section { flex: 1; min-width: 0; }
+        .hl-section-title { font-size: 0.85rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.07em; color: var(--dark); margin-bottom: 14px; }
+        .hl-preview {
+            border-radius: 4px; overflow: hidden; margin-top: 14px;
+            position: relative; min-height: 160px; display: flex; align-items: center;
+            padding: 20px 16px; gap: 14px;
+        }
+        .hl-section.women-section .hl-preview { background: #EC262D; }
+        .hl-section.men-section .hl-preview { background: #f0f0f0; }
+        .hl-preview-text { font-size: 2.2rem; font-weight: 900; user-select: none; min-width: 60px; flex-shrink: 0; }
+        .hl-section.women-section .hl-preview-text { color: rgba(255,255,255,0.25); }
+        .hl-section.men-section .hl-preview-text { color: rgba(0,0,0,0.08); }
+        .hl-preview-img-wrap { flex: 1; display: flex; align-items: center; justify-content: center; min-height: 120px; position: relative; }
+        .hl-preview-graphic {
+            max-height: 130px; max-width: 100%; object-fit: contain; cursor: grab;
+            user-select: none; display: block; position: relative;
+        }
+        .hl-preview-graphic:active { cursor: grabbing; }
+        .hl-preview-placeholder { color: rgba(255,255,255,0.35); font-size: 0.72rem; font-weight: 700; text-align: center; }
+        .hl-section.men-section .hl-preview-placeholder { color: rgba(0,0,0,0.25); }
+        .hl-coords { font-size: 0.68rem; color: var(--muted); font-weight: 700; margin-top: 6px; font-variant-numeric: tabular-nums; }
+        .hl-save-row { margin-top: 24px; display: flex; align-items: center; gap: 12px; }
+
+        /* ---- ARTICLE EDITOR SPLIT LAYOUT ---- */
+        #panel-blog-editor.active {
+            display: flex !important;
+            max-width: none;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+        .editor-left-col {
+            flex: 1; min-width: 0; overflow-y: auto; padding: 36px 40px;
+        }
+        .editor-right-col {
+            width: 50%; min-width: 320px; border-left: 1px solid var(--border);
+            overflow-y: auto; display: none; flex-direction: column; background: #fff;
+        }
+        .editor-right-col.open { display: flex; }
+        .editor-preview-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 12px 16px 11px; border-bottom: 1px solid var(--border);
+            background: var(--grey); flex-shrink: 0;
+        }
+        .editor-preview-label { font-size: 0.63rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); }
+        .editor-preview-close {
+            background: none; border: none; font-size: 1.3rem; cursor: pointer;
+            color: var(--muted); line-height: 1; padding: 0 4px; font-family: inherit; transition: color 0.15s;
+        }
+        .editor-preview-close:hover { color: var(--dark); }
+        .editor-preview-body { flex: 1; overflow-y: auto; padding: 14px; font-family: 'Manrope', sans-serif; font-size: 0.82rem; line-height: 1.6; color: var(--dark); }
+
+        /* ---- LANG TAB ---- */
+        .lang-tab-bar {
+            display: flex; gap: 0; border: 1.5px solid var(--border); border-radius: 4px;
+            overflow: hidden; width: fit-content; margin-bottom: 18px;
+        }
+        .lang-tab-btn {
+            padding: 7px 20px; font-family: 'Manrope', sans-serif; font-size: 0.75rem;
+            font-weight: 800; cursor: pointer; border: none; background: var(--grey);
+            color: var(--muted); letter-spacing: 0.07em; text-transform: uppercase; transition: all 0.2s;
+        }
+        .lang-tab-btn.active { background: var(--dark); color: #fff; }
+        .lang-tab-btn:not(.active):hover { background: #e0e0e0; color: var(--dark); }
     </style>
 </head>
 <body>
@@ -1058,6 +1158,9 @@
                 <div class="nav-l2" id="nav-women" onclick="activatePanel('panel-women', 'nav-women')">
                     <span class="nav-l2-dot"></span> Women
                 </div>
+                <div class="nav-l2" id="nav-home-layout" onclick="activatePanel('panel-home-layout', 'nav-home-layout')">
+                    <span class="nav-l2-dot"></span> Section Images
+                </div>
             </div>
         </div>
 
@@ -1104,7 +1207,7 @@
             <h2>Select a section to edit</h2>
             <p>Choose any item from the left menu to start managing your content.</p>
             <div class="cms-landing-hint">
-                <div class="cms-landing-hint-item"><span>Home page</span> → Edit article card ordering</div>
+                <div class="cms-landing-hint-item"><span>Home page</span> → Edit article ordering &amp; section images</div>
                 <div class="cms-landing-hint-item"><span>Contributor list</span> → Add, edit &amp; reorder contributors</div>
                 <div class="cms-landing-hint-item"><span>Blog Articles</span> → Create &amp; manage blog articles</div>
             </div>
@@ -1134,6 +1237,86 @@
             <div class="banner-list" id="list-women"></div>
         </div>
 
+        <!-- ======================================================= PANEL: HOME LAYOUT -->
+        <div class="cms-panel" id="panel-home-layout">
+            <h2 class="panel-title">Section Images</h2>
+            <p class="panel-sub">Upload or set the image displayed in the Women and Men homepage sections. Drag the image inside the preview to reposition it.</p>
+            <div class="hl-sections">
+                <!-- WOMEN -->
+                <div class="hl-section women-section">
+                    <div class="hl-section-title">Women Section</div>
+                    <div class="img-widget" id="iw-hl-women">
+                        <div class="img-widget-dropzone" id="iw-hl-women-zone">
+                            <img class="img-widget-preview" id="iw-hl-women-preview" src="" alt="">
+                            <div class="img-widget-dropzone-hint">Drop image here</div>
+                        </div>
+                        <div class="img-widget-tabs">
+                            <button class="img-widget-tab active" onclick="iwTab('url','hl-women')">URL</button>
+                            <button class="img-widget-tab" onclick="iwTab('upload','hl-women')">Upload</button>
+                            <button class="img-widget-tab" onclick="iwTab('b64','hl-women')">Base64</button>
+                        </div>
+                        <div class="img-widget-panes">
+                            <div class="img-widget-pane active" id="iw-hl-women-url">
+                                <input type="text" id="iw-hl-women-url-input" placeholder="https://..." oninput="iwUrlChange('hl-women')" onpaste="iwUrlPaste(event,'hl-women')">
+                            </div>
+                            <div class="img-widget-pane" id="iw-hl-women-upload">
+                                <input type="file" accept="image/*" onchange="iwFileChange(event,'hl-women')">
+                                <span class="img-widget-upload-hint">Or drag &amp; drop onto the area above</span>
+                            </div>
+                            <div class="img-widget-pane" id="iw-hl-women-b64">
+                                <textarea rows="3" id="iw-hl-women-b64-input" placeholder="Paste base64 data:image/... here" oninput="iwB64Change('hl-women')"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hl-preview" id="hl-women-preview-area">
+                        <div class="hl-preview-text">Women</div>
+                        <div class="hl-preview-img-wrap" id="hl-women-img-wrap">
+                            <span class="hl-preview-placeholder" id="hl-women-placeholder">No image</span>
+                        </div>
+                    </div>
+                    <div class="hl-coords" id="hl-women-coords">Position: 0, 0</div>
+                </div>
+                <!-- MEN -->
+                <div class="hl-section men-section">
+                    <div class="hl-section-title">Men Section</div>
+                    <div class="img-widget" id="iw-hl-men">
+                        <div class="img-widget-dropzone" id="iw-hl-men-zone">
+                            <img class="img-widget-preview" id="iw-hl-men-preview" src="" alt="">
+                            <div class="img-widget-dropzone-hint">Drop image here</div>
+                        </div>
+                        <div class="img-widget-tabs">
+                            <button class="img-widget-tab active" onclick="iwTab('url','hl-men')">URL</button>
+                            <button class="img-widget-tab" onclick="iwTab('upload','hl-men')">Upload</button>
+                            <button class="img-widget-tab" onclick="iwTab('b64','hl-men')">Base64</button>
+                        </div>
+                        <div class="img-widget-panes">
+                            <div class="img-widget-pane active" id="iw-hl-men-url">
+                                <input type="text" id="iw-hl-men-url-input" placeholder="https://..." oninput="iwUrlChange('hl-men')" onpaste="iwUrlPaste(event,'hl-men')">
+                            </div>
+                            <div class="img-widget-pane" id="iw-hl-men-upload">
+                                <input type="file" accept="image/*" onchange="iwFileChange(event,'hl-men')">
+                                <span class="img-widget-upload-hint">Or drag &amp; drop onto the area above</span>
+                            </div>
+                            <div class="img-widget-pane" id="iw-hl-men-b64">
+                                <textarea rows="3" id="iw-hl-men-b64-input" placeholder="Paste base64 data:image/... here" oninput="iwB64Change('hl-men')"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hl-preview" id="hl-men-preview-area">
+                        <div class="hl-preview-text">Men</div>
+                        <div class="hl-preview-img-wrap" id="hl-men-img-wrap">
+                            <span class="hl-preview-placeholder" id="hl-men-placeholder">No image</span>
+                        </div>
+                    </div>
+                    <div class="hl-coords" id="hl-men-coords">Position: 0, 0</div>
+                </div>
+            </div>
+            <div class="hl-save-row">
+                <button class="cms-btn" onclick="saveHomeLayoutCMS()">Save Section Images</button>
+                <span id="hl-save-status" style="font-size:0.78rem;color:var(--muted);"></span>
+            </div>
+        </div>
+
         <!-- ======================================================= PANEL: CONTRIBUTORS -->
         <div class="cms-panel" id="panel-contributors">
             <h2 class="panel-title">Contributor List</h2>
@@ -1160,25 +1343,82 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="cf-img">Card Image <span style="font-weight:400;text-transform:none;letter-spacing:0">(URL or paste image)</span></label>
-                        <input type="text" id="cf-img" placeholder="https://... or paste an image"
-                            oninput="refreshContribPreview('cf-img','cf-img-preview')"
-                            onpaste="handleContribImagePaste(event,'cf-img','cf-img-preview')">
-                        <img id="cf-img-preview" src="" alt="" style="display:none;margin-top:6px;max-height:80px;max-width:100%;border:1px solid #e0e0e0;object-fit:cover;">
+                        <label>Card Image</label>
+                        <div class="img-widget" id="iw-cf-img">
+                            <div class="img-widget-dropzone" id="iw-cf-img-zone">
+                                <img class="img-widget-preview" id="cf-img-preview" src="" alt="">
+                                <div class="img-widget-dropzone-hint">Drop image here</div>
+                            </div>
+                            <div class="img-widget-tabs">
+                                <button class="img-widget-tab active" onclick="iwTab('url','cf-img')">URL</button>
+                                <button class="img-widget-tab" onclick="iwTab('upload','cf-img')">Upload</button>
+                                <button class="img-widget-tab" onclick="iwTab('b64','cf-img')">Base64</button>
+                            </div>
+                            <div class="img-widget-panes">
+                                <div class="img-widget-pane active" id="iw-cf-img-url">
+                                    <input type="text" id="cf-img" placeholder="https://..." oninput="iwUrlChange('cf-img')" onpaste="iwUrlPaste(event,'cf-img')">
+                                </div>
+                                <div class="img-widget-pane" id="iw-cf-img-upload">
+                                    <input type="file" accept="image/*" onchange="iwFileChange(event,'cf-img')">
+                                    <span class="img-widget-upload-hint">Or drag &amp; drop onto the area above</span>
+                                </div>
+                                <div class="img-widget-pane" id="iw-cf-img-b64">
+                                    <textarea rows="3" id="iw-cf-img-b64-input" placeholder="Paste base64 data:image/... here" oninput="iwB64Change('cf-img')"></textarea>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="form-group">
-                        <label for="cf-avatar">Avatar <span style="font-weight:400;text-transform:none;letter-spacing:0">(URL or paste image, optional)</span></label>
-                        <input type="text" id="cf-avatar" placeholder="https://... or paste an image"
-                            oninput="refreshContribPreview('cf-avatar','cf-avatar-preview')"
-                            onpaste="handleContribImagePaste(event,'cf-avatar','cf-avatar-preview')">
-                        <img id="cf-avatar-preview" src="" alt="" style="display:none;margin-top:6px;max-height:80px;max-width:100%;border:1px solid #e0e0e0;object-fit:cover;">
+                        <label>Avatar <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
+                        <div class="img-widget" id="iw-cf-avatar">
+                            <div class="img-widget-dropzone" id="iw-cf-avatar-zone">
+                                <img class="img-widget-preview" id="cf-avatar-preview" src="" alt="">
+                                <div class="img-widget-dropzone-hint">Drop image here</div>
+                            </div>
+                            <div class="img-widget-tabs">
+                                <button class="img-widget-tab active" onclick="iwTab('url','cf-avatar')">URL</button>
+                                <button class="img-widget-tab" onclick="iwTab('upload','cf-avatar')">Upload</button>
+                                <button class="img-widget-tab" onclick="iwTab('b64','cf-avatar')">Base64</button>
+                            </div>
+                            <div class="img-widget-panes">
+                                <div class="img-widget-pane active" id="iw-cf-avatar-url">
+                                    <input type="text" id="cf-avatar" placeholder="https://..." oninput="iwUrlChange('cf-avatar')" onpaste="iwUrlPaste(event,'cf-avatar')">
+                                </div>
+                                <div class="img-widget-pane" id="iw-cf-avatar-upload">
+                                    <input type="file" accept="image/*" onchange="iwFileChange(event,'cf-avatar')">
+                                    <span class="img-widget-upload-hint">Or drag &amp; drop onto the area above</span>
+                                </div>
+                                <div class="img-widget-pane" id="iw-cf-avatar-b64">
+                                    <textarea rows="3" id="iw-cf-avatar-b64-input" placeholder="Paste base64 data:image/... here" oninput="iwB64Change('cf-avatar')"></textarea>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="form-group">
-                        <label for="cf-bg">Background <span style="font-weight:400;text-transform:none;letter-spacing:0">(URL or paste image, optional)</span></label>
-                        <input type="text" id="cf-bg" placeholder="https://... or paste an image"
-                            oninput="refreshContribPreview('cf-bg','cf-bg-preview')"
-                            onpaste="handleContribImagePaste(event,'cf-bg','cf-bg-preview')">
-                        <img id="cf-bg-preview" src="" alt="" style="display:none;margin-top:6px;max-height:80px;max-width:100%;border:1px solid #e0e0e0;object-fit:cover;">
+                        <label>Background <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
+                        <div class="img-widget" id="iw-cf-bg">
+                            <div class="img-widget-dropzone" id="iw-cf-bg-zone">
+                                <img class="img-widget-preview" id="cf-bg-preview" src="" alt="">
+                                <div class="img-widget-dropzone-hint">Drop image here</div>
+                            </div>
+                            <div class="img-widget-tabs">
+                                <button class="img-widget-tab active" onclick="iwTab('url','cf-bg')">URL</button>
+                                <button class="img-widget-tab" onclick="iwTab('upload','cf-bg')">Upload</button>
+                                <button class="img-widget-tab" onclick="iwTab('b64','cf-bg')">Base64</button>
+                            </div>
+                            <div class="img-widget-panes">
+                                <div class="img-widget-pane active" id="iw-cf-bg-url">
+                                    <input type="text" id="cf-bg" placeholder="https://..." oninput="iwUrlChange('cf-bg')" onpaste="iwUrlPaste(event,'cf-bg')">
+                                </div>
+                                <div class="img-widget-pane" id="iw-cf-bg-upload">
+                                    <input type="file" accept="image/*" onchange="iwFileChange(event,'cf-bg')">
+                                    <span class="img-widget-upload-hint">Or drag &amp; drop onto the area above</span>
+                                </div>
+                                <div class="img-widget-pane" id="iw-cf-bg-b64">
+                                    <textarea rows="3" id="iw-cf-bg-b64-input" placeholder="Paste base64 data:image/... here" oninput="iwB64Change('cf-bg')"></textarea>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="cf-stat1">Stat 1</label>
@@ -1350,23 +1590,53 @@
 
         <!-- ======================================================= PANEL: BLOG EDITOR -->
         <div class="cms-panel" id="panel-blog-editor">
+            <!-- LEFT COL: editor -->
+            <div class="editor-left-col" id="editor-left-col">
             <h2 class="panel-title" id="editor-panel-title">New Article</h2>
             <p class="panel-sub">Create or edit a blog article</p>
 
             <!-- Metadata -->
             <div class="editor-meta-grid">
                 <div class="form-group">
-                    <label for="ed-title">Article Title *</label>
-                    <input type="text" id="ed-title" placeholder="e.g. Building the ultimate physique">
+                    <label for="ed-title">Article Title (VN) *</label>
+                    <input type="text" id="ed-title" placeholder="e.g. Xây dựng vóc dáng lý tưởng">
+                </div>
+                <div class="form-group">
+                    <label for="ed-title-en">Article Title (EN)</label>
+                    <input type="text" id="ed-title-en" placeholder="e.g. Building the ultimate physique">
                 </div>
                 <div class="form-group">
                     <label for="ed-date">Date</label>
                     <input type="text" id="ed-date" placeholder="e.g. May 10, 2026">
                 </div>
                 <div class="form-group">
-                    <label for="ed-hero">Hero Image (URL or paste Base64)</label>
-                    <input type="text" id="ed-hero" placeholder="https://… or data:image/…"
-                        onpaste="handleHeroImagePaste(event)">
+                    <label>Hero Image</label>
+                    <div class="img-widget" id="iw-hero">
+                        <div class="img-widget-dropzone" id="iw-hero-zone">
+                            <img class="img-widget-preview" id="iw-hero-preview" src="" alt="">
+                            <div class="img-widget-dropzone-hint">Drop image here</div>
+                        </div>
+                        <div class="img-widget-tabs">
+                            <button class="img-widget-tab active" onclick="iwTab('url','hero')">URL</button>
+                            <button class="img-widget-tab" onclick="iwTab('upload','hero')">Upload</button>
+                            <button class="img-widget-tab" onclick="iwTab('b64','hero')">Base64</button>
+                        </div>
+                        <div class="img-widget-panes">
+                            <div class="img-widget-pane active" id="iw-hero-url">
+                                <input type="text" id="iw-hero-url-input" placeholder="https://… or data:image/…"
+                                    oninput="iwUrlChange('hero')" onpaste="iwUrlPaste(event,'hero')">
+                            </div>
+                            <div class="img-widget-pane" id="iw-hero-upload">
+                                <input type="file" accept="image/*" onchange="iwFileChange(event,'hero')">
+                                <span class="img-widget-upload-hint">Or drag &amp; drop onto the area above</span>
+                            </div>
+                            <div class="img-widget-pane" id="iw-hero-b64">
+                                <textarea rows="3" id="iw-hero-b64-input" placeholder="Paste base64 data:image/... here" oninput="iwB64Change('hero')"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- hidden value field read by saveArticleEditor -->
+                    <input type="hidden" id="ed-hero">
                 </div>
                 <div class="form-group">
                     <label for="ed-contrib">Contributor</label>
@@ -1390,13 +1660,19 @@
                 </div>
             </div>
 
+            <!-- Language Tab Bar -->
+            <div class="lang-tab-bar">
+                <button class="lang-tab-btn active" id="lang-btn-vn" onclick="switchEditorLang('vn')">VN</button>
+                <button class="lang-tab-btn" id="lang-btn-en" onclick="switchEditorLang('en')">EN</button>
+            </div>
+
             <!-- Mode toggle -->
             <div style="display:flex;align-items:center;margin-bottom:22px;">
                 <div class="mode-toggle-bar" style="margin-bottom:0;">
                     <button class="mode-btn active" id="mode-btn-component" onclick="switchEditorMode('component')">Component Editor</button>
                     <button class="mode-btn" id="mode-btn-normal" onclick="switchEditorMode('normal')">Normal Editor</button>
                 </div>
-                <button class="btn-preview-toggle" id="btn-preview-toggle" onclick="togglePreviewDrawer()">&#128065; Live Preview</button>
+                <button class="btn-preview-toggle" id="btn-preview-toggle" onclick="toggleInlinePreview()">&#128065; Live Preview</button>
             </div>
 
             <!-- ---- COMPONENT EDITOR ---- -->
@@ -1454,8 +1730,14 @@
                         <div class="toolbar-sep"></div>
                         <button class="toolbar-btn" onclick="toggleImgPanel()" title="Insert image">🖼 Image</button>
                     </div>
+                    <!-- VN body -->
                     <div class="editor-body" id="normal-editor-body" contenteditable="true"
-                        data-placeholder="Start writing your article here…"
+                        data-placeholder="Start writing your article here (VN)…"
+                        onpaste="handleEditorBodyPaste(event)"></div>
+                    <!-- EN body -->
+                    <div class="editor-body" id="normal-editor-body-en" contenteditable="true"
+                        data-placeholder="Start writing English content here (EN)…"
+                        style="display:none;"
                         onpaste="handleEditorBodyPaste(event)"></div>
                 </div>
             </div>
@@ -1466,6 +1748,18 @@
                 <button class="btn btn-preview" onclick="previewInNewTab()">Preview</button>
                 <button class="btn btn-reset" onclick="cancelArticleEditor()">Cancel</button>
                 <span class="form-err" id="editor-err">Please enter an article title.</span>
+            </div>
+            </div><!-- /editor-left-col -->
+
+            <!-- RIGHT COL: inline live preview -->
+            <div class="editor-right-col" id="editor-right-col">
+                <div class="editor-preview-header">
+                    <span class="editor-preview-label">Live Preview</span>
+                    <button class="editor-preview-close" onclick="toggleInlinePreview()" aria-label="Close preview">&times;</button>
+                </div>
+                <div class="editor-preview-body" id="editor-inline-preview">
+                    <div class="preview-placeholder">Add content to see a preview</div>
+                </div>
             </div>
         </div>
 
@@ -1859,25 +2153,280 @@
     var blockDragSrc = null;
     var savedNormalSelection = null;
     var pendingImageSrc = null;
+    var currentEditorLang = 'vn';
+    var blockItemsVn = [];
+    var blockItemsEn = [];
+
+    // ================================================================
+    //  IMAGE WIDGET HELPERS
+    // ================================================================
+    // Registry: widgetId -> {onSet: fn(src)}
+    var _iwCallbacks = {};
+
+    function iwRegister(wid, onSet) {
+        _iwCallbacks[wid] = onSet;
+        // Setup drag-drop on dropzone
+        var zone = document.getElementById('iw-' + wid + '-zone');
+        if (zone) {
+            zone.addEventListener('dragover', function(e){ e.preventDefault(); zone.classList.add('drag-over'); });
+            zone.addEventListener('dragleave', function(){ zone.classList.remove('drag-over'); });
+            zone.addEventListener('drop', function(e){
+                e.preventDefault(); zone.classList.remove('drag-over');
+                var file = e.dataTransfer.files[0];
+                if (file && file.type.indexOf('image') >= 0) {
+                    var reader = new FileReader();
+                    reader.onload = function(ev){ iwSetValue(wid, ev.target.result); };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+    }
+
+    function iwSetValue(wid, src) {
+        // Update preview
+        var prev = document.getElementById('iw-' + wid + '-preview');
+        if (prev) { prev.src = src; prev.style.display = src ? 'block' : 'none'; }
+        // Call registered callback
+        if (_iwCallbacks[wid]) _iwCallbacks[wid](src);
+    }
+
+    function iwTab(tab, wid) {
+        ['url','upload','b64'].forEach(function(t) {
+            var pane = document.getElementById('iw-' + wid + '-' + t);
+            if (pane) pane.classList.toggle('active', t === tab);
+        });
+        var container = document.getElementById('iw-' + wid) || document.getElementById('iw-' + wid + '-zone');
+        var widget = container ? container.closest ? container.closest('.img-widget') : null : null;
+        if (!widget) widget = document.getElementById('iw-' + wid);
+        if (widget) {
+            widget.querySelectorAll('.img-widget-tab').forEach(function(btn, i) {
+                btn.classList.toggle('active', ['url','upload','b64'][i] === tab);
+            });
+        }
+    }
+
+    function iwUrlChange(wid) {
+        var inp = document.getElementById('iw-' + wid + '-url-input') || document.getElementById(wid);
+        if (!inp) return;
+        var val = inp.value.trim();
+        iwSetValue(wid, val);
+    }
+
+    function iwUrlPaste(e, wid) {
+        var items = (e.clipboardData || e.originalEvent.clipboardData).items;
+        for (var i = 0; i < items.length; i++) {
+            if (items[i].type.indexOf('image') >= 0) {
+                e.preventDefault();
+                var reader = new FileReader();
+                reader.onload = function(ev) {
+                    var inp = document.getElementById('iw-' + wid + '-url-input') || document.getElementById(wid);
+                    if (inp) inp.value = ev.target.result;
+                    iwSetValue(wid, ev.target.result);
+                };
+                reader.readAsDataURL(items[i].getAsFile());
+                return;
+            }
+        }
+    }
+
+    function iwFileChange(e, wid) {
+        var file = e.target.files[0];
+        if (!file) return;
+        var reader = new FileReader();
+        reader.onload = function(ev){ iwSetValue(wid, ev.target.result); };
+        reader.readAsDataURL(file);
+    }
+
+    function iwB64Change(wid) {
+        var ta = document.getElementById('iw-' + wid + '-b64-input');
+        if (!ta) return;
+        var val = ta.value.trim();
+        if (val.startsWith('data:image/')) iwSetValue(wid, val);
+    }
+
+    // Block content image widget helpers
+    function iwBlockUrlChange(inp, blkId) {
+        var src = inp.value.trim();
+        iwBlockSet(blkId, src);
+    }
+    function iwBlockFile(e, blkId) {
+        var file = e.target.files[0];
+        if (!file) return;
+        var reader = new FileReader();
+        reader.onload = function(ev){ iwBlockSet(blkId, ev.target.result); };
+        reader.readAsDataURL(file);
+    }
+    function iwBlockB64(ta, blkId) {
+        var val = ta.value.trim();
+        if (val.startsWith('data:image/')) iwBlockSet(blkId, val);
+    }
+    function iwBlockDrop(e, blkId) {
+        e.preventDefault();
+        var file = e.dataTransfer.files[0];
+        if (file && file.type.indexOf('image') >= 0) {
+            var reader = new FileReader();
+            reader.onload = function(ev){ iwBlockSet(blkId, ev.target.result); };
+            reader.readAsDataURL(file);
+        }
+    }
+    function iwBlockSet(blkId, src) {
+        // Update hidden data-f="image" input
+        var blkEl = document.querySelector('[data-blk-id="' + blkId + '"]');
+        if (blkEl) {
+            var imgInput = blkEl.querySelector('[data-f="image"]');
+            if (imgInput) imgInput.value = src;
+        }
+        // Update preview
+        var prev = document.getElementById('iw-blk-' + blkId + '-preview');
+        if (prev) { prev.src = src; prev.style.display = src ? 'block' : 'none'; }
+        // Sync and re-preview
+        collectBlockFields(blkId);
+        scheduleLivePreview();
+    }
+
+    // ================================================================
+    //  HOME LAYOUT CMS
+    // ================================================================
+    var _homeLayout = { womenImage: null, womenImagePos: {x:0,y:0}, menImage: null, menImagePos: {x:0,y:0} };
+
+    function loadHomeLayoutPanel() {
+        ghStorage.getHomeLayout().then(function(layout) {
+            _homeLayout = layout || _homeLayout;
+            if (_homeLayout.womenImage) {
+                iwSetValue('hl-women', _homeLayout.womenImage);
+                var inp = document.getElementById('iw-hl-women-url-input');
+                if (inp) inp.value = _homeLayout.womenImage;
+                updateHLPreviewImage('women', _homeLayout.womenImage, _homeLayout.womenImagePos);
+            }
+            if (_homeLayout.menImage) {
+                iwSetValue('hl-men', _homeLayout.menImage);
+                var inp = document.getElementById('iw-hl-men-url-input');
+                if (inp) inp.value = _homeLayout.menImage;
+                updateHLPreviewImage('men', _homeLayout.menImage, _homeLayout.menImagePos);
+            }
+        });
+    }
+
+    function updateHLPreviewImage(section, src, pos) {
+        var wrap = document.getElementById('hl-' + section + '-img-wrap');
+        var placeholder = document.getElementById('hl-' + section + '-placeholder');
+        if (!wrap) return;
+        var existing = wrap.querySelector('.hl-preview-graphic');
+        if (existing) existing.remove();
+        if (!src) { if (placeholder) placeholder.style.display = ''; return; }
+        if (placeholder) placeholder.style.display = 'none';
+        var img = document.createElement('img');
+        img.className = 'hl-preview-graphic';
+        img.src = src;
+        img.alt = '';
+        pos = pos || {x:0,y:0};
+        img.style.transform = 'translate(' + (pos.x||0) + 'px,' + (pos.y||0) + 'px)';
+        wrap.appendChild(img);
+        setupHLDrag(img, section);
+        updateHLCoords(section, pos.x||0, pos.y||0);
+    }
+
+    function setupHLDrag(img, section) {
+        var startX, startY, startTX, startTY;
+        img.addEventListener('mousedown', function(e) {
+            e.preventDefault();
+            startX = e.clientX; startY = e.clientY;
+            var pos = _homeLayout[section + 'ImagePos'] || {x:0,y:0};
+            startTX = pos.x||0; startTY = pos.y||0;
+            img.style.cursor = 'grabbing';
+            function onMove(ev) {
+                var dx = ev.clientX - startX, dy = ev.clientY - startY;
+                var nx = startTX + dx, ny = startTY + dy;
+                img.style.transform = 'translate(' + nx + 'px,' + ny + 'px)';
+                _homeLayout[section + 'ImagePos'] = {x: Math.round(nx), y: Math.round(ny)};
+                updateHLCoords(section, nx, ny);
+            }
+            function onUp() {
+                img.style.cursor = 'grab';
+                document.removeEventListener('mousemove', onMove);
+                document.removeEventListener('mouseup', onUp);
+            }
+            document.addEventListener('mousemove', onMove);
+            document.addEventListener('mouseup', onUp);
+        });
+    }
+
+    function updateHLCoords(section, x, y) {
+        var el = document.getElementById('hl-' + section + '-coords');
+        if (el) el.textContent = 'Position: ' + Math.round(x) + ', ' + Math.round(y);
+    }
+
+    function saveHomeLayoutCMS() {
+        var statusEl = document.getElementById('hl-save-status');
+        if (statusEl) statusEl.textContent = 'Saving…';
+        ghStorage.saveHomeLayout(_homeLayout).then(function() {
+            if (statusEl) { statusEl.textContent = '✓ Saved!'; setTimeout(function(){ statusEl.textContent=''; },3000); }
+        }).catch(function(e) {
+            if (statusEl) statusEl.textContent = '⚠ Failed: ' + e.message;
+        });
+    }
+
+    // ================================================================
+    //  BILINGUAL EDITOR
+    // ================================================================
+    function switchEditorLang(lang) {
+        if (lang === currentEditorLang) return;
+        // Save current state into the appropriate bucket
+        blockItems.forEach(function(b){ collectBlockFields(b.id); });
+        if (currentEditorLang === 'vn') {
+            blockItemsVn = blockItems.map(function(b){ return { id: b.id, type: b.type, fields: Object.assign({}, b.fields) }; });
+        } else {
+            blockItemsEn = blockItems.map(function(b){ return { id: b.id, type: b.type, fields: Object.assign({}, b.fields) }; });
+        }
+        currentEditorLang = lang;
+        // Load target bucket
+        if (lang === 'vn') {
+            blockItems = blockItemsVn.map(function(b){ return { id: b.id, type: b.type, fields: Object.assign({}, b.fields) }; });
+        } else {
+            blockItems = blockItemsEn.map(function(b){ return { id: b.id, type: b.type, fields: Object.assign({}, b.fields) }; });
+        }
+        renderBlocks();
+        // Toggle normal editor bodies
+        var vn = document.getElementById('normal-editor-body');
+        var en = document.getElementById('normal-editor-body-en');
+        if (vn) vn.style.display = lang === 'vn' ? '' : 'none';
+        if (en) en.style.display = lang === 'en' ? '' : 'none';
+        // Update tab active state
+        document.getElementById('lang-btn-vn').classList.toggle('active', lang === 'vn');
+        document.getElementById('lang-btn-en').classList.toggle('active', lang === 'en');
+        scheduleLivePreview();
+    }
 
     function openNewArticleEditor() {
         editorArticleId = null;
         editorMode = 'component';
         blockItems = [];
+        blockItemsVn = [];
+        blockItemsEn = [];
+        currentEditorLang = 'vn';
         activatePanel('panel-blog-editor', 'nav-blog-editor');
         document.getElementById('editor-panel-title').textContent = 'New Article';
         document.getElementById('ed-title').value = '';
+        document.getElementById('ed-title-en').value = '';
         document.getElementById('ed-date').value = new Date().toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
         document.getElementById('ed-hero').value = '';
+        iwSetValue('hero', '');
+        var heroInp = document.getElementById('iw-hero-url-input');
+        if (heroInp) heroInp.value = '';
         populateContribDropdowns();
         document.getElementById('ed-contrib').value = '';
         document.getElementById('ed-pub-popular').checked = false;
         document.getElementById('ed-pub-men').checked = false;
         document.getElementById('ed-pub-women').checked = false;
         document.getElementById('editor-err').classList.remove('show');
+        document.getElementById('lang-btn-vn').classList.add('active');
+        document.getElementById('lang-btn-en').classList.remove('active');
         switchEditorMode('component');
         renderBlocks();
         document.getElementById('normal-editor-body').innerHTML = '';
+        document.getElementById('normal-editor-body-en').innerHTML = '';
+        document.getElementById('normal-editor-body').style.display = '';
+        document.getElementById('normal-editor-body-en').style.display = 'none';
     }
 
     function openArticleEditor(id) {
@@ -1885,23 +2434,37 @@
         if (!art) return;
         editorArticleId = id;
         editorMode = art.editorMode || 'component';
-        blockItems = (art.blocks || []).map(function(b, i) {
+        currentEditorLang = 'vn';
+        blockItemsVn = (art.blocks || []).map(function(b, i) {
             return { id: 'blk-' + Date.now() + '-' + i, type: b.type, fields: Object.assign({}, b) };
         });
+        blockItemsEn = (art.blocksEn || []).map(function(b, i) {
+            return { id: 'blk-en-' + Date.now() + '-' + i, type: b.type, fields: Object.assign({}, b) };
+        });
+        blockItems = blockItemsVn.map(function(b){ return { id: b.id, type: b.type, fields: Object.assign({}, b.fields) }; });
         activatePanel('panel-blog-editor', 'nav-blog-editor');
         document.getElementById('editor-panel-title').textContent = 'Edit Article';
         document.getElementById('ed-title').value = art.title || '';
+        document.getElementById('ed-title-en').value = art.titleEn || '';
         document.getElementById('ed-date').value = art.date || '';
         document.getElementById('ed-hero').value = art.heroImage || '';
+        iwSetValue('hero', art.heroImage || '');
+        var heroInp = document.getElementById('iw-hero-url-input');
+        if (heroInp) heroInp.value = art.heroImage || '';
         populateContribDropdowns();
         document.getElementById('ed-contrib').value = art.contributorIdx !== null && art.contributorIdx !== undefined ? art.contributorIdx : '';
         document.getElementById('ed-pub-popular').checked = !!(art.publishedTo && art.publishedTo.mostPopular);
         document.getElementById('ed-pub-men').checked = !!(art.publishedTo && art.publishedTo.men);
         document.getElementById('ed-pub-women').checked = !!(art.publishedTo && art.publishedTo.women);
         document.getElementById('editor-err').classList.remove('show');
+        document.getElementById('lang-btn-vn').classList.add('active');
+        document.getElementById('lang-btn-en').classList.remove('active');
         switchEditorMode(editorMode);
         renderBlocks();
         document.getElementById('normal-editor-body').innerHTML = art.normalContent || '';
+        document.getElementById('normal-editor-body-en').innerHTML = art.normalContentEn || '';
+        document.getElementById('normal-editor-body').style.display = '';
+        document.getElementById('normal-editor-body-en').style.display = 'none';
     }
 
     function saveArticleEditor() {
@@ -1911,11 +2474,19 @@
             return;
         }
         document.getElementById('editor-err').classList.remove('show');
+        // Collect current lang's blocks before saving
+        blockItems.forEach(function(b){ collectBlockFields(b.id); });
+        if (currentEditorLang === 'vn') {
+            blockItemsVn = blockItems.map(function(b){ return { id: b.id, type: b.type, fields: Object.assign({}, b.fields) }; });
+        } else {
+            blockItemsEn = blockItems.map(function(b){ return { id: b.id, type: b.type, fields: Object.assign({}, b.fields) }; });
+        }
         var contribVal = document.getElementById('ed-contrib').value;
         var contribIdx = (contribVal !== '' && !isNaN(parseInt(contribVal,10))) ? parseInt(contribVal,10) : null;
         var art = {
             id:           editorArticleId || generateArticleId(),
             title:        title,
+            titleEn:      document.getElementById('ed-title-en').value.trim(),
             date:         document.getElementById('ed-date').value.trim(),
             heroImage:    document.getElementById('ed-hero').value.trim(),
             contributorIdx: contribIdx,
@@ -1926,8 +2497,10 @@
             },
             editorMode:   editorMode,
             createdAt:    editorArticleId ? (getArticleById(editorArticleId) || {}).createdAt || Date.now() : Date.now(),
-            blocks:       blockItems.map(function(b){ return Object.assign({type: b.type}, b.fields); }),
-            normalContent: document.getElementById('normal-editor-body').innerHTML
+            blocks:       blockItemsVn.map(function(b){ return Object.assign({type: b.type}, b.fields); }),
+            blocksEn:     blockItemsEn.map(function(b){ return Object.assign({type: b.type}, b.fields); }),
+            normalContent: document.getElementById('normal-editor-body').innerHTML,
+            normalContentEn: document.getElementById('normal-editor-body-en').innerHTML
         };
         var articles = getArticles();
         var idx = articles.findIndex(function(a){ return a.id === art.id; });
@@ -1982,15 +2555,11 @@
 
     function refreshContribPreview(fieldId, previewId) {
         var val = document.getElementById(fieldId).value.trim();
-        var img = document.getElementById(previewId);
-        if (!img) return;
-        if (val) {
-            img.src = val;
-            img.style.display = 'block';
-        } else {
-            img.src = '';
-            img.style.display = 'none';
-        }
+        // Update widget preview
+        var prev = document.getElementById(previewId);
+        if (!prev) return;
+        if (val) { prev.src = val; prev.style.display = 'block'; }
+        else { prev.src = ''; prev.style.display = 'none'; }
     }
 
     // ================================================================
@@ -2141,7 +2710,26 @@
                     '<button class="dynamic-list-remove" onclick="removeParaItem(\'' + blk.id + '\',' + i + ')">×</button>' +
                 '</div>';
             }).join('');
-            return '<div class="form-group"><label>Image URL / Base64</label><input data-f="image" value="' + escapeAttr(f.image||'') + '" placeholder="https://… or paste base64" onpaste="handleBlockImagePaste(event,\'' + blk.id + '\')"></div>' +
+            return '<div class="form-group"><label>Image</label>' +
+                   '<div class="img-widget" id="iw-blk-' + blk.id + '">' +
+                   '<div class="img-widget-dropzone" id="iw-blk-' + blk.id + '-zone" ondragover="event.preventDefault()" ondrop="iwBlockDrop(event,\'' + blk.id + '\')">' +
+                   '<img class="img-widget-preview" id="iw-blk-' + blk.id + '-preview" src="' + escapeAttr(f.image||'') + '" alt="" style="' + (f.image ? 'display:block' : 'display:none') + '">' +
+                   '<div class="img-widget-dropzone-hint">Drop image here</div>' +
+                   '</div>' +
+                   '<div class="img-widget-tabs">' +
+                   '<button class="img-widget-tab active" onclick="iwTab(\'url\',\'blk-' + blk.id + '\')">URL</button>' +
+                   '<button class="img-widget-tab" onclick="iwTab(\'upload\',\'blk-' + blk.id + '\')">Upload</button>' +
+                   '<button class="img-widget-tab" onclick="iwTab(\'b64\',\'blk-' + blk.id + '\')">Base64</button>' +
+                   '</div>' +
+                   '<div class="img-widget-panes">' +
+                   '<div class="img-widget-pane active" id="iw-blk-' + blk.id + '-url">' +
+                   '<input type="text" data-f="image" value="' + escapeAttr(f.image||'') + '" placeholder="https://… or paste base64" oninput="iwBlockUrlChange(this,\'' + blk.id + '\')" onpaste="handleBlockImagePaste(event,\'' + blk.id + '\')"></div>' +
+                   '<div class="img-widget-pane" id="iw-blk-' + blk.id + '-upload">' +
+                   '<input type="file" accept="image/*" onchange="iwBlockFile(event,\'' + blk.id + '\')">' +
+                   '<span class="img-widget-upload-hint">Or drag &amp; drop onto the area above</span></div>' +
+                   '<div class="img-widget-pane" id="iw-blk-' + blk.id + '-b64">' +
+                   '<textarea rows="3" placeholder="Paste base64 data:image/... here" oninput="iwBlockB64(this,\'' + blk.id + '\')"></textarea></div>' +
+                   '</div></div></div>' +
                    '<div class="form-group"><label>Image Alt Text</label><input data-f="imageAlt" value="' + escapeAttr(f.imageAlt||'') + '" placeholder="Describe the image"></div>' +
                    '<div class="form-group"><label>Sub-heading</label><input data-f="heading" value="' + escapeAttr(f.heading||'') + '" placeholder="Section subheading"></div>' +
                    '<div class="form-group"><label>Paragraphs</label>' +
@@ -2246,14 +2834,15 @@
                 e.preventDefault();
                 var reader = new FileReader();
                 var file = items[i].getAsFile();
-                (function(blkIdInner){
-                    reader.onload = function(ev) {
-                        collectBlockFields(blkIdInner);
-                        var blk = blockItems.find(function(b){ return b.id === blkIdInner; });
-                        if (blk) blk.fields.image = ev.target.result;
-                        renderBlocks();
-                    };
-                })(blkId);
+                reader.onload = function(ev) {
+                    // Update the URL input field value
+                    var blkEl = document.querySelector('[data-blk-id="' + blkId + '"]');
+                    if (blkEl) {
+                        var imgInput = blkEl.querySelector('[data-f="image"]');
+                        if (imgInput) imgInput.value = ev.target.result;
+                    }
+                    iwBlockSet(blkId, ev.target.result);
+                };
                 reader.readAsDataURL(file);
                 return;
             }
@@ -2299,24 +2888,16 @@
         document.getElementById('normal-editor-body').focus();
         document.execCommand('formatBlock', false, tag);
     }
-    function togglePreviewDrawer() {
-        var drawer = document.getElementById('preview-drawer');
-        var backdrop = document.getElementById('preview-drawer-backdrop');
-        var isOpen = drawer.classList.contains('open');
-        if (isOpen) {
-            drawer.classList.remove('open');
-            backdrop.classList.remove('open');
-        } else {
-            drawer.classList.add('open');
-            backdrop.classList.add('open');
-            // Trigger a render based on the current editor mode
-            if (document.getElementById('mode-btn-component').classList.contains('active')) {
-                renderComponentPreview();
-            } else {
-                renderNormalPreview();
-            }
+    function toggleInlinePreview() {
+        var col = document.getElementById('editor-right-col');
+        var isOpen = col.classList.contains('open');
+        col.classList.toggle('open', !isOpen);
+        if (!isOpen) {
+            renderLivePreview();
         }
     }
+    // Keep legacy alias so any residual references won't break
+    function togglePreviewDrawer() { toggleInlinePreview(); }
     function toggleImgPanel() {
         var panel = document.getElementById('img-insert-panel');
         panel.classList.toggle('open');
@@ -2436,7 +3017,7 @@
     }
 
     function renderComponentPreview() {
-        var pane = document.getElementById('drawer-preview-content');
+        var pane = document.getElementById('editor-inline-preview');
         if (!pane) return;
         // Sync latest field values before rendering
         blockItems.forEach(function(b) { collectBlockFields(b.id); });
@@ -2514,8 +3095,10 @@
     }
 
     function renderNormalPreview() {
-        var body = document.getElementById('normal-editor-body');
-        var pane = document.getElementById('drawer-preview-content');
+        var body = currentEditorLang === 'en'
+            ? document.getElementById('normal-editor-body-en')
+            : document.getElementById('normal-editor-body');
+        var pane = document.getElementById('editor-inline-preview');
         if (!body || !pane) return;
         var content = body.innerHTML.trim();
         pane.innerHTML = content
@@ -2528,20 +3111,29 @@
     // ================================================================
     function previewInNewTab() {
         blockItems.forEach(function(b) { collectBlockFields(b.id); });
+        // Save current lang
+        if (currentEditorLang === 'vn') {
+            blockItemsVn = blockItems.map(function(b){ return { id: b.id, type: b.type, fields: Object.assign({}, b.fields) }; });
+        } else {
+            blockItemsEn = blockItems.map(function(b){ return { id: b.id, type: b.type, fields: Object.assign({}, b.fields) }; });
+        }
         var contribSel = document.getElementById('ed-contrib');
         var contribIdx = (contribSel && contribSel.value !== '' && !isNaN(parseInt(contribSel.value, 10)))
             ? parseInt(contribSel.value, 10) : null;
         var draft = {
-            id:             editorArticleId || ('preview-' + Date.now()),
-            title:          (document.getElementById('ed-title') || {}).value || '',
-            date:           (document.getElementById('ed-date')  || {}).value || '',
-            heroImage:      (document.getElementById('ed-hero')  || {}).value || '',
-            contributorIdx: contribIdx,
-            publishedTo:    { mostPopular: false, men: false, women: false },
-            editorMode:     editorMode,
-            createdAt:      Date.now(),
-            blocks:         blockItems.map(function(b) { return Object.assign({ type: b.type }, b.fields); }),
-            normalContent:  (document.getElementById('normal-editor-body') || {}).innerHTML || ''
+            id:              editorArticleId || ('preview-' + Date.now()),
+            title:           (document.getElementById('ed-title') || {}).value || '',
+            titleEn:         (document.getElementById('ed-title-en') || {}).value || '',
+            date:            (document.getElementById('ed-date')  || {}).value || '',
+            heroImage:       (document.getElementById('ed-hero')  || {}).value || '',
+            contributorIdx:  contribIdx,
+            publishedTo:     { mostPopular: false, men: false, women: false },
+            editorMode:      editorMode,
+            createdAt:       Date.now(),
+            blocks:          blockItemsVn.map(function(b) { return Object.assign({ type: b.type }, b.fields); }),
+            blocksEn:        blockItemsEn.map(function(b) { return Object.assign({ type: b.type }, b.fields); }),
+            normalContent:   (document.getElementById('normal-editor-body') || {}).innerHTML || '',
+            normalContentEn: (document.getElementById('normal-editor-body-en') || {}).innerHTML || ''
         };
         localStorage.setItem('aestheticLegacyPreviewDraft', JSON.stringify(draft));
         window.open('blog_tmp.html?preview=1', '_blank');
@@ -2993,6 +3585,37 @@
             ['popular','men','women'].forEach(renderHomePanel);
             renderContributors();
 
+            // Register image widget: hero
+            iwRegister('hero', function(src) {
+                document.getElementById('ed-hero').value = src || '';
+                scheduleLivePreview();
+            });
+            // Register image widget: home layout
+            iwRegister('hl-women', function(src) {
+                _homeLayout.womenImage = src || null;
+                if (!_homeLayout.womenImagePos) _homeLayout.womenImagePos = {x:0,y:0};
+                updateHLPreviewImage('women', src, _homeLayout.womenImagePos);
+            });
+            iwRegister('hl-men', function(src) {
+                _homeLayout.menImage = src || null;
+                if (!_homeLayout.menImagePos) _homeLayout.menImagePos = {x:0,y:0};
+                updateHLPreviewImage('men', src, _homeLayout.menImagePos);
+            });
+            // Register image widget: contributor fields
+            ['cf-img','cf-avatar','cf-bg'].forEach(function(fid) {
+                iwRegister(fid, function(src) {
+                    var inp = document.getElementById(fid);
+                    if (inp) inp.value = src || '';
+                });
+            });
+
+            // Load home layout data when navigating to that panel
+            var origActivate = window.activatePanel;
+            window.activatePanel = function(panelId, navId) {
+                origActivate(panelId, navId);
+                if (panelId === 'panel-home-layout') loadHomeLayoutPanel();
+            };
+
             // Live preview: hook meta field changes
             ['ed-title','ed-date','ed-hero'].forEach(function(id) {
                 var el = document.getElementById(id);
@@ -3008,8 +3631,9 @@
                 if (blkEl) collectBlockFields(blkEl.dataset.blkId);
                 scheduleLivePreview();
             });
-            // Live preview: hook normal editor body
+            // Live preview: hook normal editor bodies
             document.getElementById('normal-editor-body').addEventListener('input', scheduleLivePreview);
+            document.getElementById('normal-editor-body-en').addEventListener('input', scheduleLivePreview);
 
         }).catch(function(e) {
             clearTimeout(loadTimer);
@@ -3017,18 +3641,6 @@
         });
     })();
 </script>
-
-    <!-- Live Preview Drawer -->
-    <div class="preview-drawer-backdrop" id="preview-drawer-backdrop" onclick="togglePreviewDrawer()"></div>
-    <div class="preview-drawer" id="preview-drawer">
-        <div class="preview-drawer-header">
-            <span class="preview-drawer-label">Live Preview</span>
-            <button class="preview-drawer-close" onclick="togglePreviewDrawer()" aria-label="Close preview">&times;</button>
-        </div>
-        <div class="preview-drawer-body" id="drawer-preview-content">
-            <div class="preview-placeholder">Add content to see a preview</div>
-        </div>
-    </div>
 
 </body>
 </html>
