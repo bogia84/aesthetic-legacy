@@ -453,7 +453,7 @@
                     <div class="stat-item" id="stat-3">Casual approach</div>
                     <div class="stat-item" id="stat-4">Specialisation</div>
                 </div>
-                <a id="gallery-profile-link" href="contr_detail_tmp.html?index=0" class="view-profile-btn">View Profile →</a>
+                <a id="gallery-profile-link" href="contributor_detail.html?index=0" class="view-profile-btn">View Profile →</a>
             </div>
 
             <div class="slider-wrapper">
@@ -597,7 +597,7 @@
                         document.getElementById('stat-2').textContent = data.stats[1];
                         document.getElementById('stat-3').textContent = data.stats[2];
                         document.getElementById('stat-4').textContent = data.stats[3];
-                        if (profileLink) profileLink.href = 'contr_detail_tmp.html?index=' + realIndex;
+                        if (profileLink) profileLink.href = 'contributor_detail.html?index=' + realIndex;
                         bgImage.style.opacity = 1;
                         infoCard.classList.remove('animating');
                     }, 400); 
@@ -626,7 +626,7 @@
                 itemsToShow.forEach((item, index) => {
                     const card = document.createElement('a');
                     card.className = 'banner-card';
-                    card.href = 'contr_detail_tmp.html?index=' + item.index;
+                    card.href = 'contributor_detail.html?index=' + item.index;
                     card.style.animationDelay = `${index * 0.05}s`; 
                     card.innerHTML = `
                         <img src="${item.img}" alt="${item.name}">

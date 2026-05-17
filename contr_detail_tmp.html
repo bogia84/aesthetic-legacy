@@ -835,6 +835,8 @@
                 var params = new URLSearchParams(window.location.search);
                 var idx = parseInt(params.get('index'), 10);
                 var c = (!isNaN(idx) && contributors[idx]) ? contributors[idx] : contributors[0];
+                var realIdx = !isNaN(idx) ? idx : 0;
+                history.replaceState(null, '', 'contributor_detail.html?index=' + realIdx);
 
                 document.title = c.name + ' - Aesthetic Legacy';
 
@@ -917,11 +919,12 @@
                         if (item.source === 'article') {
                             var art = allArticles.find(function(a) { return String(a.id) === String(item.id); });
                             if (art) {
+                                var _artI = allArticles.indexOf(art);
                                 validItems.push({
                                     img: art.heroImage || '',
                                     title: art.title || '',
                                     date: art.date || '',
-                                    link: 'blog_tmp.html?id=' + encodeURIComponent(art.id)
+                                    link: 'blog_article.html?index=' + _artI
                                 });
                             }
                         } else if (item.source === 'url' && (item.img || item.title)) {
@@ -982,7 +985,7 @@
                     slide.className = 'swiper-slide';
 
                     var link = document.createElement('a');
-                    link.href = 'blog_tmp.html?id=' + encodeURIComponent(art.id);
+                    link.href = 'blog_article.html?index=' + allArticles.indexOf(art);
                     link.style.cssText = 'text-decoration:none;display:block;height:100%;';
 
                     var card = document.createElement('div');

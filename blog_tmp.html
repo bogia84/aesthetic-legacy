@@ -1102,6 +1102,7 @@
         // ---- read data ----
         var params = new URLSearchParams(window.location.search);
         var articleId = params.get('id');
+        var articleIndexParam = params.get('index');
         var isPreview = params.get('preview') === '1';
 
         // Preview draft is ephemeral — kept in localStorage, not GitHub
@@ -1113,7 +1114,7 @@
             } catch(e) {}
             if (!previewDraft) return;
         } else {
-            if (!articleId) return; // no id → show static template
+            if (!articleId && articleIndexParam === null) return; // no id or index → show static template
         }
 
         // Fetch all persistent data from GitHub
@@ -1140,8 +1141,15 @@
             _banner.textContent = 'DRAFT PREVIEW — This article has not been published';
             document.body.appendChild(_banner);
         } else {
-            article = articles.find(function(a) { return a.id === articleId; });
+            if (articleIndexParam !== null) {
+                var _artIdx = parseInt(articleIndexParam, 10);
+                article = articles[_artIdx] || null;
+            } else {
+                article = articles.find(function(a) { return a.id === articleId; });
+            }
             if (!article) return; // article not found → show static template
+            var _finalArtIdx = articleIndexParam !== null ? parseInt(articleIndexParam, 10) : articles.indexOf(article);
+            if (_finalArtIdx >= 0) history.replaceState(null, '', 'blog_article.html?index=' + _finalArtIdx);
         }
 
         var contrib = (article.contributorIdx !== null && article.contributorIdx !== undefined) ? contributors[article.contributorIdx] : null;
@@ -1180,7 +1188,7 @@
 
                 siblingArticles.forEach(function(sa) {
                     var link = document.createElement('a');
-                    link.href = 'blog_tmp.html?id=' + encodeURIComponent(sa.id);
+                    link.href = 'blog_article.html?index=' + articles.indexOf(sa);
                     link.style.cssText = 'text-decoration:none;display:block;';
                     var card = document.createElement('div');
                     card.className = 'sidebar-card';
@@ -1217,7 +1225,7 @@
                     grid.innerHTML = '';
                     popularArticles.forEach(function(pa) {
                         var a = document.createElement('a');
-                        a.href = 'blog_tmp.html?id=' + encodeURIComponent(pa.id);
+                        a.href = 'blog_article.html?index=' + articles.indexOf(pa);
                         a.style.cssText = 'text-decoration:none;display:block;';
                         var card = document.createElement('div');
                         card.className = 'popular-card';

@@ -1037,8 +1037,8 @@
         .hl-section { flex: 1; min-width: 0; }
         .hl-section-title { font-size: 0.85rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.07em; color: var(--dark); margin-bottom: 14px; }
         .hl-preview {
-            border-radius: 4px; overflow: hidden; margin-top: 14px;
-            position: relative; height: 280px;
+            border-radius: 4px; overflow: visible; margin-top: 14px;
+            position: relative; height: 380px;
         }
         .hl-section.women-section .hl-preview { background: #EC262D; }
         .hl-section.men-section .hl-preview { background: #f0f0f0; }
@@ -1058,6 +1058,16 @@
         .hl-coords { font-size: 0.68rem; color: var(--muted); font-weight: 700; margin-top: 6px; font-variant-numeric: tabular-nums; }
         .hl-remove-btn { margin-top: 8px; background: none; border: 1px solid #ddd; border-radius: 3px; padding: 4px 10px; font-size: 0.72rem; font-weight: 700; color: var(--muted); cursor: pointer; display: none; }
         .hl-remove-btn:hover { border-color: #e63946; color: #e63946; }
+        .hl-controls { margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
+        .hl-control-row { display: flex; align-items: center; gap: 8px; }
+        .hl-control-row label { font-size: 0.72rem; font-weight: 700; color: var(--muted); min-width: 100px; white-space: nowrap; }
+        .hl-control-row input[type=range] { flex: 1; accent-color: var(--primary-red); cursor: pointer; }
+        .hl-slider-val { font-size: 0.68rem; color: var(--dark); font-variant-numeric: tabular-nums; min-width: 36px; text-align: right; }
+        .hl-fullscreen-overlay { position: fixed; inset: 0; z-index: 99999; background: #fff; overflow-y: auto; }
+        .hl-fullscreen-close { position: fixed; top: 16px; right: 16px; z-index: 100000; padding: 8px 18px; background: #111; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.04em; }
+        .hl-fullscreen-section { width: 100%; min-height: 65vh; position: relative; display: flex; align-items: center; justify-content: flex-start; overflow: hidden; }
+        .hl-fullscreen-svg { position: absolute; height: 3em; width: auto; z-index: 1; pointer-events: none; transform-origin: top left; }
+        .hl-fullscreen-img { position: absolute; height: 85vh; width: auto; max-width: none; object-fit: contain; z-index: 2; transform-origin: center center; }
         .hl-save-row { margin-top: 24px; display: flex; align-items: center; gap: 12px; }
 
         /* ---- ARTICLE EDITOR SPLIT LAYOUT ---- */
@@ -1285,6 +1295,20 @@
                         </div>
                     </div>
                     <div class="hl-coords" id="hl-women-coords">Position: 0, 0</div>
+                    <div class="hl-controls">
+                        <div class="hl-control-row">
+                            <label>Text Scale <span class="hl-slider-val" id="hl-women-text-scale-val">1.00×</span></label>
+                            <input type="range" id="hl-women-text-scale" min="0.3" max="4" step="0.05" value="1" oninput="hlSliderChange('women','textScale',this.value)">
+                        </div>
+                        <div class="hl-control-row">
+                            <label>Text Opacity <span class="hl-slider-val" id="hl-women-text-opacity-val">50%</span></label>
+                            <input type="range" id="hl-women-text-opacity" min="0" max="1" step="0.05" value="0.5" oninput="hlSliderChange('women','textOpacity',this.value)">
+                        </div>
+                        <div class="hl-control-row">
+                            <label>Image Scale <span class="hl-slider-val" id="hl-women-img-scale-val">1.00×</span></label>
+                            <input type="range" id="hl-women-img-scale" min="0.2" max="3" step="0.05" value="1" oninput="hlSliderChange('women','imageScale',this.value)">
+                        </div>
+                    </div>
                     <button class="hl-remove-btn" id="hl-women-remove" onclick="clearHLImage('women')">✕ Remove Image</button>
                 </div>
                 <!-- MEN -->
@@ -1328,10 +1352,25 @@
                         </div>
                     </div>
                     <div class="hl-coords" id="hl-men-coords">Position: 0, 0</div>
+                    <div class="hl-controls">
+                        <div class="hl-control-row">
+                            <label>Text Scale <span class="hl-slider-val" id="hl-men-text-scale-val">1.00×</span></label>
+                            <input type="range" id="hl-men-text-scale" min="0.3" max="4" step="0.05" value="1" oninput="hlSliderChange('men','textScale',this.value)">
+                        </div>
+                        <div class="hl-control-row">
+                            <label>Text Opacity <span class="hl-slider-val" id="hl-men-text-opacity-val">50%</span></label>
+                            <input type="range" id="hl-men-text-opacity" min="0" max="1" step="0.05" value="0.5" oninput="hlSliderChange('men','textOpacity',this.value)">
+                        </div>
+                        <div class="hl-control-row">
+                            <label>Image Scale <span class="hl-slider-val" id="hl-men-img-scale-val">1.00×</span></label>
+                            <input type="range" id="hl-men-img-scale" min="0.2" max="3" step="0.05" value="1" oninput="hlSliderChange('men','imageScale',this.value)">
+                        </div>
+                    </div>
                     <button class="hl-remove-btn" id="hl-men-remove" onclick="clearHLImage('men')">✕ Remove Image</button>
                 </div>
             </div>
             <div class="hl-save-row">
+                <button class="cms-btn cms-btn-secondary" onclick="openHLFullscreenPreview()">Full Preview</button>
                 <button class="cms-btn" onclick="saveHomeLayoutCMS()">Save Section Images</button>
                 <span id="hl-save-status" style="font-size:0.78rem;color:var(--muted);"></span>
             </div>
@@ -2307,7 +2346,10 @@
     // ================================================================
     //  HOME LAYOUT CMS
     // ================================================================
-    var _homeLayout = { womenImage: null, womenImagePos: {x:0,y:0}, menImage: null, menImagePos: {x:0,y:0} };
+    var _homeLayout = {
+        womenImage: null, womenImagePos: {x:0,y:0}, womenImageScale: 1, womenTextScale: 1, womenTextOpacity: 0.5,
+        menImage: null, menImagePos: {x:0,y:0}, menImageScale: 1, menTextScale: 1, menTextOpacity: 0.5
+    };
 
     function loadHomeLayoutPanel() {
         ghStorage.getHomeLayout().then(function(layout) {
@@ -2324,6 +2366,19 @@
                 if (inp) inp.value = _homeLayout.menImage;
                 updateHLPreviewImage('men', _homeLayout.menImage, _homeLayout.menImagePos);
             }
+            // Restore slider values
+            ['women','men'].forEach(function(sec) {
+                var tsEl = document.getElementById('hl-' + sec + '-text-scale');
+                var toEl = document.getElementById('hl-' + sec + '-text-opacity');
+                var isEl = document.getElementById('hl-' + sec + '-img-scale');
+                var ts = _homeLayout[sec + 'TextScale'] !== undefined ? _homeLayout[sec + 'TextScale'] : 1;
+                var to = _homeLayout[sec + 'TextOpacity'] !== undefined ? _homeLayout[sec + 'TextOpacity'] : 0.5;
+                var is_ = _homeLayout[sec + 'ImageScale'] !== undefined ? _homeLayout[sec + 'ImageScale'] : 1;
+                if (tsEl) { tsEl.value = ts; document.getElementById('hl-' + sec + '-text-scale-val').textContent = parseFloat(ts).toFixed(2) + '×'; }
+                if (toEl) { toEl.value = to; document.getElementById('hl-' + sec + '-text-opacity-val').textContent = Math.round(to * 100) + '%'; }
+                if (isEl) { isEl.value = is_; document.getElementById('hl-' + sec + '-img-scale-val').textContent = parseFloat(is_).toFixed(2) + '×'; }
+                updateHLPreviewSVG(sec);
+            });
         });
     }
 
@@ -2346,7 +2401,8 @@
         img.src = src;
         img.alt = '';
         pos = pos || {x:0,y:0};
-        img.style.transform = 'translate(' + (pos.x||0) + 'px,' + (pos.y||0) + 'px)';
+        var scale = _homeLayout[section + 'ImageScale'] !== undefined ? _homeLayout[section + 'ImageScale'] : 1;
+        img.style.transform = 'translate(' + (pos.x||0) + 'px,' + (pos.y||0) + 'px) scale(' + scale + ')';
         wrap.appendChild(img);
         setupHLDrag(img, section);
         updateHLCoords(section, pos.x||0, pos.y||0);
@@ -2363,7 +2419,8 @@
             function onMove(ev) {
                 var dx = ev.clientX - startX, dy = ev.clientY - startY;
                 var nx = startTX + dx, ny = startTY + dy;
-                img.style.transform = 'translate(' + nx + 'px,' + ny + 'px)';
+                var sc = _homeLayout[section + 'ImageScale'] !== undefined ? _homeLayout[section + 'ImageScale'] : 1;
+                img.style.transform = 'translate(' + nx + 'px,' + ny + 'px) scale(' + sc + ')';
                 _homeLayout[section + 'ImagePos'] = {x: Math.round(nx), y: Math.round(ny)};
                 updateHLCoords(section, nx, ny);
             }
@@ -2380,6 +2437,73 @@
     function updateHLCoords(section, x, y) {
         var el = document.getElementById('hl-' + section + '-coords');
         if (el) el.textContent = 'Position: ' + Math.round(x) + ', ' + Math.round(y);
+    }
+
+    function updateHLPreviewSVG(section) {
+        var svg = document.querySelector('#hl-' + section + '-preview-area .hl-preview-svg');
+        if (!svg) return;
+        var opacity = _homeLayout[section + 'TextOpacity'] !== undefined ? _homeLayout[section + 'TextOpacity'] : 0.5;
+        var scale = _homeLayout[section + 'TextScale'] !== undefined ? _homeLayout[section + 'TextScale'] : 1;
+        svg.style.opacity = opacity;
+        svg.style.transform = 'translate(-50%, -50%) scale(' + scale + ')';
+    }
+
+    function hlSliderChange(section, field, value) {
+        value = parseFloat(value);
+        var key = section + field.charAt(0).toUpperCase() + field.slice(1);
+        _homeLayout[key] = value;
+        var isOpacity = field === 'textOpacity';
+        var display = isOpacity ? Math.round(value * 100) + '%' : parseFloat(value).toFixed(2) + '×';
+        var suffix = field === 'textScale' ? 'text-scale-val' : field === 'textOpacity' ? 'text-opacity-val' : 'img-scale-val';
+        var valEl = document.getElementById('hl-' + section + '-' + suffix);
+        if (valEl) valEl.textContent = display;
+        if (field === 'textScale' || field === 'textOpacity') {
+            updateHLPreviewSVG(section);
+        } else if (field === 'imageScale') {
+            var img = document.querySelector('#hl-' + section + '-img-wrap .hl-preview-graphic');
+            if (img) {
+                var pos = _homeLayout[section + 'ImagePos'] || {x:0,y:0};
+                img.style.transform = 'translate(' + (pos.x||0) + 'px,' + (pos.y||0) + 'px) scale(' + value + ')';
+            }
+        }
+    }
+
+    function openHLFullscreenPreview() {
+        var existing = document.getElementById('hl-fullscreen-overlay');
+        if (existing) { existing.remove(); return; }
+        var overlay = document.createElement('div');
+        overlay.id = 'hl-fullscreen-overlay';
+        overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;background:#fff;overflow-y:auto;';
+        var closeBtn = document.createElement('button');
+        closeBtn.textContent = '✕ Close Preview';
+        closeBtn.style.cssText = 'position:fixed;top:16px;right:16px;z-index:100000;padding:8px 18px;background:#111;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:0.85rem;font-weight:700;letter-spacing:0.04em;';
+        closeBtn.onclick = function() { overlay.remove(); };
+        ['women','men'].forEach(function(section) {
+            var isWomen = section === 'women';
+            var bg = isWomen ? '#EC262D' : '#f0f0f0';
+            var image = _homeLayout[section + 'Image'] || '';
+            var pos = _homeLayout[section + 'ImagePos'] || {x:0,y:0};
+            var imgScale = _homeLayout[section + 'ImageScale'] !== undefined ? _homeLayout[section + 'ImageScale'] : 1;
+            var textScale = _homeLayout[section + 'TextScale'] !== undefined ? _homeLayout[section + 'TextScale'] : 1;
+            var textOpacity = _homeLayout[section + 'TextOpacity'] !== undefined ? _homeLayout[section + 'TextOpacity'] : 0.5;
+            var sectionDiv = document.createElement('div');
+            sectionDiv.style.cssText = 'width:100%;min-height:65vh;background:' + bg + ';position:relative;display:flex;align-items:center;justify-content:flex-start;overflow:hidden;';
+            var svgEl = document.querySelector('#hl-' + section + '-preview-area .hl-preview-svg');
+            if (svgEl) {
+                var svgClone = svgEl.cloneNode(true);
+                svgClone.style.cssText = 'position:absolute;height:3em;width:auto;top:50%;left:50%;transform:translate(-50%,-50%) scale(' + textScale + ');opacity:' + textOpacity + ';z-index:1;pointer-events:none;';
+                sectionDiv.appendChild(svgClone);
+            }
+            if (image) {
+                var imgEl = document.createElement('img');
+                imgEl.src = image;
+                imgEl.style.cssText = 'height:85vh;width:auto;max-width:none;object-fit:contain;position:absolute;top:50%;left:50%;transform:translate(calc(-50% + ' + (pos.x||0) + 'px),calc(-50% + ' + (pos.y||0) + 'px)) scale(' + imgScale + ');z-index:2;';
+                sectionDiv.appendChild(imgEl);
+            }
+            overlay.appendChild(sectionDiv);
+        });
+        overlay.appendChild(closeBtn);
+        document.body.appendChild(overlay);
     }
 
     function clearHLImage(section) {
@@ -3174,7 +3298,7 @@
             normalContentEn: (document.getElementById('normal-editor-body-en') || {}).innerHTML || ''
         };
         localStorage.setItem('aestheticLegacyPreviewDraft', JSON.stringify(draft));
-        window.open('blog_tmp.html?preview=1', '_blank');
+        window.open('blog_article.html?preview=1', '_blank');
     }
 
     // ================================================================
