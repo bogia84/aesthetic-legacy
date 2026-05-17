@@ -2540,12 +2540,17 @@
 
         var sec = document.createElement('div');
         sec.id = 'hl-fs-' + section;
-        sec.style.cssText = 'width:100%;height:100vh;background:' + bg + ';position:relative;display:flex;align-items:center;justify-content:center;font-size:120px;overflow:hidden;flex-shrink:0;';
+        sec.style.cssText = 'width:100%;height:100vh;background:' + bg + ';position:relative;display:flex;flex-direction:row;align-items:stretch;font-size:120px;overflow:hidden;flex-shrink:0;';
 
         var lbl = document.createElement('div');
         lbl.textContent = section.toUpperCase();
         lbl.style.cssText = 'position:absolute;top:14px;left:20px;font-size:0.62rem;font-weight:900;letter-spacing:0.15em;color:' + (isWomen ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.18)') + ';pointer-events:none;z-index:5;';
         sec.appendChild(lbl);
+
+        // ── Left panel (image + SVG watermark) ───────────────────
+        var leftPanel = document.createElement('div');
+        leftPanel.style.cssText = 'flex:1;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;';
+        sec.appendChild(leftPanel);
 
         // ── SVG text ─────────────────────────────────────────────
         var svgSource = document.querySelector('#hl-' + section + '-preview-area .hl-preview-svg');
@@ -2554,11 +2559,11 @@
             var to = _homeLayout[section + 'TextOpacity'] !== undefined ? _homeLayout[section + 'TextOpacity'] : 0.5;
             var svgNode = svgSource.cloneNode(true);
             svgNode.style.cssText = 'position:absolute;height:3em;width:auto;top:50%;left:50%;transform:translate(-50%,-50%) scale(' + ts + ');transform-origin:center;opacity:' + to + ';z-index:1;pointer-events:none;user-select:none;';
-            sec.appendChild(svgNode);
+            leftPanel.appendChild(svgNode);
             var txtHandle = _makeFSHandle(false);
-            sec.appendChild(txtHandle);
-            _setupFSTextResize(txtHandle, svgNode, section, sec);
-            setTimeout(function() { _positionFSHandle(svgNode, txtHandle, sec); }, 100);
+            leftPanel.appendChild(txtHandle);
+            _setupFSTextResize(txtHandle, svgNode, section, leftPanel);
+            setTimeout(function() { _positionFSHandle(svgNode, txtHandle, leftPanel); }, 100);
         }
 
         // ── Image ─────────────────────────────────────────────────
@@ -2571,12 +2576,49 @@
             imgNode.draggable = false;
             imgNode.style.cssText = 'max-height:85vh;height:auto;width:auto;max-width:none;position:absolute;top:50%;left:50%;transform:translate(calc(-50% + ' + (pos.x||0) + 'px),calc(-50% + ' + (pos.y||0) + 'px)) scale(' + imgScale + ');transform-origin:center;z-index:2;cursor:grab;user-select:none;';
             var imgHandle = _makeFSHandle(true);
-            sec.appendChild(imgNode);
-            sec.appendChild(imgHandle);
-            _setupFSImageDrag(imgNode, imgHandle, section, sec);
-            _setupFSImageResize(imgHandle, imgNode, section, sec);
-            imgNode.addEventListener('load', function() { _positionFSHandle(imgNode, imgHandle, sec); });
-            if (imgNode.complete) _positionFSHandle(imgNode, imgHandle, sec);
+            leftPanel.appendChild(imgNode);
+            leftPanel.appendChild(imgHandle);
+            _setupFSImageDrag(imgNode, imgHandle, section, leftPanel);
+            _setupFSImageResize(imgHandle, imgNode, section, leftPanel);
+            imgNode.addEventListener('load', function() { _positionFSHandle(imgNode, imgHandle, leftPanel); });
+            if (imgNode.complete) _positionFSHandle(imgNode, imgHandle, leftPanel);
+        }
+
+        // ── Right panel (article cards) ───────────────────────────
+        var rightPanel = document.createElement('div');
+        rightPanel.style.cssText = 'flex:1.5;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:32px 24px;overflow-y:auto;gap:12px;box-sizing:border-box;';
+        sec.appendChild(rightPanel);
+
+        var ids = (_homeOrder && _homeOrder[section]) ? _homeOrder[section] : [];
+        var artMap = {};
+        if (_articles) _articles.forEach(function(a, i) { artMap[a.id] = {art: a, idx: i}; });
+        var shown = ids.slice(0, 6).map(function(id) { return artMap[id]; }).filter(Boolean);
+        if (shown.length) {
+            shown.forEach(function(item) {
+                var card = document.createElement('div');
+                card.style.cssText = 'display:flex;align-items:center;gap:12px;width:100%;background:rgba(255,255,255,0.12);border-radius:6px;overflow:hidden;flex-shrink:0;';
+                var thumb = document.createElement('img');
+                thumb.src = item.art.heroImage || '';
+                thumb.style.cssText = 'width:80px;height:60px;object-fit:cover;flex-shrink:0;';
+                var info = document.createElement('div');
+                info.style.cssText = 'flex:1;padding:0 8px;';
+                var title = document.createElement('p');
+                title.textContent = item.art.title || '';
+                title.style.cssText = 'margin:0 0 4px;font-size:0.7rem;font-weight:700;color:' + (isWomen ? '#fff' : '#111') + ';line-height:1.3;';
+                var date = document.createElement('span');
+                date.textContent = item.art.date || '';
+                date.style.cssText = 'font-size:0.6rem;color:' + (isWomen ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.45)') + ';';
+                info.appendChild(title);
+                info.appendChild(date);
+                card.appendChild(thumb);
+                card.appendChild(info);
+                rightPanel.appendChild(card);
+            });
+        } else {
+            var emp = document.createElement('p');
+            emp.textContent = 'No articles assigned to this section.';
+            emp.style.cssText = 'font-size:0.75rem;color:' + (isWomen ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.3)') + ';margin:0;';
+            rightPanel.appendChild(emp);
         }
 
         return sec;
