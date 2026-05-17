@@ -1370,7 +1370,7 @@
                 </div>
             </div>
             <div class="hl-save-row">
-                <button class="cms-btn cms-btn-secondary" onclick="openHLFullscreenPreview()">Full Preview</button>
+                <button class="cms-btn cms-btn-secondary" onclick="openHLFullscreenPreview()">Edit Full Size</button>
                 <button class="cms-btn" onclick="saveHomeLayoutCMS()">Save Section Images</button>
                 <span id="hl-save-status" style="font-size:0.78rem;color:var(--muted);"></span>
             </div>
@@ -2466,44 +2466,223 @@
                 img.style.transform = 'translate(' + (pos.x||0) + 'px,' + (pos.y||0) + 'px) scale(' + value + ')';
             }
         }
+        // Sync fullscreen overlay if open
+        var fsSection = document.getElementById('hl-fs-' + section);
+        if (fsSection) {
+            if (field === 'textScale' || field === 'textOpacity') {
+                var fsSvg = fsSection.querySelector('.hl-preview-svg');
+                if (fsSvg) {
+                    var ts = _homeLayout[section + 'TextScale'] !== undefined ? _homeLayout[section + 'TextScale'] : 1;
+                    var to = _homeLayout[section + 'TextOpacity'] !== undefined ? _homeLayout[section + 'TextOpacity'] : 0.5;
+                    fsSvg.style.transform = 'translate(-50%,-50%) scale(' + ts + ')';
+                    fsSvg.style.opacity = to;
+                }
+            } else if (field === 'imageScale') {
+                var fsImg = fsSection.querySelector('img');
+                if (fsImg) {
+                    var pos = _homeLayout[section + 'ImagePos'] || {x:0,y:0};
+                    fsImg.style.transform = 'translate(calc(-50% + ' + (pos.x||0) + 'px),calc(-50% + ' + (pos.y||0) + 'px)) scale(' + value + ')';
+                }
+            }
+        }
     }
 
     function openHLFullscreenPreview() {
         var existing = document.getElementById('hl-fullscreen-overlay');
         if (existing) { existing.remove(); return; }
+
         var overlay = document.createElement('div');
         overlay.id = 'hl-fullscreen-overlay';
-        overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;background:#fff;overflow-y:auto;';
+        overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;overflow-y:auto;background:#111;display:flex;flex-direction:column;';
+
+        // ── top bar ──────────────────────────────────────────────
+        var topBar = document.createElement('div');
+        topBar.style.cssText = 'position:sticky;top:0;z-index:100;background:#111;display:flex;align-items:center;gap:10px;padding:10px 20px;border-bottom:1px solid #333;flex-shrink:0;';
+        var hint = document.createElement('span');
+        hint.textContent = 'Drag image to move  ·  Drag ◢ corner handle to resize  ·  Scroll for Men section';
+        hint.style.cssText = 'flex:1;font-size:0.72rem;color:#888;';
+        var saveBtn = document.createElement('button');
+        saveBtn.textContent = '✓ Save Changes';
+        saveBtn.style.cssText = 'padding:6px 16px;background:#EC262D;color:#fff;border:none;border-radius:3px;cursor:pointer;font-size:0.82rem;font-weight:700;';
+        saveBtn.onclick = function() {
+            saveHomeLayoutCMS();
+            // Sync panel small previews
+            ['women','men'].forEach(function(s) {
+                var pi = document.querySelector('#hl-' + s + '-img-wrap .hl-preview-graphic');
+                if (pi) {
+                    var p = _homeLayout[s + 'ImagePos'] || {x:0,y:0};
+                    var sc = _homeLayout[s + 'ImageScale'] || 1;
+                    pi.style.transform = 'translate(' + (p.x||0) + 'px,' + (p.y||0) + 'px) scale(' + sc + ')';
+                }
+                updateHLPreviewSVG(s);
+                var cp = _homeLayout[s + 'ImagePos'] || {x:0,y:0};
+                updateHLCoords(s, cp.x||0, cp.y||0);
+            });
+        };
         var closeBtn = document.createElement('button');
-        closeBtn.textContent = '✕ Close Preview';
-        closeBtn.style.cssText = 'position:fixed;top:16px;right:16px;z-index:100000;padding:8px 18px;background:#111;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:0.85rem;font-weight:700;letter-spacing:0.04em;';
+        closeBtn.textContent = '✕ Close';
+        closeBtn.style.cssText = 'padding:6px 16px;background:rgba(255,255,255,0.07);color:#fff;border:1px solid rgba(255,255,255,0.2);border-radius:3px;cursor:pointer;font-size:0.82rem;font-weight:700;';
         closeBtn.onclick = function() { overlay.remove(); };
+        topBar.appendChild(hint); topBar.appendChild(saveBtn); topBar.appendChild(closeBtn);
+        overlay.appendChild(topBar);
+
+        // ── sections ─────────────────────────────────────────────
         ['women','men'].forEach(function(section) {
-            var isWomen = section === 'women';
-            var bg = isWomen ? '#EC262D' : '#f0f0f0';
-            var image = _homeLayout[section + 'Image'] || '';
+            overlay.appendChild(_buildFSSection(section));
+        });
+        document.body.appendChild(overlay);
+    }
+
+    // Build one full-viewport section for the fullscreen editor
+    function _buildFSSection(section) {
+        var isWomen = section === 'women';
+        var bg = isWomen ? '#EC262D' : '#f5f5f5';
+
+        var sec = document.createElement('div');
+        sec.id = 'hl-fs-' + section;
+        sec.style.cssText = 'width:100%;height:100vh;background:' + bg + ';position:relative;display:flex;align-items:center;justify-content:center;font-size:120px;overflow:hidden;flex-shrink:0;';
+
+        var lbl = document.createElement('div');
+        lbl.textContent = section.toUpperCase();
+        lbl.style.cssText = 'position:absolute;top:14px;left:20px;font-size:0.62rem;font-weight:900;letter-spacing:0.15em;color:' + (isWomen ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.18)') + ';pointer-events:none;z-index:5;';
+        sec.appendChild(lbl);
+
+        // ── SVG text ─────────────────────────────────────────────
+        var svgSource = document.querySelector('#hl-' + section + '-preview-area .hl-preview-svg');
+        if (svgSource) {
+            var ts = _homeLayout[section + 'TextScale'] !== undefined ? _homeLayout[section + 'TextScale'] : 1;
+            var to = _homeLayout[section + 'TextOpacity'] !== undefined ? _homeLayout[section + 'TextOpacity'] : 0.5;
+            var svgNode = svgSource.cloneNode(true);
+            svgNode.style.cssText = 'position:absolute;height:3em;width:auto;top:50%;left:50%;transform:translate(-50%,-50%) scale(' + ts + ');transform-origin:center;opacity:' + to + ';z-index:1;pointer-events:none;user-select:none;';
+            sec.appendChild(svgNode);
+            var txtHandle = _makeFSHandle(false);
+            sec.appendChild(txtHandle);
+            _setupFSTextResize(txtHandle, svgNode, section, sec);
+            setTimeout(function() { _positionFSHandle(svgNode, txtHandle, sec); }, 100);
+        }
+
+        // ── Image ─────────────────────────────────────────────────
+        var image = _homeLayout[section + 'Image'] || '';
+        if (image) {
             var pos = _homeLayout[section + 'ImagePos'] || {x:0,y:0};
             var imgScale = _homeLayout[section + 'ImageScale'] !== undefined ? _homeLayout[section + 'ImageScale'] : 1;
-            var textScale = _homeLayout[section + 'TextScale'] !== undefined ? _homeLayout[section + 'TextScale'] : 1;
-            var textOpacity = _homeLayout[section + 'TextOpacity'] !== undefined ? _homeLayout[section + 'TextOpacity'] : 0.5;
-            var sectionDiv = document.createElement('div');
-            sectionDiv.style.cssText = 'width:100%;min-height:65vh;background:' + bg + ';position:relative;display:flex;align-items:center;justify-content:flex-start;overflow:hidden;';
-            var svgEl = document.querySelector('#hl-' + section + '-preview-area .hl-preview-svg');
-            if (svgEl) {
-                var svgClone = svgEl.cloneNode(true);
-                svgClone.style.cssText = 'position:absolute;height:3em;width:auto;top:50%;left:50%;transform:translate(-50%,-50%) scale(' + textScale + ');opacity:' + textOpacity + ';z-index:1;pointer-events:none;';
-                sectionDiv.appendChild(svgClone);
+            var imgNode = document.createElement('img');
+            imgNode.src = image;
+            imgNode.draggable = false;
+            imgNode.style.cssText = 'max-height:85vh;height:auto;width:auto;max-width:none;position:absolute;top:50%;left:50%;transform:translate(calc(-50% + ' + (pos.x||0) + 'px),calc(-50% + ' + (pos.y||0) + 'px)) scale(' + imgScale + ');transform-origin:center;z-index:2;cursor:grab;user-select:none;';
+            var imgHandle = _makeFSHandle(true);
+            sec.appendChild(imgNode);
+            sec.appendChild(imgHandle);
+            _setupFSImageDrag(imgNode, imgHandle, section, sec);
+            _setupFSImageResize(imgHandle, imgNode, section, sec);
+            imgNode.addEventListener('load', function() { _positionFSHandle(imgNode, imgHandle, sec); });
+            if (imgNode.complete) _positionFSHandle(imgNode, imgHandle, sec);
+        }
+
+        return sec;
+    }
+
+    // Position a resize handle at the bottom-right of its target element
+    function _positionFSHandle(el, handle, container) {
+        if (!el || !handle || !container) return;
+        var r = el.getBoundingClientRect();
+        var c = container.getBoundingClientRect();
+        handle.style.left = Math.round(r.right  - c.left - 7) + 'px';
+        handle.style.top  = Math.round(r.bottom - c.top  - 7) + 'px';
+    }
+
+    // Create a styled resize handle element
+    function _makeFSHandle(isImage) {
+        var h = document.createElement('div');
+        h.style.cssText = 'position:absolute;width:14px;height:14px;background:' + (isImage ? '#fff' : '#FFD700') + ';border:2px solid rgba(0,0,0,0.35);border-radius:2px;cursor:nwse-resize;z-index:10;box-shadow:0 1px 5px rgba(0,0,0,0.45);';
+        h.title = 'Drag to resize';
+        return h;
+    }
+
+    // Drag-to-move on the image inside the fullscreen editor
+    function _setupFSImageDrag(img, handle, section, sec) {
+        img.addEventListener('mousedown', function(e) {
+            if (e.button !== 0) return;
+            e.preventDefault();
+            img.style.cursor = 'grabbing';
+            var sx = e.clientX, sy = e.clientY;
+            var p0 = _homeLayout[section + 'ImagePos'] || {x:0,y:0};
+            var spx = p0.x||0, spy = p0.y||0;
+            function onMove(ev) {
+                var nx = spx + (ev.clientX - sx);
+                var ny = spy + (ev.clientY - sy);
+                _homeLayout[section + 'ImagePos'] = {x: Math.round(nx), y: Math.round(ny)};
+                var sc = _homeLayout[section + 'ImageScale'] || 1;
+                img.style.transform = 'translate(calc(-50% + ' + nx + 'px),calc(-50% + ' + ny + 'px)) scale(' + sc + ')';
+                _positionFSHandle(img, handle, sec);
+                updateHLCoords(section, nx, ny);
+                var pi = document.querySelector('#hl-' + section + '-img-wrap .hl-preview-graphic');
+                if (pi) pi.style.transform = 'translate(' + Math.round(nx) + 'px,' + Math.round(ny) + 'px) scale(' + sc + ')';
             }
-            if (image) {
-                var imgEl = document.createElement('img');
-                imgEl.src = image;
-                imgEl.style.cssText = 'height:85vh;width:auto;max-width:none;object-fit:contain;position:absolute;top:50%;left:50%;transform:translate(calc(-50% + ' + (pos.x||0) + 'px),calc(-50% + ' + (pos.y||0) + 'px)) scale(' + imgScale + ');z-index:2;';
-                sectionDiv.appendChild(imgEl);
+            function onUp() {
+                img.style.cursor = 'grab';
+                document.removeEventListener('mousemove', onMove);
+                document.removeEventListener('mouseup', onUp);
             }
-            overlay.appendChild(sectionDiv);
+            document.addEventListener('mousemove', onMove);
+            document.addEventListener('mouseup', onUp);
         });
-        overlay.appendChild(closeBtn);
-        document.body.appendChild(overlay);
+    }
+
+    // Drag-to-resize on the image handle (distance from image centre)
+    function _setupFSImageResize(handle, img, section, sec) {
+        handle.addEventListener('mousedown', function(e) {
+            if (e.button !== 0) return;
+            e.preventDefault(); e.stopPropagation();
+            var r = img.getBoundingClientRect();
+            var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+            var d0 = Math.sqrt(Math.pow(e.clientX - cx, 2) + Math.pow(e.clientY - cy, 2)) || 1;
+            var s0 = _homeLayout[section + 'ImageScale'] !== undefined ? _homeLayout[section + 'ImageScale'] : 1;
+            function onMove(ev) {
+                var d1 = Math.sqrt(Math.pow(ev.clientX - cx, 2) + Math.pow(ev.clientY - cy, 2));
+                var ns = Math.max(0.1, Math.min(8, s0 * (d1 / d0)));
+                _homeLayout[section + 'ImageScale'] = ns;
+                var pos = _homeLayout[section + 'ImagePos'] || {x:0,y:0};
+                img.style.transform = 'translate(calc(-50% + ' + (pos.x||0) + 'px),calc(-50% + ' + (pos.y||0) + 'px)) scale(' + ns + ')';
+                var sl = document.getElementById('hl-' + section + '-img-scale');
+                var vl = document.getElementById('hl-' + section + '-img-scale-val');
+                if (sl) sl.value = ns;
+                if (vl) vl.textContent = ns.toFixed(2) + '×';
+                var pi = document.querySelector('#hl-' + section + '-img-wrap .hl-preview-graphic');
+                if (pi) pi.style.transform = 'translate(' + (pos.x||0) + 'px,' + (pos.y||0) + 'px) scale(' + ns + ')';
+                requestAnimationFrame(function() { _positionFSHandle(img, handle, sec); });
+            }
+            function onUp() { document.removeEventListener('mousemove', onMove); document.removeEventListener('mouseup', onUp); }
+            document.addEventListener('mousemove', onMove);
+            document.addEventListener('mouseup', onUp);
+        });
+    }
+
+    // Drag-to-resize on the SVG text handle
+    function _setupFSTextResize(handle, svgNode, section, sec) {
+        handle.addEventListener('mousedown', function(e) {
+            if (e.button !== 0) return;
+            e.preventDefault(); e.stopPropagation();
+            var r = svgNode.getBoundingClientRect();
+            var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+            var d0 = Math.sqrt(Math.pow(e.clientX - cx, 2) + Math.pow(e.clientY - cy, 2)) || 1;
+            var s0 = _homeLayout[section + 'TextScale'] !== undefined ? _homeLayout[section + 'TextScale'] : 1;
+            function onMove(ev) {
+                var d1 = Math.sqrt(Math.pow(ev.clientX - cx, 2) + Math.pow(ev.clientY - cy, 2));
+                var ns = Math.max(0.1, Math.min(8, s0 * (d1 / d0)));
+                _homeLayout[section + 'TextScale'] = ns;
+                svgNode.style.transform = 'translate(-50%,-50%) scale(' + ns + ')';
+                var sl = document.getElementById('hl-' + section + '-text-scale');
+                var vl = document.getElementById('hl-' + section + '-text-scale-val');
+                if (sl) sl.value = ns;
+                if (vl) vl.textContent = ns.toFixed(2) + '×';
+                updateHLPreviewSVG(section);
+                requestAnimationFrame(function() { _positionFSHandle(svgNode, handle, sec); });
+            }
+            function onUp() { document.removeEventListener('mousemove', onMove); document.removeEventListener('mouseup', onUp); }
+            document.addEventListener('mousemove', onMove);
+            document.addEventListener('mouseup', onUp);
+        });
     }
 
     function clearHLImage(section) {
