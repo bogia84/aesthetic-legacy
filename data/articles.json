@@ -29,7 +29,15 @@
         "langEn": ""
       }
     ],
-    "blocksEn": [],
+    "blocksEn": [
+      {
+        "type": "header",
+        "title": "TEST EN",
+        "date": "",
+        "langVn": "",
+        "langEn": ""
+      }
+    ],
     "normalContent": "",
     "normalContentEn": ""
   }
