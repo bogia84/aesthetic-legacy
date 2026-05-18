@@ -172,34 +172,6 @@
         "Mindful",
         "Pilates"
       ]
-    },
-    {
-      "name": "Cody Fisher",
-      "role": "Powerlifter",
-      "type": "men",
-      "img": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&q=80&w=800",
-      "bg": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&q=80&w=1920",
-      "avatar": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&q=80&w=200",
-      "stats": [
-        "Raw Strength",
-        "11 Years",
-        "Competition",
-        "Powerlifting"
-      ]
-    },
-    {
-      "name": "Esther Howard",
-      "role": "Dance Fitness Coach",
-      "type": "women",
-      "img": "https://images.unsplash.com/photo-1579703473489-02ebcb7de488?auto=format&fit=crop&q=80&w=800",
-      "bg": "https://images.unsplash.com/photo-1579703473489-02ebcb7de488?auto=format&fit=crop&q=80&w=1920",
-      "avatar": "https://images.unsplash.com/photo-1579703473489-02ebcb7de488?auto=format&fit=crop&q=80&w=200",
-      "stats": [
-        "Cardio",
-        "5 Years",
-        "High energy",
-        "Zumba"
-      ]
     }
   ],
   "menOrder": [
@@ -207,15 +179,13 @@
     1,
     4,
     6,
-    8,
-    10
+    8
   ],
   "womenOrder": [
     2,
     3,
     5,
     7,
-    9,
-    11
+    9
   ]
 }
