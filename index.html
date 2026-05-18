@@ -105,14 +105,13 @@
         .swiper-popular { width: 100%; } 
 
         /* --- BLOCK 2 & 3: SPLIT LAYOUT (WOMEN & MEN) --- */
-        .split-block { display: flex; flex-direction: row !important; align-items: center; }
+        .split-block { display: flex; flex-direction: row !important; align-items: stretch; }
         .block-women { background-color: var(--primary-red); color: white; }
         .block-men { background-color: var(--light-grey); color: var(--text-dark); }
         
         /* OVERLAPPING TEXT AND IMAGE STYLES */
         .split-left { 
             flex: 1; 
-            height: 100%; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
@@ -145,7 +144,7 @@
             z-index: 2; 
         }
 
-        .split-right { flex: 1.5; padding-left: 40px; width: 60%; position: relative; z-index: 3; }
+        .split-right { flex: 1.5; padding-left: 40px; width: 60%; position: relative; z-index: 3; display: flex; flex-direction: column; justify-content: center; }
         
         .block-women .header-controls a { color: white; }
         .block-women .swiper-button-next, .block-women .swiper-button-prev { border-color: rgba(255,255,255,0.4); }
