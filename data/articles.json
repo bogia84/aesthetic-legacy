@@ -13,7 +13,22 @@
     },
     "editorMode": "component",
     "createdAt": 1779076050734,
-    "blocks": [],
+    "blocks": [
+      {
+        "type": "header",
+        "title": "TEST",
+        "date": "",
+        "langVn": "",
+        "langEn": ""
+      },
+      {
+        "type": "header",
+        "title": "",
+        "date": "",
+        "langVn": "",
+        "langEn": ""
+      }
+    ],
     "blocksEn": [],
     "normalContent": "",
     "normalContentEn": ""
