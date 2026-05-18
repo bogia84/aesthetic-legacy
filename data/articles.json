@@ -1,18 +1,18 @@
-﻿[
+[
   {
-    "id": "art-1778611253486-3248",
-    "title": "TEST 1",
-    "titleEn": "",
-    "date": "May 13, 2026",
-    "heroImage": null,
-    "contributorIdx": null,
+    "id": "art-1779076050734-9165",
+    "title": "New",
+    "titleEn": "New",
+    "date": "May 18, 2026",
+    "heroImage": "https://mdfitness.vn/4725841D002D6361/5B74E3238722CA074725886F000BCE86/$File/tac-dung-cua-tap-gym-nu.jpg",
+    "contributorIdx": 0,
     "publishedTo": {
-      "mostPopular": true,
+      "mostPopular": false,
       "men": true,
-      "women": true
+      "women": false
     },
-    "editorMode": "normal",
-    "createdAt": 1778611253486,
+    "editorMode": "component",
+    "createdAt": 1779076050734,
     "blocks": [],
     "blocksEn": [],
     "normalContent": "",
