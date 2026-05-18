@@ -530,6 +530,10 @@
             });
             if (womenGraphic) womenGraphic.style.opacity = '1';
             if (menGraphic) menGraphic.style.opacity = '1';
+            // CMS edit mode — activated via ?cms-edit=1
+            if ((new URLSearchParams(window.location.search)).get('cms-edit') === '1') {
+                initCmsEditMode(layout || {});
+            }
         }).catch(function() {
             // On error, still reveal static placeholders
             ['swiper-popular','swiper-women','swiper-men'].forEach(function(cls) {
@@ -541,6 +545,241 @@
             if (mg) mg.style.opacity = '1';
         });
     })();
+
+    // ================================================================
+    //  CMS EDIT MODE — activated via ?cms-edit=1 in URL
+    // ================================================================
+    function initCmsEditMode(layoutData) {
+        var editLayout = {};
+        try { editLayout = JSON.parse(JSON.stringify(layoutData)); } catch(e) {}
+        ['women','men'].forEach(function(s) {
+            if (!editLayout[s+'ImagePos'])  editLayout[s+'ImagePos']  = {x:0,y:0};
+            if (!editLayout[s+'TextPos'])   editLayout[s+'TextPos']   = {x:0,y:0};
+            if (editLayout[s+'ImageScale']  === undefined) editLayout[s+'ImageScale']  = 1;
+            if (editLayout[s+'TextScale']   === undefined) editLayout[s+'TextScale']   = 1;
+            if (editLayout[s+'TextOpacity'] === undefined) editLayout[s+'TextOpacity'] = 0.5;
+        });
+        var activeSection = 'women';
+
+        // ---- Inject CSS ----
+        var css = document.createElement('style');
+        css.textContent =
+            '#cms-eb{position:fixed;top:0;left:0;right:0;z-index:9000;background:rgba(17,17,17,0.96);' +
+            'backdrop-filter:blur(4px);display:flex;align-items:center;gap:10px;padding:8px 20px;' +
+            'flex-wrap:wrap;font-family:\'Manrope\',sans-serif;box-shadow:0 2px 14px rgba(0,0,0,0.4);}' +
+            '#cms-eb .eb-lbl{font-size:.6rem;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.35);}' +
+            '#cms-eb .eb-tabs{display:flex;border:1px solid rgba(255,255,255,.15);border-radius:3px;overflow:hidden;}' +
+            '#cms-eb .eb-tab{padding:5px 14px;font-family:inherit;font-size:.72rem;font-weight:800;cursor:pointer;' +
+            'border:none;background:transparent;color:rgba(255,255,255,.5);letter-spacing:.07em;text-transform:uppercase;transition:all .15s;}' +
+            '#cms-eb .eb-tab.active{background:#EC262D;color:#fff;}' +
+            '#cms-eb .eb-sg{display:flex;align-items:center;gap:6px;}' +
+            '#cms-eb .eb-sg label{font-size:.65rem;font-weight:700;color:rgba(255,255,255,.5);white-space:nowrap;}' +
+            '#cms-eb .eb-sg input[type=range]{width:90px;accent-color:#EC262D;cursor:pointer;}' +
+            '#cms-eb .eb-sv{font-size:.65rem;color:rgba(255,255,255,.7);min-width:34px;font-variant-numeric:tabular-nums;}' +
+            '#cms-eb .eb-sep{width:1px;height:20px;background:rgba(255,255,255,.12);}' +
+            '#cms-eb .eb-btn{padding:6px 14px;font-family:inherit;font-size:.72rem;font-weight:800;cursor:pointer;' +
+            'border:none;border-radius:3px;letter-spacing:.05em;text-transform:uppercase;transition:all .2s;}' +
+            '#cms-eb .eb-save{background:#EC262D;color:#fff;}#cms-eb .eb-save:hover{background:#c9202a;}' +
+            '#cms-eb .eb-done{background:rgba(255,255,255,.08);color:rgba(255,255,255,.75);' +
+            'border:1px solid rgba(255,255,255,.15);}#cms-eb .eb-done:hover{background:rgba(255,255,255,.18);}' +
+            '#cms-eb .eb-st{font-size:.7rem;font-weight:700;color:#5de895;min-width:100px;}' +
+            '.eb-drag{cursor:grab!important;user-select:none;}.eb-drag:active{cursor:grabbing!important;}' +
+            '.eb-handle{position:absolute;width:14px;height:14px;border:2px solid rgba(0,0,0,.35);' +
+            'border-radius:2px;cursor:nwse-resize;z-index:100;box-shadow:0 1px 5px rgba(0,0,0,.45);}' +
+            '.eb-handle.img-h{background:#fff;}.eb-handle.txt-h{background:#FFD700;}';
+        document.head.appendChild(css);
+
+        // Push content below bar
+        var sc = document.querySelector('.scroll-container');
+        if (sc) sc.style.paddingTop = '46px';
+
+        // ---- Build toolbar ----
+        var bar = document.createElement('div');
+        bar.id = 'cms-eb';
+        bar.innerHTML =
+            '<span class="eb-lbl">CMS Edit</span>' +
+            '<div class="eb-tabs">' +
+                '<button class="eb-tab active" id="eb-sec-w" onclick="_ebSec(\'women\')">Women</button>' +
+                '<button class="eb-tab" id="eb-sec-m" onclick="_ebSec(\'men\')">Men</button>' +
+            '</div>' +
+            '<div class="eb-sep"></div>' +
+            '<div class="eb-sg"><label>Img Scale</label>' +
+                '<input type="range" id="eb-is" min="0.2" max="3" step="0.05" value="1" oninput="_ebSl(\'imageScale\',this.value)">' +
+                '<span class="eb-sv" id="eb-is-v">1.00&times;</span></div>' +
+            '<div class="eb-sg"><label>Text Scale</label>' +
+                '<input type="range" id="eb-ts" min="0.3" max="4" step="0.05" value="1" oninput="_ebSl(\'textScale\',this.value)">' +
+                '<span class="eb-sv" id="eb-ts-v">1.00&times;</span></div>' +
+            '<div class="eb-sg"><label>Text Opacity</label>' +
+                '<input type="range" id="eb-op" min="0" max="1" step="0.05" value="0.5" oninput="_ebSl(\'textOpacity\',this.value)">' +
+                '<span class="eb-sv" id="eb-op-v">50%</span></div>' +
+            '<div class="eb-sep"></div>' +
+            '<button class="eb-btn eb-save" onclick="_ebSave()">Save</button>' +
+            '<button class="eb-btn eb-done" onclick="location.href=\'index.html\'">Done</button>' +
+            '<span class="eb-st" id="eb-st"></span>';
+        document.body.appendChild(bar);
+
+        // ---- Utility: position handle at bottom-right of el relative to container ----
+        function posHandle(el, h, cont) {
+            if (!el || !h || !cont) return;
+            var r = el.getBoundingClientRect(), c = cont.getBoundingClientRect();
+            h.style.left = Math.round(r.right  - c.left - 7) + 'px';
+            h.style.top  = Math.round(r.bottom - c.top  - 7) + 'px';
+        }
+
+        // ---- Global: section tab switch (syncs sliders) ----
+        window._ebSec = function(section) {
+            activeSection = section;
+            var bw = document.getElementById('eb-sec-w'), bm = document.getElementById('eb-sec-m');
+            if (bw) bw.classList.toggle('active', section === 'women');
+            if (bm) bm.classList.toggle('active', section === 'men');
+            var is_ = editLayout[section+'ImageScale']  !== undefined ? editLayout[section+'ImageScale']  : 1;
+            var ts  = editLayout[section+'TextScale']   !== undefined ? editLayout[section+'TextScale']   : 1;
+            var op  = editLayout[section+'TextOpacity'] !== undefined ? editLayout[section+'TextOpacity'] : 0.5;
+            var sI = document.getElementById('eb-is'), sT = document.getElementById('eb-ts'), sO = document.getElementById('eb-op');
+            var vI = document.getElementById('eb-is-v'), vT = document.getElementById('eb-ts-v'), vO = document.getElementById('eb-op-v');
+            if (sI) { sI.value = is_; if (vI) vI.textContent = parseFloat(is_).toFixed(2)+'\u00d7'; }
+            if (sT) { sT.value = ts;  if (vT) vT.textContent = parseFloat(ts).toFixed(2)+'\u00d7';  }
+            if (sO) { sO.value = op;  if (vO) vO.textContent = Math.round(op*100)+'%'; }
+        };
+
+        // ---- Global: slider change ----
+        window._ebSl = function(field, value) {
+            value = parseFloat(value);
+            editLayout[activeSection + field.charAt(0).toUpperCase() + field.slice(1)] = value;
+            var graphic = document.querySelector('.block-' + activeSection + ' .split-graphic');
+            var svgEl   = document.querySelector('.block-' + activeSection + ' .original-svg-text');
+            var vid = field === 'imageScale' ? 'eb-is-v' : field === 'textScale' ? 'eb-ts-v' : 'eb-op-v';
+            var vEl = document.getElementById(vid);
+            if (vEl) vEl.textContent = field === 'textOpacity' ? Math.round(value*100)+'%' : parseFloat(value).toFixed(2)+'\u00d7';
+            if (field === 'imageScale' && graphic) {
+                var pos = editLayout[activeSection+'ImagePos'] || {x:0,y:0};
+                graphic.style.transform = 'translate(calc(-50% + '+(pos.x||0)+'px), '+(pos.y||0)+'px) scale('+value+')';
+                var hEl = document.getElementById('eb-h-' + activeSection);
+                var lp  = document.querySelector('.block-' + activeSection + ' .split-left');
+                if (hEl && lp) requestAnimationFrame(function() { posHandle(graphic, hEl, lp); });
+            }
+            if ((field === 'textScale' || field === 'textOpacity') && svgEl) {
+                var sc_ = editLayout[activeSection+'TextScale']   !== undefined ? editLayout[activeSection+'TextScale']   : 1;
+                var op  = editLayout[activeSection+'TextOpacity'] !== undefined ? editLayout[activeSection+'TextOpacity'] : 0.5;
+                svgEl.style.transform = 'translate(-50%,-50%) scale(' + sc_ + ')';
+                svgEl.style.opacity   = op;
+            }
+        };
+
+        // ---- Global: save to GitHub ----
+        window._ebSave = function() {
+            var stEl = document.getElementById('eb-st');
+            if (stEl) stEl.textContent = 'Saving\u2026';
+            ghStorage.saveHomeLayout(editLayout).then(function() {
+                if (stEl) {
+                    stEl.textContent = '\u2713 Saved!';
+                    setTimeout(function() { if (stEl) stEl.textContent = ''; }, 3000);
+                }
+            }).catch(function(err) {
+                if (stEl) stEl.textContent = '\u26a0 ' + ((err && err.message) || 'Failed');
+            });
+        };
+
+        // ---- Setup drag for each section ----
+        ['women','men'].forEach(function(section) {
+            var graphic   = document.querySelector('.block-' + section + ' .split-graphic');
+            var svgEl     = document.querySelector('.block-' + section + ' .original-svg-text');
+            var leftPanel = document.querySelector('.block-' + section + ' .split-left');
+
+            // Image: drag to move + corner handle to resize
+            if (graphic && leftPanel) {
+                graphic.classList.add('eb-drag');
+                var imgH = document.createElement('div');
+                imgH.className = 'eb-handle img-h';
+                imgH.id = 'eb-h-' + section;
+                imgH.title = 'Drag to resize image';
+                leftPanel.appendChild(imgH);
+                function placeH() { posHandle(graphic, imgH, leftPanel); }
+                graphic.addEventListener('load', placeH);
+                if (graphic.complete && graphic.naturalWidth) setTimeout(placeH, 150);
+
+                graphic.addEventListener('mousedown', function(e) {
+                    if (e.button !== 0) return;
+                    e.preventDefault();
+                    _ebSec(section);
+                    graphic.style.cursor = 'grabbing';
+                    var sx = e.clientX, sy = e.clientY;
+                    var p0 = editLayout[section+'ImagePos'] || {x:0,y:0};
+                    var ox = p0.x||0, oy = p0.y||0;
+                    function mv(ev) {
+                        var nx = Math.round(ox + ev.clientX - sx), ny = Math.round(oy + ev.clientY - sy);
+                        editLayout[section+'ImagePos'] = {x:nx, y:ny};
+                        var sc_ = editLayout[section+'ImageScale']||1;
+                        graphic.style.transform = 'translate(calc(-50% + '+nx+'px), '+ny+'px) scale('+sc_+')';
+                        requestAnimationFrame(placeH);
+                    }
+                    function up() {
+                        graphic.style.cursor = 'grab';
+                        document.removeEventListener('mousemove', mv);
+                        document.removeEventListener('mouseup', up);
+                    }
+                    document.addEventListener('mousemove', mv);
+                    document.addEventListener('mouseup', up);
+                });
+
+                imgH.addEventListener('mousedown', function(e) {
+                    if (e.button !== 0) return;
+                    e.preventDefault(); e.stopPropagation();
+                    _ebSec(section);
+                    var r = graphic.getBoundingClientRect();
+                    var cx = r.left + r.width/2, cy = r.top + r.height/2;
+                    var d0 = Math.hypot(e.clientX - cx, e.clientY - cy) || 1;
+                    var s0 = editLayout[section+'ImageScale'] !== undefined ? editLayout[section+'ImageScale'] : 1;
+                    function mv(ev) {
+                        var ns = Math.max(0.1, Math.min(6, s0 * Math.hypot(ev.clientX-cx, ev.clientY-cy) / d0));
+                        editLayout[section+'ImageScale'] = ns;
+                        var pos = editLayout[section+'ImagePos'] || {x:0,y:0};
+                        graphic.style.transform = 'translate(calc(-50% + '+(pos.x||0)+'px), '+(pos.y||0)+'px) scale('+ns+')';
+                        if (section === activeSection) {
+                            var sl = document.getElementById('eb-is'), vl = document.getElementById('eb-is-v');
+                            if (sl) sl.value = ns;
+                            if (vl) vl.textContent = ns.toFixed(2)+'\u00d7';
+                        }
+                        requestAnimationFrame(placeH);
+                    }
+                    function up() { document.removeEventListener('mousemove', mv); document.removeEventListener('mouseup', up); }
+                    document.addEventListener('mousemove', mv);
+                    document.addEventListener('mouseup', up);
+                });
+            }
+
+            // SVG watermark: drag to move
+            if (svgEl) {
+                svgEl.style.pointerEvents = 'all';
+                svgEl.classList.add('eb-drag');
+                svgEl.addEventListener('mousedown', function(e) {
+                    if (e.button !== 0) return;
+                    e.preventDefault();
+                    _ebSec(section);
+                    svgEl.style.cursor = 'grabbing';
+                    var sx = e.clientX, sy = e.clientY;
+                    var p0 = editLayout[section+'TextPos'] || {x:0,y:0};
+                    var ox = p0.x||0, oy = p0.y||0;
+                    function mv(ev) {
+                        var nx = Math.round(ox + ev.clientX - sx), ny = Math.round(oy + ev.clientY - sy);
+                        editLayout[section+'TextPos'] = {x:nx, y:ny};
+                        svgEl.style.top  = 'calc(50% + ' + ny + 'px)';
+                        svgEl.style.left = 'calc(50% + ' + nx + 'px)';
+                    }
+                    function up() {
+                        svgEl.style.cursor = 'grab';
+                        document.removeEventListener('mousemove', mv);
+                        document.removeEventListener('mouseup', up);
+                    }
+                    document.addEventListener('mousemove', mv);
+                    document.addEventListener('mouseup', up);
+                });
+            }
+        });
+
+        // Init sliders for default (women) section
+        _ebSec('women');
+    }
 
     // --- Mobile Menu Toggle ---
     const hamburger = document.getElementById('hamburger-menu');
