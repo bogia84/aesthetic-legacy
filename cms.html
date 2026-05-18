@@ -2481,7 +2481,7 @@
                 var fsImg = fsSection.querySelector('img');
                 if (fsImg) {
                     var pos = _homeLayout[section + 'ImagePos'] || {x:0,y:0};
-                    fsImg.style.transform = 'translate(calc(-50% + ' + (pos.x||0) + 'px),calc(-50% + ' + (pos.y||0) + 'px)) scale(' + value + ')';
+                    fsImg.style.transform = 'translate(calc(-50% + ' + (pos.x||0) + 'px),' + (pos.y||0) + 'px) scale(' + value + ')';
                 }
             }
         }
@@ -2557,12 +2557,14 @@
         if (svgSource) {
             var ts = _homeLayout[section + 'TextScale'] !== undefined ? _homeLayout[section + 'TextScale'] : 1;
             var to = _homeLayout[section + 'TextOpacity'] !== undefined ? _homeLayout[section + 'TextOpacity'] : 0.5;
+            var tp = _homeLayout[section + 'TextPos'] || {x:0, y:0};
             var svgNode = svgSource.cloneNode(true);
-            svgNode.style.cssText = 'position:absolute;height:3em;width:auto;top:50%;left:50%;transform:translate(-50%,-50%) scale(' + ts + ');transform-origin:center;opacity:' + to + ';z-index:1;pointer-events:none;user-select:none;';
+            svgNode.style.cssText = 'position:absolute;height:3em;width:auto;top:calc(50% + ' + (tp.y||0) + 'px);left:calc(50% + ' + (tp.x||0) + 'px);transform:translate(-50%,-50%) scale(' + ts + ');transform-origin:center;opacity:' + to + ';z-index:1;pointer-events:all;cursor:grab;user-select:none;';
             leftPanel.appendChild(svgNode);
             var txtHandle = _makeFSHandle(false);
             leftPanel.appendChild(txtHandle);
             _setupFSTextResize(txtHandle, svgNode, section, leftPanel);
+            _setupFSTextDrag(svgNode, txtHandle, section, leftPanel);
             setTimeout(function() { _positionFSHandle(svgNode, txtHandle, leftPanel); }, 100);
         }
 
@@ -2574,7 +2576,7 @@
             var imgNode = document.createElement('img');
             imgNode.src = image;
             imgNode.draggable = false;
-            imgNode.style.cssText = 'max-height:85vh;height:auto;width:auto;max-width:none;position:absolute;top:50%;left:50%;transform:translate(calc(-50% + ' + (pos.x||0) + 'px),calc(-50% + ' + (pos.y||0) + 'px)) scale(' + imgScale + ');transform-origin:center;z-index:2;cursor:grab;user-select:none;';
+            imgNode.style.cssText = 'max-height:85vh;height:auto;width:auto;max-width:none;position:absolute;bottom:0;left:50%;transform:translate(calc(-50% + ' + (pos.x||0) + 'px),' + (pos.y||0) + 'px) scale(' + imgScale + ');transform-origin:bottom center;z-index:2;cursor:grab;user-select:none;';
             var imgHandle = _makeFSHandle(true);
             leftPanel.appendChild(imgNode);
             leftPanel.appendChild(imgHandle);
@@ -2655,7 +2657,7 @@
                 var ny = spy + (ev.clientY - sy);
                 _homeLayout[section + 'ImagePos'] = {x: Math.round(nx), y: Math.round(ny)};
                 var sc = _homeLayout[section + 'ImageScale'] || 1;
-                img.style.transform = 'translate(calc(-50% + ' + nx + 'px),calc(-50% + ' + ny + 'px)) scale(' + sc + ')';
+                img.style.transform = 'translate(calc(-50% + ' + nx + 'px),' + ny + 'px) scale(' + sc + ')';
                 _positionFSHandle(img, handle, sec);
                 updateHLCoords(section, nx, ny);
                 var pi = document.querySelector('#hl-' + section + '-img-wrap .hl-preview-graphic');
@@ -2685,7 +2687,7 @@
                 var ns = Math.max(0.1, Math.min(8, s0 * (d1 / d0)));
                 _homeLayout[section + 'ImageScale'] = ns;
                 var pos = _homeLayout[section + 'ImagePos'] || {x:0,y:0};
-                img.style.transform = 'translate(calc(-50% + ' + (pos.x||0) + 'px),calc(-50% + ' + (pos.y||0) + 'px)) scale(' + ns + ')';
+                img.style.transform = 'translate(calc(-50% + ' + (pos.x||0) + 'px),' + (pos.y||0) + 'px) scale(' + ns + ')';
                 var sl = document.getElementById('hl-' + section + '-img-scale');
                 var vl = document.getElementById('hl-' + section + '-img-scale-val');
                 if (sl) sl.value = ns;
@@ -2722,6 +2724,33 @@
                 requestAnimationFrame(function() { _positionFSHandle(svgNode, handle, sec); });
             }
             function onUp() { document.removeEventListener('mousemove', onMove); document.removeEventListener('mouseup', onUp); }
+            document.addEventListener('mousemove', onMove);
+            document.addEventListener('mouseup', onUp);
+        });
+    }
+
+    // Drag-to-move on the SVG text watermark inside the fullscreen editor
+    function _setupFSTextDrag(svgNode, handle, section, sec) {
+        svgNode.addEventListener('mousedown', function(e) {
+            if (e.button !== 0) return;
+            e.preventDefault(); e.stopPropagation();
+            svgNode.style.cursor = 'grabbing';
+            var sx = e.clientX, sy = e.clientY;
+            var p0 = _homeLayout[section + 'TextPos'] || {x:0, y:0};
+            var spx = p0.x||0, spy = p0.y||0;
+            function onMove(ev) {
+                var nx = spx + (ev.clientX - sx);
+                var ny = spy + (ev.clientY - sy);
+                _homeLayout[section + 'TextPos'] = {x: Math.round(nx), y: Math.round(ny)};
+                svgNode.style.top = 'calc(50% + ' + ny + 'px)';
+                svgNode.style.left = 'calc(50% + ' + nx + 'px)';
+                _positionFSHandle(svgNode, handle, sec);
+            }
+            function onUp() {
+                svgNode.style.cursor = 'grab';
+                document.removeEventListener('mousemove', onMove);
+                document.removeEventListener('mouseup', onUp);
+            }
             document.addEventListener('mousemove', onMove);
             document.addEventListener('mouseup', onUp);
         });

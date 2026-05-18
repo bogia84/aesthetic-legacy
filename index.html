@@ -126,6 +126,9 @@
             width: auto;
             max-width: 100%;
             display: block;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             z-index: 1; 
             opacity: 0.5; 
         }
@@ -135,8 +138,10 @@
             max-width: 100%;
             height: auto;
             max-height: 85vh; 
-            object-fit: contain;
-            position: relative; 
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
             z-index: 2; 
         }
 
@@ -497,20 +502,26 @@
                     womenGraphic.src = layout.womenImage;
                     var wp = layout.womenImagePos || { x: 0, y: 0 };
                     var ws = layout.womenImageScale || 1;
-                    womenGraphic.style.transform = 'translate(' + (wp.x || 0) + 'px, ' + (wp.y || 0) + 'px) scale(' + ws + ')';
+                    womenGraphic.style.transform = 'translate(calc(-50% + ' + (wp.x || 0) + 'px), ' + (wp.y || 0) + 'px) scale(' + ws + ')';
                 }
                 if (menGraphic && layout.menImage) {
                     menGraphic.src = layout.menImage;
                     var mp = layout.menImagePos || { x: 0, y: 0 };
                     var ms = layout.menImageScale || 1;
-                    menGraphic.style.transform = 'translate(' + (mp.x || 0) + 'px, ' + (mp.y || 0) + 'px) scale(' + ms + ')';
+                    menGraphic.style.transform = 'translate(calc(-50% + ' + (mp.x || 0) + 'px), ' + (mp.y || 0) + 'px) scale(' + ms + ')';
                 }
                 if (womenSvg) {
-                    if (layout.womenTextScale !== undefined) womenSvg.style.transform = 'scale(' + layout.womenTextScale + ')';
+                    var wtp = layout.womenTextPos || {x:0, y:0};
+                    womenSvg.style.top = 'calc(50% + ' + (wtp.y||0) + 'px)';
+                    womenSvg.style.left = 'calc(50% + ' + (wtp.x||0) + 'px)';
+                    if (layout.womenTextScale !== undefined) womenSvg.style.transform = 'translate(-50%,-50%) scale(' + layout.womenTextScale + ')';
                     if (layout.womenTextOpacity !== undefined) womenSvg.style.opacity = layout.womenTextOpacity;
                 }
                 if (menSvg) {
-                    if (layout.menTextScale !== undefined) menSvg.style.transform = 'scale(' + layout.menTextScale + ')';
+                    var mtp = layout.menTextPos || {x:0, y:0};
+                    menSvg.style.top = 'calc(50% + ' + (mtp.y||0) + 'px)';
+                    menSvg.style.left = 'calc(50% + ' + (mtp.x||0) + 'px)';
+                    if (layout.menTextScale !== undefined) menSvg.style.transform = 'translate(-50%,-50%) scale(' + layout.menTextScale + ')';
                     if (layout.menTextOpacity !== undefined) menSvg.style.opacity = layout.menTextOpacity;
                 }
             }
