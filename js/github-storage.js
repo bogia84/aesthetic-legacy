@@ -39,11 +39,13 @@
     }
 
     function headers() {
-        return {
-            'Authorization': 'Bearer ' + getToken(),
+        var token = getToken();
+        var h = {
             'Accept': 'application/vnd.github+json',
             'X-GitHub-Api-Version': '2022-11-28'
         };
+        if (token) h['Authorization'] = 'Bearer ' + token;
+        return h;
     }
 
     // Unicode-safe base64 encode
