@@ -532,9 +532,9 @@
             <span>AESTHETIC LEGACY</span>
         </div>
         <nav id="main-nav">
-            <a href="https://bogia84.github.io/aesthetic-legacy/">Home</a>
-            <a href="https://bogia84.github.io/aesthetic-legacy/about">About us</a>
-            <a href="https://bogia84.github.io/aesthetic-legacy/contributors">Contributors</a>
+            <a href="index.html">Home</a>
+            <a href="about.html">About us</a>
+            <a href="contributors.html">Contributors</a>
         </nav>
         <div class="hamburger" id="hamburger-menu">
             <svg width="30" height="20" viewBox="0 0 30 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -638,23 +638,23 @@
             <div class="social-gallery">
                 <!-- Column 1 -->
                 <div class="gallery-col">
-                    <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=600" class="gallery-img tall" alt="Social Gallery 1">
-                    <img src="https://images.unsplash.com/photo-1548690312-e3b507d8c110?auto=format&fit=crop&q=80&w=600" class="gallery-img square" alt="Social Gallery 2">
+                    <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=600" class="gallery-img tall" alt="Social Gallery 1" id="social-img-1">
+                    <img src="https://images.unsplash.com/photo-1548690312-e3b507d8c110?auto=format&fit=crop&q=80&w=600" class="gallery-img square" alt="Social Gallery 2" id="social-img-2">
                 </div>
                 <!-- Column 2 -->
                 <div class="gallery-col">
-                    <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&q=80&w=600" class="gallery-img square" alt="Social Gallery 3">
-                    <img src="https://images.unsplash.com/photo-1534367507873-d2d7e24c797f?auto=format&fit=crop&q=80&w=600" class="gallery-img tall" alt="Social Gallery 4">
+                    <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&q=80&w=600" class="gallery-img square" alt="Social Gallery 3" id="social-img-3">
+                    <img src="https://images.unsplash.com/photo-1534367507873-d2d7e24c797f?auto=format&fit=crop&q=80&w=600" class="gallery-img tall" alt="Social Gallery 4" id="social-img-4">
                 </div>
                 <!-- Column 3 -->
                 <div class="gallery-col">
-                    <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&q=80&w=600" class="gallery-img tall" alt="Social Gallery 5">
-                    <img src="https://images.unsplash.com/photo-1609899517235-cbf9e4407b96?auto=format&fit=crop&q=80&w=600" class="gallery-img square" alt="Social Gallery 6">
+                    <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&q=80&w=600" class="gallery-img tall" alt="Social Gallery 5" id="social-img-5">
+                    <img src="https://images.unsplash.com/photo-1609899517235-cbf9e4407b96?auto=format&fit=crop&q=80&w=600" class="gallery-img square" alt="Social Gallery 6" id="social-img-6">
                 </div>
                 <!-- Column 4 -->
                 <div class="gallery-col">
-                    <img src="https://images.unsplash.com/photo-1576678927484-cc907957088c?auto=format&fit=crop&q=80&w=600" class="gallery-img square" alt="Social Gallery 7">
-                    <img src="https://images.unsplash.com/photo-1599058917212-d750089bc07e?auto=format&fit=crop&q=80&w=600" class="gallery-img tall" alt="Social Gallery 8">
+                    <img src="https://images.unsplash.com/photo-1576678927484-cc907957088c?auto=format&fit=crop&q=80&w=600" class="gallery-img square" alt="Social Gallery 7" id="social-img-7">
+                    <img src="https://images.unsplash.com/photo-1599058917212-d750089bc07e?auto=format&fit=crop&q=80&w=600" class="gallery-img tall" alt="Social Gallery 8" id="social-img-8">
                 </div>
             </div>
 
@@ -873,6 +873,15 @@
 
                 var socialHeading = document.getElementById('detail-social-heading');
                 if (socialHeading) socialHeading.textContent = c.name + ' - Social';
+
+                // Populate social gallery images from contributor data
+                if (c.galleryImages && c.galleryImages.length) {
+                    c.galleryImages.forEach(function(src, i) {
+                        if (!src) return;
+                        var el = document.getElementById('social-img-' + (i + 1));
+                        if (el) el.src = src;
+                    });
+                }
 
                 var newspaperHeading = document.getElementById('detail-newspaper-heading');
                 if (newspaperHeading) newspaperHeading.textContent = c.name + ' - Newspaper';

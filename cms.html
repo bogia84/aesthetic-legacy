@@ -706,6 +706,32 @@
         }
         .toolbar-btn:hover { background: var(--dark); color: #fff; border-color: var(--dark); }
         .toolbar-sep { width: 1px; height: 20px; background: var(--border); margin: 0 3px; flex-shrink: 0; }
+        .toolbar-select {
+            padding: 4px 6px;
+            font-family: 'Manrope', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid var(--border);
+            background: #fff;
+            color: var(--dark);
+            border-radius: 3px;
+            height: 28px;
+        }
+        .toolbar-color-wrap {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            padding: 3px 7px;
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            background: #fff;
+            cursor: pointer;
+            height: 28px;
+            box-sizing: border-box;
+        }
+        .toolbar-color-wrap span { font-size: 0.82rem; font-weight: 900; line-height: 1; }
+        .toolbar-color-wrap input[type="color"] { width: 18px; height: 18px; border: none; padding: 0; cursor: pointer; background: none; }
         .editor-body {
             min-height: 400px;
             padding: 24px;
@@ -1039,12 +1065,18 @@
         .hia-col-label { font-size: 0.72rem; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px; padding: 5px 12px; display: inline-block; color: #fff; }
         .hia-col-label.women { background: #EC262D; }
         .hia-col-label.men { background: #111; }
+        .hia-col-label.footer { background: #444; }
+        .hia-stage.footer { background: #f0f0f0; }
+        .hia-stage.footer.drag-over { outline-color: rgba(0,0,0,0.25); }
+        .hia-footer-logo-overlay { position: absolute; right: 0; top: 0; width: 50%; height: 100%; background: rgba(255,255,255,0.92); display: flex; align-items: center; justify-content: center; z-index: 3; pointer-events: none; padding: 20px; box-sizing: border-box; }
+        .hia-footer-logo-text { font-size: 1.1rem; font-weight: 900; letter-spacing: 0.05em; text-align: center; opacity: 0.4; line-height: 1.3; text-transform: uppercase; }
+        #hia-img-footer { top: 50%; bottom: auto; left: 25%; }
         .hia-stage {
             position: relative; height: 420px; border-radius: 4px; overflow: hidden;
             cursor: crosshair; flex-shrink: 0;
         }
         .hia-stage.women { background: #EC262D; }
-        .hia-stage.men { background: #f0f0f0; }
+        .hia-stage.men { background: #282828; }
         .hia-stage.drag-over { outline: 3px dashed rgba(255,255,255,0.55); outline-offset: -6px; }
         .hia-stage.men.drag-over { outline-color: rgba(0,0,0,0.25); }
         .hia-stage-svg {
@@ -1091,6 +1123,46 @@
         .hia-remove-btn { background: none; border: 1px solid #ddd; padding: 5px 12px; font-size: 0.72rem; font-weight: 700; color: var(--muted); cursor: pointer; align-self: flex-start; transition: all 0.15s; }
         .hia-remove-btn:hover { border-color: var(--red); color: var(--red); }
         .hia-save-row { margin-top: 28px; display: flex; align-items: center; gap: 12px; }
+
+        /* ---- ABOUT US PANEL ---- */
+        .about-block { background: #fff; border: 1px solid var(--border); border-radius: 4px; padding: 20px 24px; margin-bottom: 16px; }
+        .about-block-title { font-size: 0.75rem; font-weight: 900; letter-spacing: 0.07em; text-transform: uppercase; color: var(--dark); margin-bottom: 12px; }
+        .about-block-sub { font-size: 0.8rem; color: var(--muted); margin-bottom: 12px; line-height: 1.5; }
+        .about-block-label { font-size: 0.7rem; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+        .form-hint { font-size: 0.7rem; color: var(--muted); margin-top: 4px; }
+        .form-hint code { background: var(--grey); padding: 1px 5px; border-radius: 3px; font-size: 0.68rem; }
+        .spotlight-all { display: flex; flex-wrap: wrap; gap: 10px; }
+        .spotlight-card { width: 90px; border: 2px solid var(--border); border-radius: 4px; padding: 7px 6px 6px; text-align: center; cursor: pointer; transition: border-color 0.18s; }
+        .spotlight-card.featured { border-color: var(--primary-red, #E02020); }
+        .spotlight-card img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 3px; display: block; margin-bottom: 5px; }
+        .spotlight-card-name { font-size: 0.62rem; font-weight: 700; color: var(--dark); line-height: 1.3; }
+        .spotlight-ordered { display: flex; flex-direction: column; gap: 0; }
+        .spotlight-ordered-item { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--border); }
+        .spotlight-ordered-item:last-child { border-bottom: none; }
+        .spotlight-ordered-item img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+        .spotlight-ordered-item span { flex: 1; font-size: 0.82rem; font-weight: 700; color: var(--dark); }
+        .spotlight-order-btns { display: flex; gap: 4px; }
+        .spotlight-order-btns button { background: none; border: 1px solid var(--border); border-radius: 3px; cursor: pointer; font-size: 0.72rem; padding: 2px 7px; color: var(--dark); transition: all 0.15s; }
+        .spotlight-order-btns button:hover { background: var(--grey); }
+        .spotlight-order-btns button.remove { color: #c0392b; border-color: #e0aaaa; }
+        .spotlight-order-btns button.remove:hover { background: #fff0f0; }
+
+        /* About Us image widgets */
+        .about-img-widget { background: var(--grey); border: 1px solid var(--border); border-radius: 4px; padding: 10px; margin-top: 8px; }
+        .aiw-tabs { display: flex; margin-bottom: 8px; border: 1px solid var(--border); border-radius: 3px; overflow: hidden; width: fit-content; }
+        .aiw-tab { background: #fff; border: none; border-right: 1px solid var(--border); padding: 4px 10px; font-size: 0.67rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; cursor: pointer; color: var(--muted); transition: background 0.15s; }
+        .aiw-tab:last-child { border-right: none; }
+        .aiw-tab.active { background: var(--dark); color: #fff; }
+        .aiw-pane { display: none; }
+        .aiw-pane.active { display: block; }
+        .aiw-pane input[type=text] { width: 100%; box-sizing: border-box; }
+        .aiw-paste-area { width: 100%; box-sizing: border-box; font-size: 0.72rem; resize: vertical; }
+        .aiw-apply-btn { margin-top: 6px; padding: 4px 12px; font-size: 0.72rem; font-weight: 700; background: var(--dark); color: #fff; border: none; border-radius: 3px; cursor: pointer; }
+        .aiw-apply-btn:hover { opacity: 0.82; }
+        .aiw-upload-label { display: flex; align-items: center; justify-content: center; border: 2px dashed var(--border); border-radius: 3px; padding: 14px; cursor: pointer; font-size: 0.72rem; font-weight: 700; color: var(--muted); transition: border-color 0.15s; }
+        .aiw-upload-label:hover { border-color: var(--dark); color: var(--dark); }
+        .aiw-preview-row { margin-top: 8px; }
+        .aiw-preview { max-width: 100%; max-height: 90px; border-radius: 3px; object-fit: cover; border: 1px solid var(--border); }
 
         /* ---- ARTICLE EDITOR SPLIT LAYOUT ---- */
         #panel-blog-editor.active {
@@ -1224,6 +1296,13 @@
             </div>
         </div>
 
+        <!-- L1: About Us (direct link) -->
+        <div class="sidebar-section">
+            <div class="nav-l1 direct" id="nav-about" onclick="activatePanel('panel-about', 'nav-about')">
+                About Us
+            </div>
+        </div>
+
     </nav>
 
     <!-- ---- PANELS AREA ---- -->
@@ -1352,6 +1431,35 @@
                         </div>
                         <div class="hia-pos-display">Position: <span id="hia-pos-men">0, 0</span></div>
                         <button class="hia-remove-btn" id="hia-remove-men" onclick="hiaClearImage('men')" style="display:none">✕ Remove Image</button>
+                    </div>
+                </div>
+                <!-- FOOTER -->
+                <div class="hia-col" style="flex: 0 0 100%;">
+                    <div class="hia-col-label footer">Footer Section</div>
+                    <div class="hia-stage footer" id="hia-stage-footer" style="height: 260px;">
+                        <div class="hia-footer-logo-overlay">
+                            <div class="hia-footer-logo-text">Aesthetic<br>Legacy</div>
+                        </div>
+                        <img class="hia-graphic" id="hia-img-footer" draggable="false">
+                        <div class="hia-hint" id="hia-hint-footer">
+                            <label for="hia-file-footer">
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+                                <span>Click or drop image</span>
+                            </label>
+                            <input type="file" accept="image/*" id="hia-file-footer" onchange="hiaFileChange(event,'footer')">
+                        </div>
+                    </div>
+                    <div class="hia-controls">
+                        <div class="hia-upload-row">
+                            <input type="text" id="hia-url-footer" placeholder="Image URL or base64&hellip;" oninput="hiaUrlInput('footer',this.value)" onpaste="hiaUrlPaste(event,'footer')">
+                            <label for="hia-file-footer" class="hia-upload-label">Upload</label>
+                        </div>
+                        <div class="hia-scale-row">
+                            <label>Scale <b id="hia-scale-val-footer">1.00&times;</b></label>
+                            <input type="range" id="hia-scale-footer" min="0.1" max="4" step="0.05" value="1" oninput="hiaScaleChange('footer',this.value)">
+                        </div>
+                        <div class="hia-pos-display">Position: <span id="hia-pos-footer">0, 0</span></div>
+                        <button class="hia-remove-btn" id="hia-remove-footer" onclick="hiaClearImage('footer')" style="display:none">&times; Remove Image</button>
                     </div>
                 </div>
             </div>
@@ -1512,6 +1620,220 @@
                     <div class="cf-social-row">
                         <label class="cf-social-toggle"><input type="checkbox" id="cf-social-tiktok-enabled"><span class="cf-social-icon">&#x266b;</span> TikTok</label>
                         <input type="url" id="cf-social-tiktok-url" placeholder="https://tiktok.com/@..." class="cf-social-url">
+                    </div>
+                </div>
+
+                <!-- Section 4: Social Gallery Images -->
+                <div class="cf-section-title">Section 4 — Social Gallery Images</div>
+                <p class="cf-section-hint">Add up to 8 images for the contributor's social gallery (4 columns × 2 rows). Leave blank to hide the slot.</p>
+                <div class="form-grid" id="cf-gallery-grid">
+                    <div class="form-group">
+                        <label>Gallery Image 1 <span style="font-weight:400;text-transform:none;letter-spacing:0">(col 1 top)</span></label>
+                        <div class="img-widget" id="iw-cf-gallery-1">
+                            <div class="img-widget-dropzone" id="iw-cf-gallery-1-zone">
+                                <img class="img-widget-preview" id="iw-cf-gallery-1-preview" src="" alt="">
+                                <div class="img-widget-dropzone-hint">Drop image here</div>
+                            </div>
+                            <div class="img-widget-tabs">
+                                <button class="img-widget-tab active" onclick="iwTab('url','cf-gallery-1')">URL</button>
+                                <button class="img-widget-tab" onclick="iwTab('upload','cf-gallery-1')">Upload</button>
+                                <button class="img-widget-tab" onclick="iwTab('b64','cf-gallery-1')">Base64</button>
+                            </div>
+                            <div class="img-widget-panes">
+                                <div class="img-widget-pane active" id="iw-cf-gallery-1-url">
+                                    <input type="text" id="cf-gallery-1" placeholder="https://..." oninput="iwUrlChange('cf-gallery-1')" onpaste="iwUrlPaste(event,'cf-gallery-1')">
+                                </div>
+                                <div class="img-widget-pane" id="iw-cf-gallery-1-upload">
+                                    <input type="file" accept="image/*" onchange="iwFileChange(event,'cf-gallery-1')">
+                                    <span class="img-widget-upload-hint">Or drag &amp; drop onto the area above</span>
+                                </div>
+                                <div class="img-widget-pane" id="iw-cf-gallery-1-b64">
+                                    <textarea rows="3" id="iw-cf-gallery-1-b64-input" placeholder="Paste base64 data:image/... here" oninput="iwB64Change('cf-gallery-1')"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Gallery Image 2 <span style="font-weight:400;text-transform:none;letter-spacing:0">(col 1 bottom)</span></label>
+                        <div class="img-widget" id="iw-cf-gallery-2">
+                            <div class="img-widget-dropzone" id="iw-cf-gallery-2-zone">
+                                <img class="img-widget-preview" id="iw-cf-gallery-2-preview" src="" alt="">
+                                <div class="img-widget-dropzone-hint">Drop image here</div>
+                            </div>
+                            <div class="img-widget-tabs">
+                                <button class="img-widget-tab active" onclick="iwTab('url','cf-gallery-2')">URL</button>
+                                <button class="img-widget-tab" onclick="iwTab('upload','cf-gallery-2')">Upload</button>
+                                <button class="img-widget-tab" onclick="iwTab('b64','cf-gallery-2')">Base64</button>
+                            </div>
+                            <div class="img-widget-panes">
+                                <div class="img-widget-pane active" id="iw-cf-gallery-2-url">
+                                    <input type="text" id="cf-gallery-2" placeholder="https://..." oninput="iwUrlChange('cf-gallery-2')" onpaste="iwUrlPaste(event,'cf-gallery-2')">
+                                </div>
+                                <div class="img-widget-pane" id="iw-cf-gallery-2-upload">
+                                    <input type="file" accept="image/*" onchange="iwFileChange(event,'cf-gallery-2')">
+                                    <span class="img-widget-upload-hint">Or drag &amp; drop onto the area above</span>
+                                </div>
+                                <div class="img-widget-pane" id="iw-cf-gallery-2-b64">
+                                    <textarea rows="3" id="iw-cf-gallery-2-b64-input" placeholder="Paste base64 data:image/... here" oninput="iwB64Change('cf-gallery-2')"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Gallery Image 3 <span style="font-weight:400;text-transform:none;letter-spacing:0">(col 2 top)</span></label>
+                        <div class="img-widget" id="iw-cf-gallery-3">
+                            <div class="img-widget-dropzone" id="iw-cf-gallery-3-zone">
+                                <img class="img-widget-preview" id="iw-cf-gallery-3-preview" src="" alt="">
+                                <div class="img-widget-dropzone-hint">Drop image here</div>
+                            </div>
+                            <div class="img-widget-tabs">
+                                <button class="img-widget-tab active" onclick="iwTab('url','cf-gallery-3')">URL</button>
+                                <button class="img-widget-tab" onclick="iwTab('upload','cf-gallery-3')">Upload</button>
+                                <button class="img-widget-tab" onclick="iwTab('b64','cf-gallery-3')">Base64</button>
+                            </div>
+                            <div class="img-widget-panes">
+                                <div class="img-widget-pane active" id="iw-cf-gallery-3-url">
+                                    <input type="text" id="cf-gallery-3" placeholder="https://..." oninput="iwUrlChange('cf-gallery-3')" onpaste="iwUrlPaste(event,'cf-gallery-3')">
+                                </div>
+                                <div class="img-widget-pane" id="iw-cf-gallery-3-upload">
+                                    <input type="file" accept="image/*" onchange="iwFileChange(event,'cf-gallery-3')">
+                                    <span class="img-widget-upload-hint">Or drag &amp; drop onto the area above</span>
+                                </div>
+                                <div class="img-widget-pane" id="iw-cf-gallery-3-b64">
+                                    <textarea rows="3" id="iw-cf-gallery-3-b64-input" placeholder="Paste base64 data:image/... here" oninput="iwB64Change('cf-gallery-3')"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Gallery Image 4 <span style="font-weight:400;text-transform:none;letter-spacing:0">(col 2 bottom)</span></label>
+                        <div class="img-widget" id="iw-cf-gallery-4">
+                            <div class="img-widget-dropzone" id="iw-cf-gallery-4-zone">
+                                <img class="img-widget-preview" id="iw-cf-gallery-4-preview" src="" alt="">
+                                <div class="img-widget-dropzone-hint">Drop image here</div>
+                            </div>
+                            <div class="img-widget-tabs">
+                                <button class="img-widget-tab active" onclick="iwTab('url','cf-gallery-4')">URL</button>
+                                <button class="img-widget-tab" onclick="iwTab('upload','cf-gallery-4')">Upload</button>
+                                <button class="img-widget-tab" onclick="iwTab('b64','cf-gallery-4')">Base64</button>
+                            </div>
+                            <div class="img-widget-panes">
+                                <div class="img-widget-pane active" id="iw-cf-gallery-4-url">
+                                    <input type="text" id="cf-gallery-4" placeholder="https://..." oninput="iwUrlChange('cf-gallery-4')" onpaste="iwUrlPaste(event,'cf-gallery-4')">
+                                </div>
+                                <div class="img-widget-pane" id="iw-cf-gallery-4-upload">
+                                    <input type="file" accept="image/*" onchange="iwFileChange(event,'cf-gallery-4')">
+                                    <span class="img-widget-upload-hint">Or drag &amp; drop onto the area above</span>
+                                </div>
+                                <div class="img-widget-pane" id="iw-cf-gallery-4-b64">
+                                    <textarea rows="3" id="iw-cf-gallery-4-b64-input" placeholder="Paste base64 data:image/... here" oninput="iwB64Change('cf-gallery-4')"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Gallery Image 5 <span style="font-weight:400;text-transform:none;letter-spacing:0">(col 3 top)</span></label>
+                        <div class="img-widget" id="iw-cf-gallery-5">
+                            <div class="img-widget-dropzone" id="iw-cf-gallery-5-zone">
+                                <img class="img-widget-preview" id="iw-cf-gallery-5-preview" src="" alt="">
+                                <div class="img-widget-dropzone-hint">Drop image here</div>
+                            </div>
+                            <div class="img-widget-tabs">
+                                <button class="img-widget-tab active" onclick="iwTab('url','cf-gallery-5')">URL</button>
+                                <button class="img-widget-tab" onclick="iwTab('upload','cf-gallery-5')">Upload</button>
+                                <button class="img-widget-tab" onclick="iwTab('b64','cf-gallery-5')">Base64</button>
+                            </div>
+                            <div class="img-widget-panes">
+                                <div class="img-widget-pane active" id="iw-cf-gallery-5-url">
+                                    <input type="text" id="cf-gallery-5" placeholder="https://..." oninput="iwUrlChange('cf-gallery-5')" onpaste="iwUrlPaste(event,'cf-gallery-5')">
+                                </div>
+                                <div class="img-widget-pane" id="iw-cf-gallery-5-upload">
+                                    <input type="file" accept="image/*" onchange="iwFileChange(event,'cf-gallery-5')">
+                                    <span class="img-widget-upload-hint">Or drag &amp; drop onto the area above</span>
+                                </div>
+                                <div class="img-widget-pane" id="iw-cf-gallery-5-b64">
+                                    <textarea rows="3" id="iw-cf-gallery-5-b64-input" placeholder="Paste base64 data:image/... here" oninput="iwB64Change('cf-gallery-5')"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Gallery Image 6 <span style="font-weight:400;text-transform:none;letter-spacing:0">(col 3 bottom)</span></label>
+                        <div class="img-widget" id="iw-cf-gallery-6">
+                            <div class="img-widget-dropzone" id="iw-cf-gallery-6-zone">
+                                <img class="img-widget-preview" id="iw-cf-gallery-6-preview" src="" alt="">
+                                <div class="img-widget-dropzone-hint">Drop image here</div>
+                            </div>
+                            <div class="img-widget-tabs">
+                                <button class="img-widget-tab active" onclick="iwTab('url','cf-gallery-6')">URL</button>
+                                <button class="img-widget-tab" onclick="iwTab('upload','cf-gallery-6')">Upload</button>
+                                <button class="img-widget-tab" onclick="iwTab('b64','cf-gallery-6')">Base64</button>
+                            </div>
+                            <div class="img-widget-panes">
+                                <div class="img-widget-pane active" id="iw-cf-gallery-6-url">
+                                    <input type="text" id="cf-gallery-6" placeholder="https://..." oninput="iwUrlChange('cf-gallery-6')" onpaste="iwUrlPaste(event,'cf-gallery-6')">
+                                </div>
+                                <div class="img-widget-pane" id="iw-cf-gallery-6-upload">
+                                    <input type="file" accept="image/*" onchange="iwFileChange(event,'cf-gallery-6')">
+                                    <span class="img-widget-upload-hint">Or drag &amp; drop onto the area above</span>
+                                </div>
+                                <div class="img-widget-pane" id="iw-cf-gallery-6-b64">
+                                    <textarea rows="3" id="iw-cf-gallery-6-b64-input" placeholder="Paste base64 data:image/... here" oninput="iwB64Change('cf-gallery-6')"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Gallery Image 7 <span style="font-weight:400;text-transform:none;letter-spacing:0">(col 4 top)</span></label>
+                        <div class="img-widget" id="iw-cf-gallery-7">
+                            <div class="img-widget-dropzone" id="iw-cf-gallery-7-zone">
+                                <img class="img-widget-preview" id="iw-cf-gallery-7-preview" src="" alt="">
+                                <div class="img-widget-dropzone-hint">Drop image here</div>
+                            </div>
+                            <div class="img-widget-tabs">
+                                <button class="img-widget-tab active" onclick="iwTab('url','cf-gallery-7')">URL</button>
+                                <button class="img-widget-tab" onclick="iwTab('upload','cf-gallery-7')">Upload</button>
+                                <button class="img-widget-tab" onclick="iwTab('b64','cf-gallery-7')">Base64</button>
+                            </div>
+                            <div class="img-widget-panes">
+                                <div class="img-widget-pane active" id="iw-cf-gallery-7-url">
+                                    <input type="text" id="cf-gallery-7" placeholder="https://..." oninput="iwUrlChange('cf-gallery-7')" onpaste="iwUrlPaste(event,'cf-gallery-7')">
+                                </div>
+                                <div class="img-widget-pane" id="iw-cf-gallery-7-upload">
+                                    <input type="file" accept="image/*" onchange="iwFileChange(event,'cf-gallery-7')">
+                                    <span class="img-widget-upload-hint">Or drag &amp; drop onto the area above</span>
+                                </div>
+                                <div class="img-widget-pane" id="iw-cf-gallery-7-b64">
+                                    <textarea rows="3" id="iw-cf-gallery-7-b64-input" placeholder="Paste base64 data:image/... here" oninput="iwB64Change('cf-gallery-7')"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Gallery Image 8 <span style="font-weight:400;text-transform:none;letter-spacing:0">(col 4 bottom)</span></label>
+                        <div class="img-widget" id="iw-cf-gallery-8">
+                            <div class="img-widget-dropzone" id="iw-cf-gallery-8-zone">
+                                <img class="img-widget-preview" id="iw-cf-gallery-8-preview" src="" alt="">
+                                <div class="img-widget-dropzone-hint">Drop image here</div>
+                            </div>
+                            <div class="img-widget-tabs">
+                                <button class="img-widget-tab active" onclick="iwTab('url','cf-gallery-8')">URL</button>
+                                <button class="img-widget-tab" onclick="iwTab('upload','cf-gallery-8')">Upload</button>
+                                <button class="img-widget-tab" onclick="iwTab('b64','cf-gallery-8')">Base64</button>
+                            </div>
+                            <div class="img-widget-panes">
+                                <div class="img-widget-pane active" id="iw-cf-gallery-8-url">
+                                    <input type="text" id="cf-gallery-8" placeholder="https://..." oninput="iwUrlChange('cf-gallery-8')" onpaste="iwUrlPaste(event,'cf-gallery-8')">
+                                </div>
+                                <div class="img-widget-pane" id="iw-cf-gallery-8-upload">
+                                    <input type="file" accept="image/*" onchange="iwFileChange(event,'cf-gallery-8')">
+                                    <span class="img-widget-upload-hint">Or drag &amp; drop onto the area above</span>
+                                </div>
+                                <div class="img-widget-pane" id="iw-cf-gallery-8-b64">
+                                    <textarea rows="3" id="iw-cf-gallery-8-b64-input" placeholder="Paste base64 data:image/... here" oninput="iwB64Change('cf-gallery-8')"></textarea>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -1773,6 +2095,23 @@
                         <button class="toolbar-btn" onclick="execFmt('insertOrderedList')" title="Numbered list">1. List</button>
                         <div class="toolbar-sep"></div>
                         <button class="toolbar-btn" onclick="toggleImgPanel()" title="Insert image">🖼 Image</button>
+                        <div class="toolbar-sep"></div>
+                        <select class="toolbar-select" onchange="execFontSize(this.value); this.value=''" title="Font size">
+                            <option value="">Size</option>
+                            <option value="12px">12</option>
+                            <option value="14px">14</option>
+                            <option value="16px">16</option>
+                            <option value="18px">18</option>
+                            <option value="20px">20</option>
+                            <option value="24px">24</option>
+                            <option value="28px">28</option>
+                            <option value="32px">32</option>
+                            <option value="36px">36</option>
+                        </select>
+                        <label class="toolbar-color-wrap" title="Text color">
+                            <input type="color" id="toolbar-color-picker" onchange="execColor(this.value)" value="#000000">
+                            <span>A</span>
+                        </label>
                     </div>
                     <!-- VN body -->
                     <div class="editor-body" id="normal-editor-body" contenteditable="true"
@@ -1804,6 +2143,129 @@
                 <div class="editor-preview-body" id="editor-inline-preview">
                     <div class="preview-placeholder">Add content to see a preview</div>
                 </div>
+            </div>
+        </div>
+
+        <!-- ======================================================= PANEL: ABOUT US -->
+        <div class="cms-panel" id="panel-about">
+            <h2 class="panel-title">About Us Page</h2>
+            <p class="panel-sub">Configure the video, section images, and contributor spotlight shown on the About Us page.</p>
+
+            <!-- Video -->
+            <div class="about-block">
+                <div class="about-block-title">Section 2 — Video</div>
+                <div class="form-group">
+                    <label>Video Embed URL</label>
+                    <input type="text" id="about-video-url" placeholder="e.g. https://www.youtube.com/embed/VIDEO_ID">
+                    <div class="form-hint">Use the embed URL format — YouTube: <code>https://www.youtube.com/embed/ID</code></div>
+                </div>
+                <div class="form-group" style="margin-top:10px;">
+                    <label>Video Cover Image</label>
+                    <div class="about-img-widget">
+                        <div class="aiw-tabs">
+                            <button class="aiw-tab active" onclick="aiwTab(this,'url')">URL</button>
+                            <button class="aiw-tab" onclick="aiwTab(this,'paste')">Base64 / Paste</button>
+                            <button class="aiw-tab" onclick="aiwTab(this,'upload')">Upload</button>
+                        </div>
+                        <div class="aiw-pane aiw-url active"><input type="text" id="about-video-cover" placeholder="https://..."
+                                oninput="aiwUpdatePreview(this.closest('.about-img-widget'),this.value)"></div>
+                        <div class="aiw-pane aiw-paste">
+                            <textarea class="aiw-paste-area" rows="3" placeholder="Paste image or base64 data:image/… string here…" onpaste="aiwHandlePaste(event,this)"></textarea>
+                            <button class="aiw-apply-btn" onclick="aiwApplyPaste(this)">Apply</button>
+                        </div>
+                        <div class="aiw-pane aiw-upload">
+                            <label class="aiw-upload-label">📂 Choose file
+                                <input type="file" accept="image/*" style="display:none" onchange="aiwApplyUpload(this)">
+                            </label>
+                        </div>
+                        <div class="aiw-preview-row"><img class="aiw-preview" src="" alt="" onerror="this.style.display='none'" style="display:none"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section Images -->
+            <div class="about-block">
+                <div class="about-block-title">Section 3 — "How Will We Do It" (right image)</div>
+                <div class="about-img-widget">
+                    <div class="aiw-tabs">
+                        <button class="aiw-tab active" onclick="aiwTab(this,'url')">URL</button>
+                        <button class="aiw-tab" onclick="aiwTab(this,'paste')">Base64 / Paste</button>
+                        <button class="aiw-tab" onclick="aiwTab(this,'upload')">Upload</button>
+                    </div>
+                    <div class="aiw-pane aiw-url active"><input type="text" id="about-sec3-img" placeholder="https://..."
+                        oninput="aiwUpdatePreview(this.closest('.about-img-widget'),this.value)"></div>
+                    <div class="aiw-pane aiw-paste">
+                        <textarea class="aiw-paste-area" rows="3" placeholder="Paste image or base64 data:image/… string here…" onpaste="aiwHandlePaste(event,this)"></textarea>
+                        <button class="aiw-apply-btn" onclick="aiwApplyPaste(this)">Apply</button>
+                    </div>
+                    <div class="aiw-pane aiw-upload">
+                        <label class="aiw-upload-label">📂 Choose file<input type="file" accept="image/*" style="display:none" onchange="aiwApplyUpload(this)"></label>
+                    </div>
+                    <div class="aiw-preview-row"><img class="aiw-preview" src="" alt="" onerror="this.style.display='none'" style="display:none"></div>
+                </div>
+            </div>
+
+            <div class="about-block">
+                <div class="about-block-title">Section 4 — "Reach This Mission" (right image)</div>
+                <div class="about-img-widget">
+                    <div class="aiw-tabs">
+                        <button class="aiw-tab active" onclick="aiwTab(this,'url')">URL</button>
+                        <button class="aiw-tab" onclick="aiwTab(this,'paste')">Base64 / Paste</button>
+                        <button class="aiw-tab" onclick="aiwTab(this,'upload')">Upload</button>
+                    </div>
+                    <div class="aiw-pane aiw-url active"><input type="text" id="about-sec4-img" placeholder="https://..."
+                        oninput="aiwUpdatePreview(this.closest('.about-img-widget'),this.value)"></div>
+                    <div class="aiw-pane aiw-paste">
+                        <textarea class="aiw-paste-area" rows="3" placeholder="Paste image or base64 data:image/… string here…" onpaste="aiwHandlePaste(event,this)"></textarea>
+                        <button class="aiw-apply-btn" onclick="aiwApplyPaste(this)">Apply</button>
+                    </div>
+                    <div class="aiw-pane aiw-upload">
+                        <label class="aiw-upload-label">📂 Choose file<input type="file" accept="image/*" style="display:none" onchange="aiwApplyUpload(this)"></label>
+                    </div>
+                    <div class="aiw-preview-row"><img class="aiw-preview" src="" alt="" onerror="this.style.display='none'" style="display:none"></div>
+                </div>
+            </div>
+
+            <div class="about-block">
+                <div class="about-block-title">Section 5 — "Vision" (right image)</div>
+                <div class="about-img-widget">
+                    <div class="aiw-tabs">
+                        <button class="aiw-tab active" onclick="aiwTab(this,'url')">URL</button>
+                        <button class="aiw-tab" onclick="aiwTab(this,'paste')">Base64 / Paste</button>
+                        <button class="aiw-tab" onclick="aiwTab(this,'upload')">Upload</button>
+                    </div>
+                    <div class="aiw-pane aiw-url active"><input type="text" id="about-sec5-img" placeholder="https://..."
+                        oninput="aiwUpdatePreview(this.closest('.about-img-widget'),this.value)"></div>
+                    <div class="aiw-pane aiw-paste">
+                        <textarea class="aiw-paste-area" rows="3" placeholder="Paste image or base64 data:image/… string here…" onpaste="aiwHandlePaste(event,this)"></textarea>
+                        <button class="aiw-apply-btn" onclick="aiwApplyPaste(this)">Apply</button>
+                    </div>
+                    <div class="aiw-pane aiw-upload">
+                        <label class="aiw-upload-label">📂 Choose file<input type="file" accept="image/*" style="display:none" onchange="aiwApplyUpload(this)"></label>
+                    </div>
+                    <div class="aiw-preview-row"><img class="aiw-preview" src="" alt="" onerror="this.style.display='none'" style="display:none"></div>
+                </div>
+            </div>
+
+            <!-- Contributor Spotlight -->
+            <div class="about-block">
+                <div class="about-block-title">Contributor Spotlight</div>
+                <p class="about-block-sub">Select contributors to feature in the auto-sliding gallery. Click to add/remove; use arrows to reorder.</p>
+
+                <div class="about-block-label">All contributors — click to toggle featured:</div>
+                <div class="spotlight-all" id="spotlight-all">
+                    <!-- Populated by loadAboutPanel() -->
+                </div>
+
+                <div class="about-block-label" style="margin-top:16px;">Featured order (<span id="spotlight-count">0</span>):</div>
+                <div class="spotlight-ordered" id="spotlight-ordered">
+                    <!-- Populated by renderSpotlightOrdered() -->
+                </div>
+            </div>
+
+            <div class="hia-save-row">
+                <button class="cms-btn" onclick="saveAboutCMS()">Save Changes</button>
+                <span id="about-save-status" style="font-size:0.78rem;color:var(--muted);"></span>
             </div>
         </div>
 
@@ -2341,7 +2803,7 @@
             if (layout && typeof layout === 'object' && Object.keys(layout).length) {
                 _homeLayout = layout;
             }
-            ['women','men'].forEach(function(s) {
+            ['women','men','footer'].forEach(function(s) {
                 var img = document.getElementById('hia-img-' + s);
                 if (img) img._hiaDrag = false;
                 if (_homeLayout[s + 'Image']) {
@@ -2360,7 +2822,7 @@
                 var stageSvg = document.querySelector('#hia-stage-' + s + ' .hia-stage-svg');
                 if (stageSvg) stageSvg.style.transform = 'translate(-50%,-50%) scale(' + textScale + ')';
             });
-            ['women','men'].forEach(function(s) {
+            ['women','men','footer'].forEach(function(s) {
                 var stage = document.getElementById('hia-stage-' + s);
                 if (stage && !stage._hiaDropSetup) {
                     stage._hiaDropSetup = true;
@@ -2410,7 +2872,11 @@
         var scale = _homeLayout[section + 'ImageScale'] !== undefined ? _homeLayout[section + 'ImageScale'] : 1;
         var px = pos.x || 0;
         var py = pos.y || 0;
-        img.style.transform = 'translate(calc(-50% + ' + px + 'px), ' + py + 'px) scale(' + scale + ')';
+        if (section === 'footer') {
+            img.style.transform = 'translate(calc(-50% + ' + px + 'px), calc(-50% + ' + py + 'px)) scale(' + scale + ')';
+        } else {
+            img.style.transform = 'translate(calc(-50% + ' + px + 'px), ' + py + 'px) scale(' + scale + ')';
+        }
         var posEl = document.getElementById('hia-pos-' + section);
         if (posEl) posEl.textContent = Math.round(px) + ', ' + Math.round(py);
     }
@@ -2658,8 +3124,8 @@
             },
             editorMode:   editorMode,
             createdAt:    editorArticleId ? (getArticleById(editorArticleId) || {}).createdAt || Date.now() : Date.now(),
-            blocks:       blockItemsVn.map(function(b){ return Object.assign({type: b.type}, b.fields); }),
-            blocksEn:     blockItemsEn.map(function(b){ return Object.assign({type: b.type}, b.fields); }),
+            blocks:       dedupeHeaderBlocks(blockItemsVn.map(function(b){ return Object.assign({type: b.type}, b.fields); })),
+            blocksEn:     dedupeHeaderBlocks(blockItemsEn.map(function(b){ return Object.assign({type: b.type}, b.fields); })),
             normalContent: document.getElementById('normal-editor-body').innerHTML,
             normalContentEn: document.getElementById('normal-editor-body-en').innerHTML
         };
@@ -2681,6 +3147,18 @@
     function cancelArticleEditor() {
         activatePanel('panel-blog-list', 'nav-blog-list');
         renderBlogList();
+    }
+
+    // Remove duplicate header blocks — only keep the first one
+    function dedupeHeaderBlocks(blocks) {
+        var seen = false;
+        return blocks.filter(function(b) {
+            if (b.type === 'header') {
+                if (seen) return false;
+                seen = true;
+            }
+            return true;
+        });
     }
 
     function handleHeroImagePaste(e) {
@@ -2732,6 +3210,7 @@
         document.getElementById('mode-btn-normal').classList.toggle('active', mode === 'normal');
         document.getElementById('component-editor').classList.toggle('active', mode === 'component');
         document.getElementById('normal-editor').classList.toggle('active', mode === 'normal');
+        scheduleLivePreview();
     }
 
     // ================================================================
@@ -3049,6 +3528,25 @@
         document.getElementById('normal-editor-body').focus();
         document.execCommand('formatBlock', false, tag);
     }
+    function execFontSize(size) {
+        if (!size) return;
+        var editor = document.getElementById('normal-editor-body');
+        editor.focus();
+        // Use fontSize=7 as a unique marker, then replace <font size="7"> with <span style="font-size:Xpx">
+        document.execCommand('fontSize', false, 7);
+        var fonts = editor.querySelectorAll('font[size="7"]');
+        fonts.forEach(function(f) {
+            var span = document.createElement('span');
+            span.style.fontSize = size;
+            while (f.firstChild) span.appendChild(f.firstChild);
+            if (f.parentNode) f.parentNode.replaceChild(span, f);
+        });
+    }
+    function execColor(color) {
+        var editor = document.getElementById('normal-editor-body');
+        editor.focus();
+        document.execCommand('foreColor', false, color);
+    }
     function toggleInlinePreview() {
         var col = document.getElementById('editor-right-col');
         var isOpen = col.classList.contains('open');
@@ -3144,19 +3642,222 @@
         pendingImageSrc = null;
     }
     function handleEditorBodyPaste(e) {
-        var items = (e.clipboardData || e.originalEvent.clipboardData).items;
+        var cd = e.clipboardData || (e.originalEvent && e.originalEvent.clipboardData);
+        if (!cd) return;
+        var items = cd.items;
+        // 1. Image blob — highest priority (skip items with no actual file)
         for (var i = 0; i < items.length; i++) {
             if (items[i].type.indexOf('image') >= 0) {
+                var file = items[i].getAsFile();
+                if (!file) continue; // string-kind item with image type — skip
                 e.preventDefault();
                 var reader = new FileReader();
-                var file = items[i].getAsFile();
-                reader.onload = function(ev) {
-                    restoreSelectionAndInsert(ev.target.result);
-                };
+                reader.onload = (function(f) { return function(ev) { restoreSelectionAndInsert(ev.target.result); }; })(file);
                 reader.readAsDataURL(file);
                 return;
             }
         }
+        // 2. Rich HTML (Google Docs, Word, web pages) — clean and insert
+        var htmlData = cd.getData('text/html');
+        if (htmlData) {
+            e.preventDefault();
+            try {
+                var cleaned = cleanPastedHtml(htmlData);
+                console.log('[paste] cleaned HTML:', cleaned ? cleaned.substring(0, 200) : '(empty)');
+                if (!cleaned || !cleaned.trim()) {
+                    // cleaned is empty — fall through to plain text
+                    var pt = cd.getData('text/plain') || '';
+                    if (pt) document.execCommand('insertText', false, pt);
+                    scheduleLivePreview();
+                    return;
+                }
+                // Ensure we have a valid selection inside the editor
+                var editorEl = document.getElementById('normal-editor-body-en') &&
+                    document.getElementById('normal-editor-body-en').style.display !== 'none'
+                    ? document.getElementById('normal-editor-body-en')
+                    : document.getElementById('normal-editor-body');
+                var targetEditor = e.target.closest ? e.target.closest('[contenteditable]') : null;
+                if (targetEditor) editorEl = targetEditor;
+                editorEl.focus();
+                var sel = window.getSelection();
+                if (!sel || sel.rangeCount === 0) {
+                    var r0 = document.createRange();
+                    r0.selectNodeContents(editorEl);
+                    r0.collapse(false);
+                    sel.removeAllRanges();
+                    sel.addRange(r0);
+                }
+                // Try execCommand first; fall back to Range-based insertion
+                var ok = document.execCommand('insertHTML', false, cleaned);
+                if (!ok) {
+                    var sel2 = window.getSelection();
+                    if (sel2 && sel2.rangeCount > 0) {
+                        var range2 = sel2.getRangeAt(0);
+                        range2.deleteContents();
+                        var tmpDiv = document.createElement('div');
+                        tmpDiv.innerHTML = cleaned;
+                        var frag = document.createDocumentFragment();
+                        var lastChild = null;
+                        while (tmpDiv.firstChild) { lastChild = tmpDiv.firstChild; frag.appendChild(lastChild); }
+                        range2.insertNode(frag);
+                        if (lastChild) { range2.setStartAfter(lastChild); range2.collapse(true); sel2.removeAllRanges(); sel2.addRange(range2); }
+                    }
+                }
+            } catch (err) {
+                console.warn('[paste] error during HTML paste:', err);
+                // fallback: insert as plain text
+                var plain = cd.getData('text/plain') || '';
+                if (plain) document.execCommand('insertText', false, plain);
+            }
+            scheduleLivePreview();
+            return;
+        }
+        // 3. Plain text — convert standalone video URLs to embeds
+        var textData = cd.getData('text/plain');
+        if (textData) {
+            var embed = tryConvertVideoUrl(textData.trim());
+            if (embed) {
+                e.preventDefault();
+                var sel2 = window.getSelection();
+                if (sel2 && sel2.rangeCount > 0) {
+                    var range2 = sel2.getRangeAt(0);
+                    range2.deleteContents();
+                    var tmp2 = document.createElement('div');
+                    tmp2.innerHTML = embed;
+                    var frag2 = document.createDocumentFragment();
+                    var last2 = null;
+                    while (tmp2.firstChild) { last2 = tmp2.firstChild; frag2.appendChild(last2); }
+                    range2.insertNode(frag2);
+                    if (last2) { range2.setStartAfter(last2); range2.collapse(true); sel2.removeAllRanges(); sel2.addRange(range2); }
+                }
+                scheduleLivePreview();
+            }
+        }
+        // else: browser handles plain-text paste normally
+    }
+
+    function tryConvertVideoUrl(url) {
+        var yt = url.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?(?:[^&]*&)*v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+        if (yt) {
+            return '<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;margin:12px 0">' +
+                '<iframe src="https://www.youtube.com/embed/' + yt[1] + '" frameborder="0" ' +
+                'allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen ' +
+                'style="position:absolute;top:0;left:0;width:100%;height:100%"></iframe></div>';
+        }
+        return null;
+    }
+
+    function cleanPastedHtml(raw) {
+        var tmp = document.createElement('div');
+        tmp.innerHTML = raw;
+        _pasteCleanNode(tmp);
+        // Convert standalone video-URL paragraphs to embeds
+        tmp.querySelectorAll('p, div').forEach(function(p) {
+            if (!p.querySelector('*')) {
+                var text = p.textContent.trim();
+                var embed = tryConvertVideoUrl(text);
+                if (embed && p.parentNode) {
+                    var wrapper = document.createElement('div');
+                    wrapper.innerHTML = embed;
+                    p.parentNode.replaceChild(wrapper, p);
+                }
+            }
+        });
+        return tmp.innerHTML;
+    }
+
+    function _pasteCleanNode(node) {
+        var children = Array.from(node.childNodes);
+        for (var ci = 0; ci < children.length; ci++) {
+            var child = children[ci];
+            if (child.nodeType !== 1) continue;
+            var tag = child.tagName.toLowerCase();
+            // Drop noise elements (including Google Docs wrapper tags)
+            if (tag === 'style' || tag === 'script' || tag === 'meta' || tag === 'link' ||
+                tag === 'head' || tag === 'title' || tag.indexOf(':') >= 0 ||
+                tag === 'google-docs-html-origin' || tag.indexOf('google-') === 0) {
+                if (child.parentNode) child.parentNode.removeChild(child);
+                continue;
+            }
+            // Recurse into children first
+            _pasteCleanNode(child);
+            var parent = child.parentNode;
+            if (!parent) continue;
+            if (tag === 'span' || tag === 'font') {
+                // Promote bold/italic inline styles to semantic elements before unwrapping
+                var spanStyle = child.getAttribute('style') || '';
+                var isBold   = /font-weight\s*:\s*(bold|[6-9]\d{2})/i.test(spanStyle);
+                var isItalic = /font-style\s*:\s*italic/i.test(spanStyle);
+                // Extract text color if present (skip pure black — that's the default)
+                var colorMatch = spanStyle.match(/(?:^|;)\s*color\s*:\s*([^;]+)/i);
+                var color = colorMatch ? colorMatch[1].trim() : '';
+                if (color && /^#0{3,6}$|^rgb\(0,\s*0,\s*0\)$|^rgba\(0,\s*0,\s*0,\s*1[^)]*\)$/i.test(color)) color = '';
+                // Extract font-size (Google Docs uses pt; convert to px)
+                var fsMatch = spanStyle.match(/font-size\s*:\s*([\d.]+)(pt|px|em|rem)/i);
+                var fontSize = '';
+                if (fsMatch) {
+                    var fsNum = parseFloat(fsMatch[1]);
+                    var fsUnit = fsMatch[2].toLowerCase();
+                    if (fsUnit === 'pt') {
+                        fontSize = Math.round(fsNum * 4 / 3) + 'px'; // 1pt ≈ 1.333px
+                    } else {
+                        fontSize = fsNum + fsUnit;
+                    }
+                }
+                // Also handle <font size="N"> attribute
+                if (!fontSize && tag === 'font') {
+                    var sizeAttr = child.getAttribute('size');
+                    var htmlPxSizes = ['', '10px', '13px', '16px', '18px', '24px', '32px', '48px'];
+                    if (sizeAttr && htmlPxSizes[parseInt(sizeAttr, 10)]) fontSize = htmlPxSizes[parseInt(sizeAttr, 10)];
+                }
+                var frag = document.createDocumentFragment();
+                while (child.firstChild) frag.appendChild(child.firstChild);
+                var wrapped = frag;
+                if (isItalic)  { var em = document.createElement('em');     em.appendChild(wrapped); wrapped = em; }
+                if (isBold)    { var st = document.createElement('strong'); st.appendChild(wrapped); wrapped = st; }
+                if (color)     { var cs = document.createElement('span');   cs.style.color = color;    cs.appendChild(wrapped); wrapped = cs; }
+                if (fontSize)  { var fs = document.createElement('span');   fs.style.fontSize = fontSize; fs.appendChild(wrapped); wrapped = fs; }
+                parent.insertBefore(wrapped, child);
+                parent.removeChild(child);
+            } else if (tag === 'b') {
+                // Google Docs wraps body in <b style="font-weight:normal"> — unwrap those
+                if (/font-weight\s*:\s*normal/i.test(child.getAttribute('style') || '')) {
+                    var frag2 = document.createDocumentFragment();
+                    while (child.firstChild) frag2.appendChild(child.firstChild);
+                    parent.insertBefore(frag2, child);
+                    parent.removeChild(child);
+                } else {
+                    _pasteStripAttrs(child, {});
+                }
+            } else if (tag === 'a') {
+                var href = child.getAttribute('href') || '';
+                if (href.indexOf('google.com/url') >= 0) {
+                    var m = href.match(/[?&]q=([^&]+)/);
+                    if (m) href = decodeURIComponent(m[1]);
+                }
+                _pasteStripAttrs(child, href ? {href: href, target: '_blank', rel: 'noopener'} : {});
+            } else if (tag === 'img') {
+                var src = child.getAttribute('src') || '';
+                _pasteStripAttrs(child, src ? {src: src, alt: child.getAttribute('alt') || ''} : {alt: ''});
+            } else if (tag === 'iframe') {
+                var isrc = child.getAttribute('src') || '';
+                _pasteStripAttrs(child, {src: isrc, frameborder: '0', allowfullscreen: '', width: '560', height: '315'});
+            } else {
+                // For block elements, preserve text-align if explicitly set
+                var blockStyle = child.getAttribute('style') || '';
+                var alignMatch = blockStyle.match(/text-align\s*:\s*(center|right|justify|left)/i);
+                if (alignMatch) {
+                    _pasteStripAttrs(child, {style: 'text-align:' + alignMatch[1].toLowerCase()});
+                } else {
+                    _pasteStripAttrs(child, {});
+                }
+            }
+        }
+    }
+
+    function _pasteStripAttrs(el, keep) {
+        Array.from(el.attributes).forEach(function(a) { if (!(a.name in keep)) el.removeAttribute(a.name); });
+        Object.keys(keep).forEach(function(k) { el.setAttribute(k, keep[k]); });
     }
 
     // ================================================================
@@ -3478,6 +4179,12 @@
             }
         });
 
+        // Populate gallery images
+        var gi = c.galleryImages || [];
+        for (var gIdx = 1; gIdx <= 8; gIdx++) {
+            iwSetValue('cf-gallery-' + gIdx, gi[gIdx - 1] || '');
+        }
+
         document.getElementById('contrib-form-title').textContent = 'Edit Contributor';
         document.getElementById('btn-contrib-submit').textContent = 'Update Contributor';
         document.getElementById('form-err').classList.remove('show');
@@ -3533,6 +4240,10 @@
                 if (el) el.value = '';
             });
         });
+        // Reset gallery images
+        for (var gi = 1; gi <= 8; gi++) {
+            iwSetValue('cf-gallery-' + gi, '');
+        }
     }
 
     function confirmContributor() {
@@ -3584,7 +4295,14 @@
             newsItems.push(item);
         });
 
-        var data = { name: name, role: role, type: type, img: img, avatar: avatar || img, bg: bg || img, stats: [stat1 || 'Stat 1', stat2 || 'Stat 2', stat3 || 'Stat 3', stat4 || 'Stat 4'], bio: bio, socialLinks: socialLinks, newsItems: newsItems };
+        // Collect gallery images
+        var galleryImages = [];
+        for (var gi = 1; gi <= 8; gi++) {
+            var gEl = document.getElementById('cf-gallery-' + gi);
+            galleryImages.push(gEl ? gEl.value.trim() : '');
+        }
+
+        var data = { name: name, role: role, type: type, img: img, avatar: avatar || img, bg: bg || img, stats: [stat1 || 'Stat 1', stat2 || 'Stat 2', stat3 || 'Stat 3', stat4 || 'Stat 4'], bio: bio, socialLinks: socialLinks, newsItems: newsItems, galleryImages: galleryImages };
         if (editContribIdx !== null) {
             var oldType = contributors[editContribIdx].type;
             contributors[editContribIdx] = data;
@@ -3637,7 +4355,182 @@
             populateContribDropdowns();
             renderBlogList();
         }
+        if (panelId === 'panel-about') {
+            loadAboutPanel();
+        }
     }
+
+    // ================================================================
+    //  ABOUT US PANEL
+    // ================================================================
+    // ================================================================
+    //  ABOUT US IMAGE WIDGETS
+    // ================================================================
+    function aiwTab(btn, tab) {
+        var w = btn.closest('.about-img-widget');
+        w.querySelectorAll('.aiw-tab').forEach(function(b) { b.classList.remove('active'); });
+        w.querySelectorAll('.aiw-pane').forEach(function(p) { p.classList.remove('active'); });
+        btn.classList.add('active');
+        w.querySelector('.aiw-' + tab).classList.add('active');
+    }
+    function aiwApplyPaste(btn) {
+        var w = btn.closest('.about-img-widget');
+        var ta = w.querySelector('.aiw-paste-area');
+        var val = ta ? ta.value.trim() : '';
+        if (!val) return;
+        var inp = w.querySelector('.aiw-url input');
+        if (inp) inp.value = val;
+        aiwUpdatePreview(w, val);
+        aiwTab(w.querySelector('.aiw-tab'), 'url');
+    }
+    function aiwHandlePaste(e, ta) {
+        var items = (e.clipboardData || e.originalEvent.clipboardData).items;
+        for (var i = 0; i < items.length; i++) {
+            if (items[i].type.indexOf('image') >= 0) {
+                e.preventDefault();
+                var w = ta.closest('.about-img-widget');
+                var reader = new FileReader();
+                reader.onload = (function(ww, textarea) { return function(ev) {
+                    textarea.value = ev.target.result;
+                    var inp = ww ? ww.querySelector('.aiw-url input') : null;
+                    if (inp) inp.value = ev.target.result;
+                    if (ww) aiwUpdatePreview(ww, ev.target.result);
+                }; })(w, ta);
+                reader.readAsDataURL(items[i].getAsFile());
+                return;
+            }
+        }
+    }
+    function aiwApplyUpload(fileInput) {
+        var file = fileInput.files[0];
+        if (!file) return;
+        var w = fileInput.closest('.about-img-widget');
+        var reader = new FileReader();
+        reader.onload = (function(ww) { return function(ev) {
+            var data = ev.target.result;
+            var inp = ww ? ww.querySelector('.aiw-url input') : null;
+            if (inp) inp.value = data;
+            if (ww) { aiwUpdatePreview(ww, data); aiwTab(ww.querySelector('.aiw-tab'), 'url'); }
+        }; })(w);
+        reader.readAsDataURL(file);
+    }
+    function aiwUpdatePreview(w, src) {
+        var img = w ? w.querySelector('.aiw-preview') : null;
+        if (!img) return;
+        if (src) { img.src = src; img.style.display = 'block'; }
+        else { img.src = ''; img.style.display = 'none'; }
+    }
+
+    var _aboutConfig = { videoUrl: '', videoCover: '', sec3Image: '', sec4Image: '', sec5Image: '', spotlightContribs: [] };
+
+    function loadAboutPanel() {
+        ghStorage.getAboutConfig().then(function(cfg) {
+            if (cfg && typeof cfg === 'object') {
+                _aboutConfig = {
+                    videoUrl:         cfg.videoUrl         || '',
+                    videoCover:       cfg.videoCover       || '',
+                    sec3Image:        cfg.sec3Image        || '',
+                    sec4Image:        cfg.sec4Image        || '',
+                    sec5Image:        cfg.sec5Image        || '',
+                    spotlightContribs: Array.isArray(cfg.spotlightContribs) ? cfg.spotlightContribs.slice() : []
+                };
+            }
+            var f = function(id, v) { var el = document.getElementById(id); if (el) el.value = v; };
+            f('about-video-url',   _aboutConfig.videoUrl);
+            f('about-video-cover', _aboutConfig.videoCover);
+            f('about-sec3-img',    _aboutConfig.sec3Image);
+            f('about-sec4-img',    _aboutConfig.sec4Image);
+            f('about-sec5-img',    _aboutConfig.sec5Image);
+            // Refresh image widget previews
+            document.querySelectorAll('.about-img-widget').forEach(function(w) {
+                var inp = w.querySelector('.aiw-url input');
+                if (inp && inp.value) aiwUpdatePreview(w, inp.value);
+            });
+            renderSpotlightAll();
+            renderSpotlightOrdered();
+        }).catch(function(e) { console.warn('loadAboutPanel error', e); });
+    }
+
+    function renderSpotlightAll() {
+        var container = document.getElementById('spotlight-all');
+        if (!container) return;
+        container.innerHTML = '';
+        contributors.forEach(function(c, i) {
+            var isFeatured = _aboutConfig.spotlightContribs.indexOf(i) >= 0;
+            var card = document.createElement('div');
+            card.className = 'spotlight-card' + (isFeatured ? ' featured' : '');
+            card.title = isFeatured ? 'Click to remove from spotlight' : 'Click to add to spotlight';
+            card.innerHTML = '<img src="' + escAttr(c.img || '') + '" alt="' + escAttr(c.name || '') + '" onerror="this.style.opacity=0.3">' +
+                '<div class="spotlight-card-name">' + escHtml(c.name || '') + '</div>';
+            card.onclick = (function(idx) { return function() { toggleSpotlightContrib(idx); }; })(i);
+            container.appendChild(card);
+        });
+    }
+
+    function renderSpotlightOrdered() {
+        var container = document.getElementById('spotlight-ordered');
+        var countEl   = document.getElementById('spotlight-count');
+        if (!container) return;
+        var arr = _aboutConfig.spotlightContribs;
+        if (countEl) countEl.textContent = arr.length;
+        container.innerHTML = '';
+        if (!arr.length) {
+            container.innerHTML = '<div style="font-size:0.78rem;color:var(--muted);padding:6px 0;">No contributors selected yet.</div>';
+            return;
+        }
+        arr.forEach(function(idx, pos) {
+            var c = contributors[idx];
+            if (!c) return;
+            var item = document.createElement('div');
+            item.className = 'spotlight-ordered-item';
+            item.innerHTML =
+                '<img src="' + escAttr(c.img || '') + '" alt="' + escAttr(c.name || '') + '" onerror="this.style.opacity=0.3">' +
+                '<span>' + escHtml(c.name || '') + '</span>' +
+                '<div class="spotlight-order-btns">' +
+                  (pos > 0 ? '<button onclick="moveSpotlight(' + pos + ',-1)">↑</button>' : '') +
+                  (pos < arr.length - 1 ? '<button onclick="moveSpotlight(' + pos + ',1)">↓</button>' : '') +
+                  '<button class="remove" onclick="toggleSpotlightContrib(' + idx + ')">×</button>' +
+                '</div>';
+            container.appendChild(item);
+        });
+    }
+
+    function toggleSpotlightContrib(idx) {
+        var pos = _aboutConfig.spotlightContribs.indexOf(idx);
+        if (pos >= 0) {
+            _aboutConfig.spotlightContribs.splice(pos, 1);
+        } else {
+            _aboutConfig.spotlightContribs.push(idx);
+        }
+        renderSpotlightAll();
+        renderSpotlightOrdered();
+    }
+
+    function moveSpotlight(pos, dir) {
+        var arr = _aboutConfig.spotlightContribs;
+        var newPos = pos + dir;
+        if (newPos < 0 || newPos >= arr.length) return;
+        var tmp = arr[pos]; arr[pos] = arr[newPos]; arr[newPos] = tmp;
+        renderSpotlightOrdered();
+    }
+
+    function saveAboutCMS() {
+        _aboutConfig.videoUrl   = (document.getElementById('about-video-url')   || {}).value || '';
+        _aboutConfig.videoCover = (document.getElementById('about-video-cover') || {}).value || '';
+        _aboutConfig.sec3Image  = (document.getElementById('about-sec3-img')    || {}).value || '';
+        _aboutConfig.sec4Image  = (document.getElementById('about-sec4-img')    || {}).value || '';
+        _aboutConfig.sec5Image  = (document.getElementById('about-sec5-img')    || {}).value || '';
+        var statusEl = document.getElementById('about-save-status');
+        if (statusEl) statusEl.textContent = 'Saving…';
+        ghStorage.saveAboutConfig(_aboutConfig).then(function() {
+            if (statusEl) { statusEl.textContent = '✓ Saved!'; setTimeout(function() { statusEl.textContent = ''; }, 3000); }
+        }).catch(function(e) {
+            if (statusEl) statusEl.textContent = '⚠ Failed: ' + e.message;
+        });
+    }
+
+    function escAttr(s) { return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+    function escHtml(s)  { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
     // ================================================================
     //  SAVE & RESET
@@ -3760,6 +4653,16 @@
                     if (inp) inp.value = src || '';
                 });
             });
+
+            // Register image widget: contributor gallery fields
+            for (var _gIdx = 1; _gIdx <= 8; _gIdx++) {
+                (function(idx) {
+                    iwRegister('cf-gallery-' + idx, function(src) {
+                        var inp = document.getElementById('cf-gallery-' + idx);
+                        if (inp) inp.value = src || '';
+                    });
+                })(_gIdx);
+            }
 
             // Load home layout data when navigating to that panel
             var origActivate = window.activatePanel;

@@ -231,6 +231,17 @@
         return ghPut('data/home-layout.json', layout, 'CMS: update home layout');
     }
 
+    function getAboutConfig() {
+        return ghGet('data/about-config.json').then(function(data) {
+            if (data && typeof data === 'object') return data;
+            return { videoUrl: '', videoCover: '', sec3Image: '', sec4Image: '', sec5Image: '', spotlightContribs: [] };
+        });
+    }
+
+    function saveAboutConfig(cfg) {
+        return ghPut('data/about-config.json', cfg, 'CMS: update about config');
+    }
+
     // Expose on window
     global.ghStorage = {
         getArticles:      getArticles,
@@ -241,6 +252,8 @@
         saveContributors: saveContributors,
         getHomeLayout:    getHomeLayout,
         saveHomeLayout:   saveHomeLayout,
+        getAboutConfig:   getAboutConfig,
+        saveAboutConfig:  saveAboutConfig,
         setToken:  function(t) { localStorage.setItem(TOKEN_KEY, t); _shaCache = {}; },
         hasToken:  function()  { return !!getToken(); }
     };

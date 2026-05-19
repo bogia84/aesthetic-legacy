@@ -298,6 +298,28 @@
         /* --- SECTION 6: FOOTER --- */
         .block-footer { background: #fff; align-items: center; text-align: center; padding: 60px 10%; }
         .footer-logo-container svg { width: 100%; height: auto; max-width: 416px; display: block; margin: 0 auto 30px; }
+
+        /* --- CONTRIBUTOR SPOTLIGHT --- */
+        .contrib-spotlight { background: #1a1a1a; padding: 80px 0 60px; overflow: hidden; }
+        .cs-heading { text-align: center; font-size: 2.2rem; font-weight: 900; color: #fff; margin-bottom: 40px; letter-spacing: 0.04em; }
+        .cs-scroll-row {
+            display: flex;
+            flex-direction: row;
+            overflow-x: auto;
+            gap: 16px;
+            padding: 0 60px 24px;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+        }
+        .cs-scroll-row::-webkit-scrollbar { height: 4px; }
+        .cs-scroll-row::-webkit-scrollbar-track { background: transparent; }
+        .cs-scroll-row::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.25); border-radius: 2px; }
+        .cs-card { display: block; text-decoration: none; color: inherit; flex: 0 0 200px; scroll-snap-align: start; cursor: pointer; transition: opacity 0.15s; }
+        .cs-card:hover { opacity: 0.85; }
+        .cs-card img { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; }
+        .cs-card-info { padding: 10px 4px 0; }
+        .cs-card-name { color: #fff; font-weight: 800; font-size: 0.88rem; }
+        .cs-card-role { color: rgba(255,255,255,0.55); font-size: 0.75rem; font-weight: 600; margin-top: 2px; }
         
         .socials-wrapper { display: flex; align-items: center; justify-content: center; gap: 20px; }
         .follow-text { font-size: 1.1rem; font-weight: 500; color: #111; }
@@ -441,9 +463,9 @@
             <span>AESTHETIC LEGACY</span>
         </div>
         <nav id="main-nav">
-            <a href="https://bogia84.github.io/aesthetic-legacy/">Home</a>
-            <a href="https://bogia84.github.io/aesthetic-legacy/about">About us</a>
-            <a href="https://bogia84.github.io/aesthetic-legacy/contributors">Contributors</a>
+            <a href="index.html">Home</a>
+            <a href="about.html">About us</a>
+            <a href="contributors.html">Contributors</a>
         </nav>
         <div class="hamburger" id="hamburger-menu">
             <svg width="30" height="20" viewBox="0 0 30 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -533,7 +555,7 @@
                     </div>
                 </div>
                 <div class="split-5050-right">
-                    <img src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=800" alt="How we do it image">
+                    <img id="about-sec3-img" src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=800" alt="How we do it image">
                 </div>
             </div>
         </section>
@@ -562,7 +584,7 @@
 
                 </div>
                 <div class="split-5050-right">
-                    <img src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&q=80&w=600" alt="Reach this mission">
+                    <img id="about-sec4-img" src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&q=80&w=600" alt="Reach this mission">
                 </div>
             </div>
         </section>
@@ -578,12 +600,18 @@
                     </div>
                 </div>
                 <div class="split-5050-right">
-                    <img src="https://images.unsplash.com/photo-1526506159807-1a52701b22e1?auto=format&fit=crop&q=80&w=800" alt="Vision">
+                    <img id="about-sec5-img" src="https://images.unsplash.com/photo-1526506159807-1a52701b22e1?auto=format&fit=crop&q=80&w=800" alt="Vision">
                 </div>
             </div>
         </section>
 
-        <!-- SECTION 6: FOOTER -->
+        <!-- SECTION 6: CONTRIBUTOR SPOTLIGHT (populated from config) -->
+        <section class="contrib-spotlight" id="contrib-spotlight" style="display:none;">
+            <h2 class="cs-heading">OUR <span class="text-red">CONTRIBUTORS</span></h2>
+            <div class="cs-scroll-row" id="cs-scroll-row"></div>
+        </section>
+
+        <!-- SECTION 7: FOOTER -->
         <section class="block-footer">
             <div class="footer-logo-container">
                 <svg viewBox="0 0 416 98" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -669,12 +697,79 @@
             const videoContainer = document.getElementById('custom-video-player');
             const videoIframe = document.getElementById('video-iframe');
 
+            var _configuredVideoUrl = '';
+
+            function toEmbedUrl(url) {
+                if (!url) return 'https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&controls=1';
+                // YouTube watch URL
+                var ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/);
+                if (ytMatch) return 'https://www.youtube.com/embed/' + ytMatch[1];
+                // Vimeo
+                var vmMatch = url.match(/vimeo\.com\/(\d+)/);
+                if (vmMatch) return 'https://player.vimeo.com/video/' + vmMatch[1];
+                // Already an embed/iframe src
+                return url;
+            }
+
             if (videoContainer && videoIframe) {
                 videoContainer.addEventListener('click', function() {
                     videoContainer.classList.add('is-playing');
-                    videoIframe.src = "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&controls=1";
+                    var embedUrl = toEmbedUrl(_configuredVideoUrl);
+                    videoIframe.src = embedUrl + (embedUrl.indexOf('?') >= 0 ? '&' : '?') + 'autoplay=1&controls=1';
                 });
             }
+
+            // Load About Config
+            (function() {
+                function applyConfig(cfg) {
+                    if (!cfg) return;
+                    if (cfg.videoCover) {
+                        var cover = document.querySelector('.video-cover');
+                        if (cover) cover.src = cfg.videoCover;
+                    }
+                    if (cfg.videoUrl) {
+                        _configuredVideoUrl = cfg.videoUrl;
+                    }
+                    if (cfg.sec3Image) { var el = document.getElementById('about-sec3-img'); if (el) el.src = cfg.sec3Image; }
+                    if (cfg.sec4Image) { var el = document.getElementById('about-sec4-img'); if (el) el.src = cfg.sec4Image; }
+                    if (cfg.sec5Image) { var el = document.getElementById('about-sec5-img'); if (el) el.src = cfg.sec5Image; }
+                    if (cfg.spotlightContribs && cfg.spotlightContribs.length > 0) {
+                        fetch('/data/contributors.json')
+                            .then(function(r) { return r.ok ? r.json() : null; })
+                            .then(function(data) {
+                                if (data && Array.isArray(data.contributors)) {
+                                    buildSpotlight(cfg.spotlightContribs, data.contributors);
+                                }
+                            }).catch(function() {});
+                    }
+                }
+
+                function buildSpotlight(indices, contribs) {
+                    var container = document.getElementById('cs-scroll-row');
+                    var section = document.getElementById('contrib-spotlight');
+                    if (!container || !section) return;
+                    var html = '';
+                    indices.forEach(function(idx) {
+                        var c = contribs[idx];
+                        if (!c) return;
+                        html += '<a href="contributor_detail.html?index=' + idx + '" class="cs-card">' +
+                            '<img src="' + (c.img || '') + '" alt="" loading="lazy">' +
+                            '<div class="cs-card-info">' +
+                            '<div class="cs-card-name">' + (c.name || '') + '</div>' +
+                            '<div class="cs-card-role">' + (c.role || '') + '</div>' +
+                            '</div></a>';
+                    });
+                    if (html) {
+                        container.innerHTML = html;
+                        section.style.display = '';
+                    }
+                }
+
+                fetch('/data/about-config.json', { cache: 'no-store' })
+                    .then(function(r) { return r.ok ? r.json() : null; })
+                    .then(applyConfig)
+                    .catch(function() {});
+            })();
 
             // Mobile Menu Logic (Synced with Home)
             const hamburger = document.getElementById('hamburger-menu');

@@ -16,7 +16,8 @@ const ALLOWED_DATA_FILES = [
     'data/home-layout.json',
     'data/articles.json',
     'data/contributors.json',
-    'data/home-order.json'
+    'data/home-order.json',
+    'data/about-config.json'
 ];
 
 app.post('/api/save-json', (req, res) => {

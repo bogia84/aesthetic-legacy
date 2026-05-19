@@ -644,9 +644,9 @@
             <span>AESTHETIC LEGACY</span>
         </div>
         <nav id="main-nav">
-            <a href="https://bogia84.github.io/aesthetic-legacy/">Home</a>
-            <a href="https://bogia84.github.io/aesthetic-legacy/about">About us</a>
-            <a href="https://bogia84.github.io/aesthetic-legacy/contributors">Contributors</a>
+            <a href="index.html">Home</a>
+            <a href="about.html">About us</a>
+            <a href="contributors.html">Contributors</a>
         </nav>
         <div class="hamburger" id="hamburger-menu">
             <svg width="30" height="20" viewBox="0 0 30 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1114,7 +1114,7 @@
             } catch(e) {}
             if (!previewDraft) return;
         } else {
-            if (!articleId && articleIndexParam === null) return; // no id or index → show static template
+            if (!articleId && articleIndexParam === null) return;
         }
 
         // Fetch all persistent data from GitHub
@@ -1147,7 +1147,7 @@
             } else {
                 article = articles.find(function(a) { return a.id === articleId; });
             }
-            if (!article) return; // article not found → show static template
+            if (!article) { return; } // article not found → show static template
             var _finalArtIdx = articleIndexParam !== null ? parseInt(articleIndexParam, 10) : articles.indexOf(article);
             if (_finalArtIdx >= 0) history.replaceState(null, '', 'blog_article.html?index=' + _finalArtIdx);
         }
@@ -1260,12 +1260,15 @@
             // Clear all block elements (header, stats, content, pullquote, routine, social)
             var toRemove = mainContent.querySelectorAll('.article-header-block,.quick-stats-block,.article-content-block,.article-pull-quote,.routine-block,.social-media-block');
             toRemove.forEach(function(el) { el.remove(); });
+            // Add article header (title + date + lang switcher) — same as component mode
+            var normalHeaderEl = buildHeaderBlock({ title: article.title || '', date: article.date || '' });
+            mainContent.insertBefore(normalHeaderEl, mainContent.firstChild);
             // Inject normal content into a wrapper
             var wrapper = document.createElement('div');
             wrapper.className = 'normal-content-body';
             wrapper.style.cssText = 'font-family:inherit;line-height:1.75;color:#282828;';
             wrapper.innerHTML = article.normalContent || '';
-            mainContent.insertBefore(wrapper, mainContent.firstChild);
+            mainContent.insertBefore(wrapper, normalHeaderEl.nextSibling);
         } else {
             // --- COMPONENT MODE: populate template blocks ---
             var blocks = article.blocks || [];
@@ -1274,13 +1277,24 @@
             var staticRemove = mainContent.querySelectorAll('.article-header-block,.quick-stats-block,.article-content-block,.article-pull-quote,.routine-block,.social-media-block');
             staticRemove.forEach(function(el) { el.remove(); });
 
-            // Build and insert blocks in order
+            // Build and insert blocks in order; only allow one header block
             var fragment = document.createDocumentFragment();
+            var headerRendered = false;
 
             blocks.forEach(function(blk) {
+                if (blk.type === 'header') {
+                    if (headerRendered) return; // skip duplicate header blocks
+                    headerRendered = true;
+                }
                 var el = buildBlockElement(blk);
                 if (el) fragment.appendChild(el);
             });
+
+            // If no header block in data, synthesize one from article metadata
+            if (!headerRendered) {
+                var syntheticHeader = buildHeaderBlock({ title: article.title || '', date: article.date || '' });
+                fragment.insertBefore(syntheticHeader, fragment.firstChild);
+            }
 
             // Insert before sidebar (which is outside mainContent, so just append)
             mainContent.appendChild(fragment);
@@ -1528,3 +1542,6 @@
         }
         return null;
     }
+    </script>
+</body>
+</html>
