@@ -58,20 +58,6 @@
       ]
     },
     {
-      "name": "Cody Fisher",
-      "role": "Powerlifter",
-      "type": "men",
-      "img": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&q=80&w=800",
-      "bg": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&q=80&w=1920",
-      "avatar": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&q=80&w=200",
-      "stats": [
-        "Raw Strength",
-        "11 Years",
-        "Competition",
-        "Powerlifting"
-      ]
-    },
-    {
       "name": "Esther Howard",
       "role": "Dance Fitness Coach",
       "type": "women",
@@ -86,11 +72,9 @@
       ]
     }
   ],
-  "menOrder": [
-    1
-  ],
+  "menOrder": [],
   "womenOrder": [
     0,
-    2
+    1
   ]
 }
