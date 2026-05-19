@@ -5,7 +5,7 @@
     "y": 0
   },
   "womenImageScale": 1,
-  "womenTextScale": 1,
+  "womenTextScale": 0.3,
   "womenTextOpacity": 0.5,
   "menImage": null,
   "menImagePos": {
@@ -13,6 +13,6 @@
     "y": 0
   },
   "menImageScale": 1,
-  "menTextScale": 1,
+  "menTextScale": 0.85,
   "menTextOpacity": 0.5
 }
