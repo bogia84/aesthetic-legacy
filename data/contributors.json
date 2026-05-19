@@ -58,6 +58,62 @@
       ]
     },
     {
+      "name": "Guy Hawkins",
+      "role": "Gymnast",
+      "type": "women",
+      "img": "https://images.unsplash.com/photo-1574680093668-0782e2cb658e?auto=format&fit=crop&q=80&w=800",
+      "bg": "https://images.unsplash.com/photo-1574680093668-0782e2cb658e?auto=format&fit=crop&q=80&w=1920",
+      "avatar": "https://images.unsplash.com/photo-1574680093668-0782e2cb658e?auto=format&fit=crop&q=80&w=200",
+      "stats": [
+        "Acrobatic",
+        "10 Years",
+        "Elite approach",
+        "Calisthenics"
+      ]
+    },
+    {
+      "name": "Wade Warren",
+      "role": "Sprinter",
+      "type": "men",
+      "img": "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=800",
+      "bg": "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=1920",
+      "avatar": "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=200",
+      "stats": [
+        "Speed",
+        "6 Years",
+        "Track Focus",
+        "100m Dash"
+      ]
+    },
+    {
+      "name": "Bessie Cooper",
+      "role": "Fitness Influencer",
+      "type": "women",
+      "img": "https://images.unsplash.com/photo-1608667508764-33cf0726b13a?auto=format&fit=crop&q=80&w=800",
+      "bg": "https://images.unsplash.com/photo-1608667508764-33cf0726b13a?auto=format&fit=crop&q=80&w=1920",
+      "avatar": "https://images.unsplash.com/photo-1608667508764-33cf0726b13a?auto=format&fit=crop&q=80&w=200",
+      "stats": [
+        "Physique type",
+        "Training years",
+        "Casual approach",
+        "Specialisation"
+      ]
+    },
+    {
+      "name": "Jacob Jones",
+      "role": "Personal Trainer",
+      "type": "men",
+      "img": "https://images.unsplash.com/photo-1567013127542-490d757e51fc?auto=format&fit=crop&q=80&w=800",
+      "bg": "https://images.unsplash.com/photo-1567013127542-490d757e51fc?auto=format&fit=crop&q=80&w=1920",
+      "avatar": "https://images.unsplash.com/photo-1567013127542-490d757e51fc?auto=format&fit=crop&q=80&w=200",
+      "stats": [
+        "Strength",
+        "9 Years",
+        "Functional",
+        "HIIT"
+      ]
+    },
+    {
       "name": "Kristin Watson",
       "role": "Pilates Coach",
       "type": "women",
@@ -101,11 +157,15 @@
     }
   ],
   "menOrder": [
-    2
+    2,
+    4,
+    6
   ],
   "womenOrder": [
     0,
     1,
-    3
+    3,
+    5,
+    7
   ]
 }
