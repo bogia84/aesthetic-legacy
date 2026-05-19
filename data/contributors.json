@@ -58,48 +58,6 @@
       ]
     },
     {
-      "name": "Lazar Angelov",
-      "role": "Boxing Coach",
-      "type": "men",
-      "img": "https://images.unsplash.com/photo-1594381898411-846e7d193883?auto=format&fit=crop&q=80&w=800",
-      "bg": "https://images.unsplash.com/photo-1594381898411-846e7d193883?auto=format&fit=crop&q=80&w=1920",
-      "avatar": "https://images.unsplash.com/photo-1594381898411-846e7d193883?auto=format&fit=crop&q=80&w=200",
-      "stats": [
-        "Agility",
-        "15 Years",
-        "Pro approach",
-        "Striking"
-      ]
-    },
-    {
-      "name": "Guy Hawkins",
-      "role": "Gymnast",
-      "type": "women",
-      "img": "https://images.unsplash.com/photo-1574680093668-0782e2cb658e?auto=format&fit=crop&q=80&w=800",
-      "bg": "https://images.unsplash.com/photo-1574680093668-0782e2cb658e?auto=format&fit=crop&q=80&w=1920",
-      "avatar": "https://images.unsplash.com/photo-1574680093668-0782e2cb658e?auto=format&fit=crop&q=80&w=200",
-      "stats": [
-        "Acrobatic",
-        "10 Years",
-        "Elite approach",
-        "Calisthenics"
-      ]
-    },
-    {
-      "name": "Wade Warren",
-      "role": "Sprinter",
-      "type": "men",
-      "img": "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=800",
-      "bg": "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=1920",
-      "avatar": "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=200",
-      "stats": [
-        "Speed",
-        "6 Years",
-        "Track Focus",
-        "100m Dash"
-      ]
-    },
-    {
       "name": "Bessie Cooper",
       "role": "Fitness Influencer",
       "type": "women",
@@ -171,16 +129,13 @@
     }
   ],
   "menOrder": [
-    1,
-    3,
-    5,
-    7
+    2,
+    4
   ],
   "womenOrder": [
     0,
-    2,
-    4,
-    6,
-    8
+    1,
+    3,
+    5
   ]
 }
