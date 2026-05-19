@@ -19,6 +19,31 @@
     // SHA cache so we don't need to fetch before every write
     var _shaCache = {};
 
+    // When running on localhost, read/write local files instead of GitHub API
+    function isLocal() {
+        var h = global.location && global.location.hostname;
+        return h === 'localhost' || h === '127.0.0.1';
+    }
+
+    function localGet(filePath) {
+        return fetch('/' + filePath, { cache: 'no-store' })
+            .then(function(res) {
+                if (!res.ok) return null;
+                return res.json();
+            })
+            .catch(function() { return null; });
+    }
+
+    function localPut(filePath, value) {
+        return fetch('/api/save-json', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ filePath: filePath, content: value })
+        }).then(function(res) {
+            if (!res.ok) return res.text().then(function(t) { throw new Error('Local save failed: ' + t); });
+        });
+    }
+
     // Public repo info — not secret, safe to hardcode
     var OWNER     = 'bogia84';
     var REPO      = 'aesthetic-legacy';
@@ -64,6 +89,7 @@
      * Returns parsed JS value, or null on 404.
      */
     function ghGet(filePath) {
+        if (isLocal()) return localGet(filePath);
         return fetch(apiUrl(filePath), { headers: headers(), cache: 'no-store' })
             .then(function(res) {
                 if (res.status === 404) return null;
@@ -95,6 +121,7 @@
      * Uses the cached SHA if available, otherwise fetches it first.
      */
     function ghPut(filePath, value, commitMessage) {
+        if (isLocal()) return localPut(filePath, value);
         var content = b64encode(JSON.stringify(value, null, 2));
         var sha = _shaCache[filePath];
 
