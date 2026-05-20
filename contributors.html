@@ -440,10 +440,10 @@
 
         <!-- SECTION 2: INTERACTIVE GALLERY -->
         <section class="interactive-gallery">
-            <img src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=1920" id="gallery-main-bg" class="gallery-bg-image" alt="Contributor Background">
+            <img src="" id="gallery-main-bg" class="gallery-bg-image" alt="Contributor Background" style="opacity:0">
             <div class="gallery-overlay"></div>
 
-            <div class="info-card" id="gallery-info-card">
+            <div class="info-card" id="gallery-info-card" style="opacity:0">
                 <div class="info-tag" id="dynamic-name">Floyd Miles</div>
                 <div class="info-title" id="dynamic-role">Fitness influencer</div>
                 
@@ -572,10 +572,39 @@
                 });
 
                 const gallerySwiper = new Swiper('.swiper-gallery', {
-                    loop: true, slidesPerView: 'auto', spaceBetween: 25, centeredSlides: true, slideToClickedSlide: true, grabCursor: true
+                    loop: true, slidesPerView: 'auto', spaceBetween: 25, centeredSlides: true, grabCursor: true
                 });
 
                 const profileLink = document.getElementById('gallery-profile-link');
+
+                // Click event delegation — uses slideToLoop for correct loop ordering
+                document.querySelector('.swiper-gallery').addEventListener('click', function(e) {
+                    var avatarEl = e.target.closest('.avatar-container');
+                    if (avatarEl) {
+                        var idx = parseInt(avatarEl.dataset.index, 10);
+                        gallerySwiper.slideToLoop(idx, 300);
+                    }
+                });
+
+                // Populate first contributor immediately (no flash of placeholder text)
+                (function() {
+                    var data = contributorsData[0];
+                    if (!data) return;
+                    var bgImage = document.getElementById('gallery-main-bg');
+                    var infoCard = document.getElementById('gallery-info-card');
+                    bgImage.src = data.bg;
+                    document.getElementById('dynamic-name').textContent = data.name;
+                    document.getElementById('dynamic-role').textContent = data.role;
+                    document.getElementById('stat-1').textContent = data.stats[0];
+                    document.getElementById('stat-2').textContent = data.stats[1];
+                    document.getElementById('stat-3').textContent = data.stats[2];
+                    document.getElementById('stat-4').textContent = data.stats[3];
+                    if (profileLink) profileLink.href = 'contributor_detail.html?index=0';
+                    setTimeout(function() {
+                        bgImage.style.opacity = 1;
+                        infoCard.style.opacity = 1;
+                    }, 50);
+                })();
 
                 gallerySwiper.on('slideChange', function () {
                     const realIndex = this.realIndex;

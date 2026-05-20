@@ -16,6 +16,7 @@
             --text-light: #fff;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        main { visibility: hidden; }
         
         body { 
             font-family: 'Manrope', sans-serif; 
@@ -401,7 +402,10 @@
             display: flex;
             align-items: flex-end;
             margin-bottom: 40px;
+            cursor: pointer;
+            transition: opacity 0.2s;
         }
+        .sidebar-avatar:hover { opacity: 0.85; }
         
         .sidebar-avatar img {
             position: absolute;
@@ -916,12 +920,12 @@
                 <aside class="blog-sidebar">
                     
                     <!-- Avatar Widget -->
-                    <div class="sidebar-avatar">
+                    <a class="sidebar-avatar" id="sidebar-contributor-link" href="#" style="text-decoration:none;color:inherit;">
                         <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80" alt="Savannah Nguyen">
                         <div class="sidebar-avatar-overlay">
                             <h3>Savannah Nguyen</h3>
                         </div>
-                    </div>
+                    </a>
 
                     <!-- Latest Article Widget -->
                     <div class="sidebar-latest-articles">
@@ -1079,8 +1083,11 @@
          DYNAMIC ARTICLE POPULATION — reads ?id= from URL
          ================================================================ -->
     <script>
+    // Safety: always reveal main after 2s even if async fails
+    setTimeout(function() { var m = document.querySelector('main'); if(m) m.style.visibility='visible'; }, 2000);
     (async function() {
         // ---- helpers ----
+        function showMain() { var m = document.querySelector('main'); if(m) m.style.visibility='visible'; }
         function esc(str) { return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
         function escAttr(str) { return String(str || '').replace(/"/g,'&quot;'); }
 
@@ -1112,9 +1119,9 @@
                 previewDraft = JSON.parse(localStorage.getItem('aestheticLegacyPreviewDraft') || 'null');
                 localStorage.removeItem('aestheticLegacyPreviewDraft');
             } catch(e) {}
-            if (!previewDraft) return;
+            if (!previewDraft) { showMain(); return; }
         } else {
-            if (!articleId && articleIndexParam === null) return;
+            if (!articleId && articleIndexParam === null) { showMain(); return; }
         }
 
         // Fetch all persistent data from GitHub
@@ -1125,7 +1132,7 @@
                 ghStorage.getContributors(),
                 ghStorage.getHomeOrder()
             ]);
-        } catch(e) { return; }
+        } catch(e) { showMain(); return; }
 
         var articles    = ghResults[0];
         var contribData = ghResults[1];
@@ -1147,7 +1154,7 @@
             } else {
                 article = articles.find(function(a) { return a.id === articleId; });
             }
-            if (!article) { return; } // article not found → show static template
+            if (!article) { showMain(); return; } // article not found → show static template
             var _finalArtIdx = articleIndexParam !== null ? parseInt(articleIndexParam, 10) : articles.indexOf(article);
             if (_finalArtIdx >= 0) history.replaceState(null, '', 'blog_article.html?index=' + _finalArtIdx);
         }
@@ -1172,42 +1179,50 @@
             if (avatarImg) { avatarImg.src = contrib.avatar || contrib.img || ''; avatarImg.alt = contrib.name || ''; }
             var avatarH3 = document.querySelector('.sidebar-avatar-overlay h3');
             if (avatarH3) avatarH3.textContent = contrib.name || '';
+            var contribLink = document.getElementById('sidebar-contributor-link');
+            if (contribLink) contribLink.href = 'contributor_detail.html?index=' + article.contributorIdx;
         }
 
         // ---- SIDEBAR: latest articles from same contributor ----
         var sidebarLatest = document.querySelector('.sidebar-latest-articles');
-        if (sidebarLatest && contrib) {
-            var siblingArticles = articles.filter(function(a) {
-                return a.id !== article.id && a.contributorIdx === article.contributorIdx;
-            }).sort(function(a,b) { return b.createdAt - a.createdAt; }).slice(0, 4);
+        if (sidebarLatest) {
+            // Always clear static placeholder cards
+            sidebarLatest.querySelectorAll('.sidebar-card').forEach(function(c) { c.remove(); });
 
-            if (siblingArticles.length > 0) {
-                // Clear existing hardcoded cards
-                var existingCards = sidebarLatest.querySelectorAll('.sidebar-card');
-                existingCards.forEach(function(c) { c.remove(); });
+            if (contrib) {
+                var siblingArticles = articles.filter(function(a) {
+                    return a.id !== article.id && a.contributorIdx === article.contributorIdx;
+                }).sort(function(a,b) { return b.createdAt - a.createdAt; }).slice(0, 4);
 
-                siblingArticles.forEach(function(sa) {
-                    var link = document.createElement('a');
-                    link.href = 'blog_article.html?index=' + articles.indexOf(sa);
-                    link.style.cssText = 'text-decoration:none;display:block;';
-                    var card = document.createElement('div');
-                    card.className = 'sidebar-card';
-                    var imgEl = document.createElement('img');
-                    imgEl.src = sa.heroImage || '';
-                    imgEl.alt = sa.title || '';
-                    var overlay = document.createElement('div');
-                    overlay.className = 'sidebar-card-overlay';
-                    var h4 = document.createElement('h4');
-                    h4.textContent = sa.title || 'Untitled';
-                    var span = document.createElement('span');
-                    span.textContent = sa.date || '';
-                    overlay.appendChild(h4);
-                    overlay.appendChild(span);
-                    card.appendChild(imgEl);
-                    card.appendChild(overlay);
-                    link.appendChild(card);
-                    sidebarLatest.appendChild(link);
-                });
+                if (siblingArticles.length > 0) {
+                    siblingArticles.forEach(function(sa) {
+                        var link = document.createElement('a');
+                        link.href = 'blog_article.html?index=' + articles.indexOf(sa);
+                        link.style.cssText = 'text-decoration:none;display:block;';
+                        var card = document.createElement('div');
+                        card.className = 'sidebar-card';
+                        var imgEl = document.createElement('img');
+                        imgEl.src = sa.heroImage || '';
+                        imgEl.alt = sa.title || '';
+                        var overlay = document.createElement('div');
+                        overlay.className = 'sidebar-card-overlay';
+                        var h4 = document.createElement('h4');
+                        h4.textContent = sa.title || 'Untitled';
+                        var span = document.createElement('span');
+                        span.textContent = sa.date || '';
+                        overlay.appendChild(h4);
+                        overlay.appendChild(span);
+                        card.appendChild(imgEl);
+                        card.appendChild(overlay);
+                        link.appendChild(card);
+                        sidebarLatest.appendChild(link);
+                    });
+                } else {
+                    var sidebarHeading = sidebarLatest.querySelector('.sidebar-heading');
+                    if (sidebarHeading) sidebarHeading.style.display = 'none';
+                }
+            } else {
+                sidebarLatest.style.display = 'none';
             }
         }
 
@@ -1253,7 +1268,7 @@
         //  MAIN CONTENT — component vs normal mode
         // ================================================================
         var mainContent = document.querySelector('.blog-main-content');
-        if (!mainContent) return;
+        if (!mainContent) { showMain(); return; }
 
         if (article.editorMode === 'normal') {
             // --- NORMAL MODE: inject HTML directly ---
@@ -1299,6 +1314,8 @@
             // Insert before sidebar (which is outside mainContent, so just append)
             mainContent.appendChild(fragment);
         }
+
+        showMain();
 
         // ---- block builders ----
         function buildBlockElement(blk) {
@@ -1481,7 +1498,15 @@
         // Update h1 title
         var h1 = document.getElementById('article-main-title');
         if (h1) {
-            h1.textContent = (lang === 'en' && article.titleEn) ? article.titleEn : (article.title || h1.textContent);
+            if (article.editorMode !== 'normal') {
+                // Component mode: title lives in the header block, not article.title/titleEn
+                var _langBlocks = (lang === 'en' && article.blocksEn && article.blocksEn.length) ? article.blocksEn : (article.blocks || []);
+                var _hdrBlk = _langBlocks.find(function(b) { return b.type === 'header'; });
+                h1.textContent = (_hdrBlk && _hdrBlk.title) ? _hdrBlk.title
+                    : (lang === 'en' ? (article.titleEn || article.title || h1.textContent) : (article.title || h1.textContent));
+            } else {
+                h1.textContent = (lang === 'en' && article.titleEn) ? article.titleEn : (article.title || h1.textContent);
+            }
         }
         // Re-render body
         var mainContent = document.querySelector('.blog-main-content');

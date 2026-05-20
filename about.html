@@ -299,27 +299,34 @@
         .block-footer { background: #fff; align-items: center; text-align: center; padding: 60px 10%; }
         .footer-logo-container svg { width: 100%; height: auto; max-width: 416px; display: block; margin: 0 auto 30px; }
 
-        /* --- CONTRIBUTOR SPOTLIGHT --- */
-        .contrib-spotlight { background: #1a1a1a; padding: 80px 0 60px; overflow: hidden; }
-        .cs-heading { text-align: center; font-size: 2.2rem; font-weight: 900; color: #fff; margin-bottom: 40px; letter-spacing: 0.04em; }
-        .cs-scroll-row {
-            display: flex;
-            flex-direction: row;
-            overflow-x: auto;
-            gap: 16px;
-            padding: 0 60px 24px;
-            scroll-snap-type: x mandatory;
-            -webkit-overflow-scrolling: touch;
+        /* --- SECTION 1 SWIPER: CONTRIBUTOR CARDS --- */
+        .swiper-sec1 .swiper-slide a.cs-card {
+            display: block;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            text-decoration: none;
+            color: inherit;
         }
-        .cs-scroll-row::-webkit-scrollbar { height: 4px; }
-        .cs-scroll-row::-webkit-scrollbar-track { background: transparent; }
-        .cs-scroll-row::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.25); border-radius: 2px; }
-        .cs-card { display: block; text-decoration: none; color: inherit; flex: 0 0 200px; scroll-snap-align: start; cursor: pointer; transition: opacity 0.15s; }
-        .cs-card:hover { opacity: 0.85; }
-        .cs-card img { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; }
-        .cs-card-info { padding: 10px 4px 0; }
-        .cs-card-name { color: #fff; font-weight: 800; font-size: 0.88rem; }
-        .cs-card-role { color: rgba(255,255,255,0.55); font-size: 0.75rem; font-weight: 600; margin-top: 2px; }
+        .swiper-sec1 .swiper-slide a.cs-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            opacity: 0.9;
+        }
+        .swiper-sec1 .cs-card-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 30px 12px 12px;
+            background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, transparent 100%);
+            pointer-events: none;
+        }
+        .swiper-sec1 .cs-card-name { color: #fff; font-weight: 800; font-size: 0.82rem; line-height: 1.3; }
+        .swiper-sec1 .cs-card-role { color: rgba(255,255,255,0.6); font-size: 0.7rem; font-weight: 600; margin-top: 2px; }
+        .swiper-sec1 .swiper-slide a.cs-card:hover img { opacity: 1; }
         
         .socials-wrapper { display: flex; align-items: center; justify-content: center; gap: 20px; }
         .follow-text { font-size: 1.1rem; font-weight: 500; color: #111; }
@@ -493,24 +500,8 @@
                 </div>
             </div>
 
-            <div class="swiper swiper-sec1">
-                <div class="swiper-wrapper">
-                    <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=400" alt="Slider 1"></div>
-                    <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400" alt="Slider 2"></div>
-                    <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&q=80&w=400" alt="Slider 3"></div>
-                    <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1526506159807-1a52701b22e1?auto=format&fit=crop&q=80&w=400" alt="Slider 4"></div>
-                    <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1594381898411-846e7d193883?auto=format&fit=crop&q=80&w=400" alt="Slider 5"></div>
-                    <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1608667508764-33cf0726b13a?auto=format&fit=crop&q=80&w=400" alt="Slider 6"></div>
-                    <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1574680093668-0782e2cb658e?auto=format&fit=crop&q=80&w=400" alt="Slider 7"></div>
-                    <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&q=80&w=400" alt="Slider 8"></div>
-                    <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=400" alt="Slider 9"></div>
-                    <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400" alt="Slider 10"></div>
-                    <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&q=80&w=400" alt="Slider 11"></div>
-                    <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1526506159807-1a52701b22e1?auto=format&fit=crop&q=80&w=400" alt="Slider 12"></div>
-                    <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1594381898411-846e7d193883?auto=format&fit=crop&q=80&w=400" alt="Slider 13"></div>
-                    <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1608667508764-33cf0726b13a?auto=format&fit=crop&q=80&w=400" alt="Slider 14"></div>
-                    <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1574680093668-0782e2cb658e?auto=format&fit=crop&q=80&w=400" alt="Slider 15"></div>
-                </div>
+            <div class="swiper swiper-sec1" id="swiper-sec1">
+                <div class="swiper-wrapper" id="sec1-swiper-wrapper"></div>
             </div>
 
             <div class="sec1-bottom-text">
@@ -605,11 +596,7 @@
             </div>
         </section>
 
-        <!-- SECTION 6: CONTRIBUTOR SPOTLIGHT (populated from config) -->
-        <section class="contrib-spotlight" id="contrib-spotlight" style="display:none;">
-            <h2 class="cs-heading">OUR <span class="text-red">CONTRIBUTORS</span></h2>
-            <div class="cs-scroll-row" id="cs-scroll-row"></div>
-        </section>
+
 
         <!-- SECTION 7: FOOTER -->
         <section class="block-footer">
@@ -674,25 +661,6 @@
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             
-            const sec1Swiper = new Swiper('.swiper-sec1', {
-                loop: true,
-                freemode: true, 
-                slidesPerView: 'auto', 
-                spaceBetween: 15,
-                speed: 8000, 
-                autoplay: {
-                    delay: 0,
-                    disableOnInteraction: false,
-                    pauseOnMouseEnter: false 
-                },
-                allowTouchMove: false, 
-                breakpoints: {
-                    320: { slidesPerView: 2.5, spaceBetween: 10 }, 
-                    768: { slidesPerView: 4, spaceBetween: 15 },
-                    1024: { slidesPerView: 6.2, spaceBetween: 15 } 
-                }
-            });
-
             // Video Player Swap
             const videoContainer = document.getElementById('custom-video-player');
             const videoIframe = document.getElementById('video-iframe');
@@ -745,23 +713,39 @@
                 }
 
                 function buildSpotlight(indices, contribs) {
-                    var container = document.getElementById('cs-scroll-row');
-                    var section = document.getElementById('contrib-spotlight');
-                    if (!container || !section) return;
+                    var wrapper = document.getElementById('sec1-swiper-wrapper');
+                    if (!wrapper) return;
                     var html = '';
                     indices.forEach(function(idx) {
                         var c = contribs[idx];
                         if (!c) return;
-                        html += '<a href="contributor_detail.html?index=' + idx + '" class="cs-card">' +
+                        html += '<div class="swiper-slide">' +
+                            '<a href="contributor_detail.html?index=' + idx + '" class="cs-card">' +
                             '<img src="' + (c.img || '') + '" alt="" loading="lazy">' +
                             '<div class="cs-card-info">' +
                             '<div class="cs-card-name">' + (c.name || '') + '</div>' +
                             '<div class="cs-card-role">' + (c.role || '') + '</div>' +
-                            '</div></a>';
+                            '</div></a></div>';
                     });
                     if (html) {
-                        container.innerHTML = html;
-                        section.style.display = '';
+                        wrapper.innerHTML = html;
+                        new Swiper('#swiper-sec1', {
+                            loop: true,
+                            slidesPerView: 'auto',
+                            spaceBetween: 15,
+                            speed: 8000,
+                            autoplay: {
+                                delay: 0,
+                                disableOnInteraction: false,
+                                pauseOnMouseEnter: false
+                            },
+                            allowTouchMove: false,
+                            breakpoints: {
+                                320:  { slidesPerView: 2.5, spaceBetween: 10 },
+                                768:  { slidesPerView: 4,   spaceBetween: 15 },
+                                1024: { slidesPerView: 6.2, spaceBetween: 15 }
+                            }
+                        });
                     }
                 }
 

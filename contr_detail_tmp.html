@@ -18,6 +18,7 @@
             --text-light: #fff;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        main { visibility: hidden; }
         
         body { 
             font-family: 'Manrope', sans-serif; 
@@ -806,6 +807,11 @@
     <script src="js/github-storage.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", async function() {
+            function showMain() {
+                var m = document.querySelector('main');
+                if (m) m.style.visibility = 'visible';
+            }
+            var _showMainTimeout = setTimeout(showMain, 2000);
             // --- Dynamic Contributor Population ---
             const DEFAULT_CONTRIBUTORS = [
                 { name: "Jeremy Buendia", role: "Men's Physique Champion", type: "men", img: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&q=80&w=800", bg: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&q=80&w=1920", avatar: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&q=80&w=200", stats: ["Physique type", "Training years", "Casual approach", "Specialisation"], bio: "" },
@@ -1026,6 +1032,9 @@
                     swiperWrapper.appendChild(slide);
                 });
             })();
+
+            clearTimeout(_showMainTimeout);
+            showMain();
 
             const articleSwiperElement = document.querySelector('.article-swiper');
             if (articleSwiperElement) {

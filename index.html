@@ -531,6 +531,7 @@
                     womenSvg.style.left = 'calc(50% + ' + (wtp.x||0) + 'px)';
                     if (layout.womenTextScale !== undefined) womenSvg.style.transform = 'translate(-50%,-50%) scale(' + layout.womenTextScale + ')';
                     if (layout.womenTextOpacity !== undefined) womenSvg.style.opacity = layout.womenTextOpacity;
+                    if (layout.womenTextHidden) womenSvg.style.display = 'none';
                 }
                 if (menSvg) {
                     var mtp = layout.menTextPos || {x:0, y:0};
@@ -538,6 +539,7 @@
                     menSvg.style.left = 'calc(50% + ' + (mtp.x||0) + 'px)';
                     if (layout.menTextScale !== undefined) menSvg.style.transform = 'translate(-50%,-50%) scale(' + layout.menTextScale + ')';
                     if (layout.menTextOpacity !== undefined) menSvg.style.opacity = layout.menTextOpacity;
+                    if (layout.menTextHidden) menSvg.style.display = 'none';
                 }
                 var footerGraphic = document.getElementById('footer-graphic');
                 if (footerGraphic && layout.footerImage) {
