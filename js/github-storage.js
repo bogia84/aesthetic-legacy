@@ -63,11 +63,22 @@
     function getCmsMode() {
         try { return sessionStorage.getItem('cmsMode'); } catch(e) { return null; }
     }
-    function setCmsSession(token, mode) {
-        try { sessionStorage.setItem('cmsToken', token); sessionStorage.setItem('cmsMode', mode); } catch(e) {}
+    function getCmsUser() {
+        try { return sessionStorage.getItem('cmsUser'); } catch(e) { return null; }
+    }
+    function setCmsSession(token, mode, username) {
+        try {
+            sessionStorage.setItem('cmsToken', token);
+            sessionStorage.setItem('cmsMode', mode);
+            if (username) sessionStorage.setItem('cmsUser', username);
+        } catch(e) {}
     }
     function clearCmsToken() {
-        try { sessionStorage.removeItem('cmsToken'); sessionStorage.removeItem('cmsMode'); } catch(e) {}
+        try {
+            sessionStorage.removeItem('cmsToken');
+            sessionStorage.removeItem('cmsMode');
+            sessionStorage.removeItem('cmsUser');
+        } catch(e) {}
     }
 
     function isAuthenticated() {
@@ -140,6 +151,67 @@
     }
 
     function logout() { clearCmsToken(); }
+
+    // ---- User management API (works in both server and client mode) ----
+    function cmsRequest(method, endpoint, body) {
+        var token = getCmsToken();
+        var mode  = getCmsMode();
+        if (mode === 'client') return cmsClientRequest(method, endpoint, body);
+        var opts = {
+            method: method,
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (token || '') }
+        };
+        if (body && method !== 'GET') opts.body = JSON.stringify(body);
+        return fetch(endpoint, opts).then(function(res) {
+            return res.json().then(function(data) {
+                if (!res.ok) throw new Error(data.error || 'Request failed (' + res.status + ')');
+                return data;
+            });
+        });
+    }
+
+    function cmsClientRequest(method, endpoint, body) {
+        var KEY = 'cmsUsers';
+        function load()  { try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch(e) { return []; } }
+        function store(u){ localStorage.setItem(KEY, JSON.stringify(u)); }
+
+        if (method === 'GET') {
+            return Promise.resolve(load().map(function(u) { return { username: u.username, blocked: !!u.blocked }; }));
+        }
+        if (method === 'POST') {
+            var users = load();
+            if (users.find(function(u) { return u.username === body.username; }))
+                return Promise.reject(new Error('Username already exists.'));
+            return hashString(body.password).then(function(h) {
+                users.push({ username: body.username, passwordHash: h, blocked: false });
+                store(users); return { ok: true };
+            });
+        }
+        var username = endpoint.split('/').pop();
+        if (method === 'PUT') {
+            var users = load(), idx = users.findIndex(function(u) { return u.username === username; });
+            if (idx === -1) return Promise.reject(new Error('User not found.'));
+            if (body.blocked !== undefined) users[idx].blocked = !!body.blocked;
+            if (body.password) {
+                return hashString(body.password).then(function(h) {
+                    users[idx].passwordHash = h; store(users); return { ok: true };
+                });
+            }
+            store(users); return Promise.resolve({ ok: true });
+        }
+        if (method === 'DELETE') {
+            var users = load(), filtered = users.filter(function(u) { return u.username !== username; });
+            if (filtered.length === users.length) return Promise.reject(new Error('User not found.'));
+            if (filtered.length === 0) return Promise.reject(new Error('Cannot delete the last user.'));
+            store(filtered); return Promise.resolve({ ok: true });
+        }
+        return Promise.reject(new Error('Unknown operation'));
+    }
+
+    function getUsers()                          { return cmsRequest('GET',    '/api/users',             null); }
+    function createUser(username, password)      { return cmsRequest('POST',   '/api/users',             { username: username, password: password }); }
+    function updateUser(username, opts)          { return cmsRequest('PUT',    '/api/users/' + username, opts); }
+    function deleteUser(username)                { return cmsRequest('DELETE', '/api/users/' + username, null); }
 
     // Unicode-safe base64 decode
     function b64decode(str) {
@@ -364,7 +436,11 @@
         login:           login,
         logout:          logout,
         isAuthenticated: isAuthenticated,
-        clientSetup:     clientSetup
+        clientSetup:     clientSetup,
+        getUsers:        getUsers,
+        createUser:      createUser,
+        updateUser:      updateUser,
+        deleteUser:      deleteUser
     };
 
 })(window);

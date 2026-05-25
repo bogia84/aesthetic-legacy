@@ -51,6 +51,27 @@ function safeEqual(a, b) {
     return crypto.timingSafeEqual(bufA, bufB);
 }
 
+// ---- Users file management ----
+const USERS_FILE = path.join(__dirname, 'data/users.json');
+
+function hashPass(pw) {
+    return crypto.createHash('sha256').update(pw || '', 'utf8').digest('hex');
+}
+function loadUsers() {
+    try { return JSON.parse(fs.readFileSync(USERS_FILE, 'utf8')); } catch(e) { return null; }
+}
+function saveUsers(users) {
+    fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
+}
+
+// Auth middleware — checks Authorization: Bearer <token> header
+function requireSession(req, res, next) {
+    const auth = req.headers['authorization'] || '';
+    const token = auth.startsWith('Bearer ') ? auth.slice(7) : '';
+    if (!validateSession(token)) return res.status(401).json({ error: 'Session expired. Please log in again.' });
+    next();
+}
+
 // ---- GitHub API proxy helper (uses built-in https module) ----
 function githubFetch(method, apiPath, pat, bodyObj) {
     return new Promise((resolve, reject) => {
@@ -84,11 +105,31 @@ function githubFetch(method, apiPath, pat, bodyObj) {
 }
 
 // ---- POST /api/login ----
+// Initialise users.json with default admin on first run
+(function initUsers() {
+    if (!fs.existsSync(USERS_FILE)) {
+        const u = process.env.CMS_USERNAME || 'admin';
+        const p = process.env.CMS_PASSWORD || 'admin123';
+        saveUsers([{ username: u, passwordHash: hashPass(p), blocked: false }]);
+        console.log(`  ✓  Created data/users.json with user "${u}"`);
+    }
+})();
+
 app.post('/api/login', (req, res) => {
     const { username, password } = req.body;
-    const expectedUser = process.env.CMS_USERNAME || 'admin';
-    const expectedPass = process.env.CMS_PASSWORD || 'admin123';
-    if (!safeEqual(username || '', expectedUser) || !safeEqual(password || '', expectedPass)) {
+    const users = loadUsers();
+    if (!users) {
+        // Fallback to env vars if users.json is missing
+        const eu = process.env.CMS_USERNAME || 'admin';
+        const ep = process.env.CMS_PASSWORD || 'admin123';
+        if (!safeEqual(username || '', eu) || !safeEqual(password || '', ep)) {
+            return res.status(401).json({ error: 'Invalid username or password.' });
+        }
+        return res.json({ token: createSession() });
+    }
+    const hash = hashPass(password);
+    const user = users.find(u => u.username === username && !u.blocked);
+    if (!user || !safeEqual(hash, user.passwordHash)) {
         return res.status(401).json({ error: 'Invalid username or password.' });
     }
     res.json({ token: createSession() });
@@ -135,6 +176,78 @@ app.post('/api/github-write', async (req, res) => {
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
+});
+
+// ---- User management endpoints (require valid session) ----
+app.get('/api/users', requireSession, (req, res) => {
+    const users = loadUsers() || [];
+    res.json(users.map(u => ({ username: u.username, blocked: !!u.blocked })));
+});
+
+app.post('/api/users', requireSession, (req, res) => {
+    const { username, password } = req.body;
+    if (!username || !password) return res.status(400).json({ error: 'Username and password are required.' });
+    const users = loadUsers() || [];
+    if (users.find(u => u.username === username)) return res.status(400).json({ error: 'Username already exists.' });
+    users.push({ username, passwordHash: hashPass(password), blocked: false });
+    saveUsers(users);
+    res.json({ ok: true });
+});
+
+app.put('/api/users/:username', requireSession, (req, res) => {
+    const { password, blocked } = req.body;
+    const users = loadUsers() || [];
+    const idx = users.findIndex(u => u.username === req.params.username);
+    if (idx === -1) return res.status(404).json({ error: 'User not found.' });
+    if (password) users[idx].passwordHash = hashPass(password);
+    if (blocked !== undefined) users[idx].blocked = !!blocked;
+    saveUsers(users);
+    res.json({ ok: true });
+});
+
+app.delete('/api/users/:username', requireSession, (req, res) => {
+    const users = loadUsers() || [];
+    const filtered = users.filter(u => u.username !== req.params.username);
+    if (filtered.length === users.length) return res.status(404).json({ error: 'User not found.' });
+    if (filtered.length === 0) return res.status(400).json({ error: 'Cannot delete the last user.' });
+    saveUsers(filtered);
+    res.json({ ok: true });
+});
+
+// ---- User management endpoints (require valid session) ----
+app.get('/api/users', requireSession, (req, res) => {
+    const users = loadUsers() || [];
+    res.json(users.map(u => ({ username: u.username, blocked: !!u.blocked })));
+});
+
+app.post('/api/users', requireSession, (req, res) => {
+    const { username, password } = req.body;
+    if (!username || !password) return res.status(400).json({ error: 'Username and password are required.' });
+    const users = loadUsers() || [];
+    if (users.find(u => u.username === username)) return res.status(400).json({ error: 'Username already exists.' });
+    users.push({ username, passwordHash: hashPass(password), blocked: false });
+    saveUsers(users);
+    res.json({ ok: true });
+});
+
+app.put('/api/users/:username', requireSession, (req, res) => {
+    const { password, blocked } = req.body;
+    const users = loadUsers() || [];
+    const idx = users.findIndex(u => u.username === req.params.username);
+    if (idx === -1) return res.status(404).json({ error: 'User not found.' });
+    if (password) users[idx].passwordHash = hashPass(password);
+    if (blocked !== undefined) users[idx].blocked = !!blocked;
+    saveUsers(users);
+    res.json({ ok: true });
+});
+
+app.delete('/api/users/:username', requireSession, (req, res) => {
+    const users = loadUsers() || [];
+    const filtered = users.filter(u => u.username !== req.params.username);
+    if (filtered.length === users.length) return res.status(404).json({ error: 'User not found.' });
+    if (filtered.length === 0) return res.status(400).json({ error: 'Cannot delete the last user.' });
+    saveUsers(filtered);
+    res.json({ ok: true });
 });
 
 // ---- POST /api/save-json (localhost only — direct file write) ----

@@ -55,6 +55,72 @@
             transition: all 0.2s;
         }
         .btn-logout:hover { background: #e63946; color: #fff; }
+        .btn-users {
+            text-decoration: none;
+            color: #2563eb;
+            font-size: 0.82rem;
+            font-weight: 700;
+            border: 1px solid #2563eb;
+            padding: 8px 18px;
+            background: transparent;
+            cursor: pointer;
+            font-family: Manrope, sans-serif;
+            transition: all 0.2s;
+            margin-right: 6px;
+        }
+        .btn-users:hover { background: #2563eb; color: #fff; }
+        /* ---- USERS MODAL ---- */
+        #users-modal-overlay {
+            display: none;
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 9000;
+            align-items: center;
+            justify-content: center;
+        }
+        #users-modal-overlay.open { display: flex; }
+        #users-modal {
+            background: #fff;
+            width: min(520px, 96vw);
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 32px 28px 24px;
+            font-family: Manrope, sans-serif;
+            box-shadow: 0 8px 40px rgba(0,0,0,.18);
+        }
+        #users-modal h2 { margin: 0 0 20px; font-size: 1.15rem; letter-spacing: .02em; }
+        .um-row {
+            display: flex; align-items: center; gap: 8px;
+            padding: 9px 0; border-bottom: 1px solid #f0f0f0;
+        }
+        .um-row:last-of-type { border-bottom: none; }
+        .um-name { flex: 1; font-weight: 600; font-size: .9rem; }
+        .um-badge {
+            font-size: .73rem; font-weight: 700; padding: 2px 8px;
+            border-radius: 99px;
+        }
+        .um-badge.active  { background: #d1fae5; color: #065f46; }
+        .um-badge.blocked { background: #fee2e2; color: #991b1b; }
+        .um-btn {
+            font-size: .78rem; font-weight: 600; cursor: pointer;
+            border: 1px solid #ccc; background: #fff; padding: 4px 10px;
+            font-family: Manrope, sans-serif; transition: all .15s;
+        }
+        .um-btn:hover { background: #f5f5f5; }
+        .um-btn.danger { border-color: #e63946; color: #e63946; }
+        .um-btn.danger:hover { background: #e63946; color: #fff; }
+        .um-inline-form {
+            display: flex; gap: 6px; flex-wrap: wrap;
+            padding: 8px 0 4px; align-items: center;
+        }
+        .um-inline-form input {
+            flex: 1; min-width: 140px; padding: 6px 10px;
+            border: 1px solid #ccc; font-family: Manrope, sans-serif; font-size: .85rem;
+        }
+        #um-add-form { padding-top: 18px; border-top: 2px solid #f0f0f0; margin-top: 10px; }
+        #um-add-form h3 { margin: 0 0 12px; font-size: .95rem; }
+        #um-add-form .um-inline-form input { min-width: 120px; }
+        #um-msg { font-size: .83rem; margin-top: 10px; min-height: 18px; }
 
         /* ---- ACTION BAR ---- */
         .action-bar {
@@ -1318,6 +1384,7 @@
         <button class="btn btn-reset" onclick="resetCMS()">Reset to Default</button>
         <span class="save-status" id="save-status"></span>
         <a href="index.html" class="back-link">← Back to Site</a>
+        <button class="btn-users" onclick="openUsersModal()">Users</button>
         <button class="btn-logout" onclick="cmsLogout()">Log Out</button>
     </div>
 </header>
@@ -5054,7 +5121,116 @@
             showOverlayError(e.message);
         });
     })();
+
+    // ---- Users Management ----
+    function openUsersModal() {
+        document.getElementById('users-modal-overlay').classList.add('open');
+        loadUsersModalData();
+    }
+    function closeUsersModal() {
+        document.getElementById('users-modal-overlay').classList.remove('open');
+        document.getElementById('um-msg').textContent = '';
+    }
+    function showUsersMsg(msg, color) {
+        var el = document.getElementById('um-msg');
+        el.textContent = msg;
+        el.style.color = color || '#333';
+    }
+    function loadUsersModalData() {
+        var list = document.getElementById('um-user-list');
+        list.innerHTML = '<em style="color:#999">Loading...</em>';
+        ghStorage.getUsers().then(function(users) {
+            if (!users || users.length === 0) {
+                list.innerHTML = '<p style="color:#999">No users found.</p>';
+                return;
+            }
+            list.innerHTML = '';
+            users.forEach(function(u) {
+                var row = document.createElement('div');
+                row.className = 'um-row';
+                row.id = 'um-row-' + CSS.escape(u.username);
+                var badge = u.blocked
+                    ? '<span class="um-badge blocked">Blocked</span>'
+                    : '<span class="um-badge active">Active</span>';
+                var blockBtn = u.blocked
+                    ? '<button class="um-btn" onclick="cmsToggleBlock(\'' + u.username + '\', false)">Unblock</button>'
+                    : '<button class="um-btn danger" onclick="cmsToggleBlock(\'' + u.username + '\', true)">Block</button>';
+                row.innerHTML = '<span class="um-name">' + u.username + '</span>' +
+                    badge +
+                    '<button class="um-btn" onclick="cmsTriggerChangePw(\'' + u.username + '\')">Change PW</button>' +
+                    blockBtn +
+                    '<button class="um-btn danger" onclick="cmsDeleteUser(\'' + u.username + '\')">Delete</button>';
+                list.appendChild(row);
+            });
+        }).catch(function(err) {
+            list.innerHTML = '<p style="color:#e63946">' + (err.message || 'Failed to load users.') + '</p>';
+        });
+    }
+    function cmsTriggerChangePw(username) {
+        var rowId = 'um-row-' + CSS.escape(username);
+        var row = document.getElementById(rowId);
+        if (!row) return;
+        if (row.querySelector('.um-inline-form')) { row.querySelector('.um-inline-form').remove(); return; }
+        var form = document.createElement('div');
+        form.className = 'um-inline-form';
+        form.style.flexBasis = '100%';
+        form.innerHTML = '<input type="password" placeholder="New password" autocomplete="new-password" id="um-pw-' + username + '">' +
+            '<button class="um-btn" onclick="cmsSaveChangePw(\'' + username + '\')">Save</button>';
+        row.appendChild(form);
+    }
+    function cmsSaveChangePw(username) {
+        var pw = (document.getElementById('um-pw-' + username) || {}).value || '';
+        if (!pw) { showUsersMsg('Please enter a new password.', '#e63946'); return; }
+        ghStorage.updateUser(username, { password: pw }).then(function() {
+            showUsersMsg('Password updated for ' + username + '.', '#065f46');
+            loadUsersModalData();
+        }).catch(function(err) { showUsersMsg(err.message || 'Error.', '#e63946'); });
+    }
+    function cmsToggleBlock(username, blocked) {
+        ghStorage.updateUser(username, { blocked: blocked }).then(function() {
+            showUsersMsg(username + ' ' + (blocked ? 'blocked' : 'unblocked') + '.', blocked ? '#991b1b' : '#065f46');
+            loadUsersModalData();
+        }).catch(function(err) { showUsersMsg(err.message || 'Error.', '#e63946'); });
+    }
+    function cmsDeleteUser(username) {
+        if (!confirm('Delete user "' + username + '"? This cannot be undone.')) return;
+        ghStorage.deleteUser(username).then(function() {
+            showUsersMsg('User ' + username + ' deleted.', '#991b1b');
+            loadUsersModalData();
+        }).catch(function(err) { showUsersMsg(err.message || 'Error.', '#e63946'); });
+    }
+    function cmsAddUser() {
+        var u = document.getElementById('um-new-username').value.trim();
+        var p = document.getElementById('um-new-password').value;
+        if (!u || !p) { showUsersMsg('Username and password are required.', '#e63946'); return; }
+        ghStorage.createUser(u, p).then(function() {
+            document.getElementById('um-new-username').value = '';
+            document.getElementById('um-new-password').value = '';
+            showUsersMsg('User ' + u + ' created.', '#065f46');
+            loadUsersModalData();
+        }).catch(function(err) { showUsersMsg(err.message || 'Error.', '#e63946'); });
+    }
 </script>
+
+<!-- ============================================================ USERS MODAL -->
+<div id="users-modal-overlay" onclick="if(event.target===this)closeUsersModal()">
+  <div id="users-modal">
+    <h2>Manage Users</h2>
+    <div id="um-user-list"></div>
+    <div id="um-add-form">
+      <h3>Add New User</h3>
+      <div class="um-inline-form">
+        <input id="um-new-username" type="text" placeholder="Username" autocomplete="off">
+        <input id="um-new-password" type="password" placeholder="Password" autocomplete="new-password">
+        <button class="um-btn" onclick="cmsAddUser()">Add User</button>
+      </div>
+    </div>
+    <div id="um-msg"></div>
+    <div style="text-align:right;margin-top:16px">
+      <button class="btn-logout" onclick="closeUsersModal()">Close</button>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
