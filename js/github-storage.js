@@ -83,36 +83,55 @@
         return decodeURIComponent(escape(atob(str)));
     }
 
+    var CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+    var CACHE_PREFIX = 'alCache_';
+
+    function cacheGet(filePath) {
+        try {
+            var raw = sessionStorage.getItem(CACHE_PREFIX + filePath);
+            if (!raw) return null;
+            var entry = JSON.parse(raw);
+            if (Date.now() - entry.ts < CACHE_TTL) return entry.data;
+        } catch(e) {}
+        return null;
+    }
+
+    function cacheSet(filePath, data) {
+        try {
+            sessionStorage.setItem(CACHE_PREFIX + filePath, JSON.stringify({ ts: Date.now(), data: data }));
+        } catch(e) {}
+    }
+
+    function cacheInvalidate(filePath) {
+        try { sessionStorage.removeItem(CACHE_PREFIX + filePath); } catch(e) {}
+    }
+
     /**
      * Fetch a JSON file from the repo.
-     * Caches the SHA for subsequent writes.
+     * Uses raw.githubusercontent.com (CDN, no base64 overhead) + sessionStorage cache.
      * Returns parsed JS value, or null on 404.
      */
     function ghGet(filePath) {
         if (isLocal()) return localGet(filePath);
-        return fetch(apiUrl(filePath), { headers: headers(), cache: 'no-store' })
+
+        var cached = cacheGet(filePath);
+        if (cached !== null) return Promise.resolve(cached);
+
+        var cfg = global.GITHUB_CONFIG || {};
+        var owner  = cfg.owner  || OWNER;
+        var repo   = cfg.repo   || REPO;
+        var branch = cfg.branch || BRANCH;
+        var rawUrl = 'https://raw.githubusercontent.com/' + owner + '/' + repo + '/' + branch + '/' + filePath;
+
+        return fetch(rawUrl)
             .then(function(res) {
                 if (res.status === 404) return null;
                 if (!res.ok) throw new Error('GitHub GET failed: ' + res.status + ' ' + filePath);
                 return res.json();
             })
             .then(function(data) {
-                if (!data) return null;
-                _shaCache[filePath] = data.sha;
-                // Files > 1 MB: GitHub returns encoding:'none' and empty content.
-                // Fall back to the raw download URL in that case.
-                if (data.encoding === 'none' || !data.content) {
-                    return fetch(data.download_url, { cache: 'no-store' })
-                        .then(function(r) {
-                            if (!r.ok) throw new Error('Raw download failed: ' + r.status + ' ' + filePath);
-                            return r.json();
-                        });
-                }
-                try {
-                    return JSON.parse(b64decode(data.content.replace(/\n/g, '')));
-                } catch(e) {
-                    return null;
-                }
+                cacheSet(filePath, data);
+                return data;
             });
     }
 
@@ -161,6 +180,7 @@
                 if (data && data.content && data.content.sha) {
                     _shaCache[filePath] = data.content.sha;
                 }
+                cacheInvalidate(filePath);
             });
         }
 
