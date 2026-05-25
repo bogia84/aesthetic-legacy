@@ -4770,11 +4770,7 @@
         updateSiteStatusUI(next);
         var btn = document.getElementById('site-status-btn');
         if (btn) { btn.disabled = true; }
-        ghStorage.getHomeLayout().then(function(layout) {
-            layout = layout || {};
-            layout.sitePublished = next;
-            return ghStorage.saveHomeLayout(layout);
-        }).then(function() {
+        ghStorage.saveSiteStatus(next).then(function() {
             showStatus(next ? '● Site is now Live' : '● Site is now Offline', next ? 'success' : 'info');
         }).catch(function(e) {
             updateSiteStatusUI(!next); // revert on error
@@ -4845,8 +4841,8 @@
             if (overlay) overlay.style.display = 'none';
 
             // Load current site status for the toggle button
-            ghStorage.getHomeLayout().then(function(layout) {
-                updateSiteStatusUI(!layout || layout.sitePublished !== false);
+            ghStorage.getSiteStatus().then(function(status) {
+                updateSiteStatusUI(!status || status.published !== false);
             }).catch(function() {});
 
             populateContribDropdowns();

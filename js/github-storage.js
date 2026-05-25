@@ -262,6 +262,27 @@
         return ghPut('data/about-config.json', cfg, 'CMS: update about config');
     }
 
+    function getSiteStatus() {
+        // Always fetch fresh via Contents API (bypass CDN)
+        if (isLocal()) {
+            return localGet('data/site-status.json').then(function(data) {
+                return (data && typeof data.published === 'boolean') ? data : { published: true };
+            });
+        }
+        return fetch('https://api.github.com/repos/' + OWNER + '/' + REPO + '/contents/data/site-status.json?ref=' + BRANCH, {
+            headers: headers(),
+            cache: 'no-store'
+        }).then(function(res) { return res.ok ? res.json() : null; })
+          .then(function(data) {
+              if (!data || !data.content) return { published: true };
+              try { return JSON.parse(b64decode(data.content.replace(/\n/g, ''))); } catch(e) { return { published: true }; }
+          }).catch(function() { return { published: true }; });
+    }
+
+    function saveSiteStatus(published) {
+        return ghPut('data/site-status.json', { published: published }, 'CMS: update site status');
+    }
+
     // Expose on window
     global.ghStorage = {
         getArticles:      getArticles,
@@ -274,6 +295,8 @@
         saveHomeLayout:   saveHomeLayout,
         getAboutConfig:   getAboutConfig,
         saveAboutConfig:  saveAboutConfig,
+        getSiteStatus:    getSiteStatus,
+        saveSiteStatus:   saveSiteStatus,
         setToken:  function(t) { localStorage.setItem(TOKEN_KEY, t); _shaCache = {}; },
         hasToken:  function()  { return !!getToken(); }
     };
