@@ -4845,6 +4845,49 @@
     // ================================================================
     //  LOGIN  helpers (called before the CMS data is loaded)
     // ================================================================
+    function showSetupForm(errorMsg) {
+        var overlay = document.getElementById('cms-loading-overlay');
+        if (!overlay) return;
+        overlay.style.background = '#f5f5f5';
+        overlay.innerHTML =
+            '<div style="background:#fff;border-radius:12px;padding:40px 36px;max-width:360px;width:90%;box-shadow:0 4px 24px rgba(0,0,0,0.1);font-family:Manrope,sans-serif;">' +
+            '<div style="text-align:center;margin-bottom:22px;">' +
+                '<div style="font-size:0.88rem;font-weight:900;letter-spacing:0.14em;color:#0a0a0a;">FIRST TIME SETUP</div>' +
+                '<div style="font-size:0.71rem;color:#999;margin-top:4px;">Set your CMS login credentials</div>' +
+            '</div>' +
+            (errorMsg ? '<div style="background:#fee2e2;color:#dc2626;padding:10px 14px;border-radius:8px;font-size:0.78rem;margin-bottom:14px;">' + errorMsg + '</div>' : '') +
+            '<form onsubmit="cmsClientSetup();return false;">' +
+                '<input id="setup-username" type="text" placeholder="Username" autocomplete="username" ' +
+                    'style="width:100%;padding:11px 14px;border:1px solid #e0e0e0;border-radius:8px;margin-bottom:10px;font-size:0.83rem;font-family:Manrope,sans-serif;box-sizing:border-box;outline:none;" />' +
+                '<input id="setup-password" type="password" placeholder="Password" autocomplete="new-password" ' +
+                    'style="width:100%;padding:11px 14px;border:1px solid #e0e0e0;border-radius:8px;margin-bottom:10px;font-size:0.83rem;font-family:Manrope,sans-serif;box-sizing:border-box;outline:none;" />' +
+                '<input id="setup-pat" type="password" placeholder="GitHub PAT (github_pat_\u2026)" ' +
+                    'style="width:100%;padding:11px 14px;border:1px solid #e0e0e0;border-radius:8px;margin-bottom:6px;font-size:0.83rem;font-family:Manrope,sans-serif;box-sizing:border-box;outline:none;" />' +
+                '<div style="font-size:0.71rem;color:#aaa;margin-bottom:18px;">Fine-grained PAT with Contents: Read &amp; Write &mdash; entered once only.</div>' +
+                '<button id="setup-btn" type="submit" ' +
+                    'style="width:100%;padding:12px;background:#0a0a0a;color:#fff;border:none;border-radius:8px;font-weight:800;cursor:pointer;font-size:0.83rem;font-family:Manrope,sans-serif;letter-spacing:0.05em;">Set Up &amp; Open CMS</button>' +
+            '</form>' +
+            '<div style="text-align:center;margin-top:14px;">' +
+                '<a href="#" onclick="showLoginForm();return false;" style="font-size:0.75rem;color:#aaa;text-decoration:none;">&larr; Back to login</a>' +
+            '</div>' +
+            '</div>';
+        setTimeout(function() { var u = document.getElementById('setup-username'); if (u) u.focus(); }, 80);
+    }
+
+    function cmsClientSetup() {
+        var un  = (document.getElementById('setup-username') || {}).value || '';
+        var pw  = (document.getElementById('setup-password') || {}).value || '';
+        var pat = (document.getElementById('setup-pat')      || {}).value || '';
+        var btn = document.getElementById('setup-btn');
+        if (!un || !pw || !pat) { showSetupForm('Please fill in all fields.'); return; }
+        if (btn) { btn.disabled = true; btn.textContent = 'Setting up…'; }
+        ghStorage.clientSetup(un, pw, pat).then(function() {
+            location.reload();
+        }).catch(function(e) {
+            showSetupForm(e.message || 'Setup failed. Please try again.');
+        });
+    }
+
     function showLoginForm(errorMsg) {
         var overlay = document.getElementById('cms-loading-overlay');
         if (!overlay) return;
@@ -4882,7 +4925,11 @@
         ghStorage.login(un, pw).then(function() {
             location.reload();
         }).catch(function(e) {
-            showLoginForm(e.message || 'Invalid username or password.');
+            if (e.isSetupNeeded) {
+                showSetupForm();
+            } else {
+                showLoginForm(e.message || 'Invalid username or password.');
+            }
         });
     }
 

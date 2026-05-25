@@ -53,22 +53,65 @@
         };
     }
 
-    // ---- CMS session token (stored in sessionStorage on the browser) ----
+    // Unicode-safe base64 encode (needed for direct GitHub API writes)
+    function b64encode(str) { return btoa(unescape(encodeURIComponent(str))); }
+
+    // ---- CMS session management ----
     function getCmsToken() {
         try { return sessionStorage.getItem('cmsToken'); } catch(e) { return null; }
     }
-
-    function setCmsToken(t) {
-        try { sessionStorage.setItem('cmsToken', t); } catch(e) {}
+    function getCmsMode() {
+        try { return sessionStorage.getItem('cmsMode'); } catch(e) { return null; }
     }
-
+    function setCmsSession(token, mode) {
+        try { sessionStorage.setItem('cmsToken', token); sessionStorage.setItem('cmsMode', mode); } catch(e) {}
+    }
     function clearCmsToken() {
-        try { sessionStorage.removeItem('cmsToken'); } catch(e) {}
+        try { sessionStorage.removeItem('cmsToken'); sessionStorage.removeItem('cmsMode'); } catch(e) {}
     }
 
     function isAuthenticated() {
-        if (isLocal()) return true; // no login required on localhost
+        if (isLocal()) return true;
         return !!getCmsToken();
+    }
+
+    // SHA-256 helper (Web Crypto API)
+    function hashString(str) {
+        return crypto.subtle.digest('SHA-256', new TextEncoder().encode(str)).then(function(buf) {
+            return Array.from(new Uint8Array(buf)).map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
+        });
+    }
+
+    // Client-side auth — used on GitHub Pages / static hosting (no server available)
+    function clientLogin(username, password) {
+        return hashString(password).then(function(hash) {
+            var storedUser = localStorage.getItem('cmsSetupUser') || (global.GITHUB_CONFIG && global.GITHUB_CONFIG.cmsUser) || '';
+            var storedHash = localStorage.getItem('cmsSetupHash') || (global.GITHUB_CONFIG && global.GITHUB_CONFIG.cmsPassHash) || '';
+            var pat        = localStorage.getItem('cmsSetupPat')  || (global.GITHUB_CONFIG && global.GITHUB_CONFIG.token) || '';
+            if (!storedHash) {
+                var e = new Error('__SETUP_NEEDED__'); e.isSetupNeeded = true; throw e;
+            }
+            if (username !== storedUser || hash !== storedHash) {
+                var e = new Error('Invalid username or password.'); e.isServerError = true; throw e;
+            }
+            if (!pat) {
+                var e = new Error('GitHub PAT not found. Please set up your credentials.'); e.isSetupNeeded = true; throw e;
+            }
+            setCmsSession(pat, 'client');
+            return { mode: 'client' };
+        });
+    }
+
+    // Save credentials to localStorage (first-time setup on GitHub Pages)
+    function clientSetup(username, password, pat) {
+        if (!username || !password || !pat) return Promise.reject(new Error('All fields are required.'));
+        return hashString(password).then(function(hash) {
+            localStorage.setItem('cmsSetupUser', username);
+            localStorage.setItem('cmsSetupHash', hash);
+            localStorage.setItem('cmsSetupPat',  pat);
+            setCmsSession(pat, 'client');
+            return { mode: 'client' };
+        });
     }
 
     function login(username, password) {
@@ -77,17 +120,26 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username: username, password: password })
         }).then(function(res) {
+            var ct = res.headers.get('Content-Type') || '';
+            if (!ct.includes('application/json')) {
+                // Static host returned HTML — no server available, use client auth
+                return clientLogin(username, password);
+            }
             return res.json().then(function(data) {
-                if (!res.ok) throw new Error(data.error || 'Login failed');
-                setCmsToken(data.token);
-                return data;
+                if (!res.ok) {
+                    var e = new Error(data.error || 'Invalid username or password.');
+                    e.isServerError = true; throw e;
+                }
+                setCmsSession(data.token, 'server');
+                return { mode: 'server' };
             });
+        }).catch(function(err) {
+            if (err.isServerError || err.isSetupNeeded) throw err; // don't retry client on explicit errors
+            return clientLogin(username, password); // network error — try client auth
         });
     }
 
-    function logout() {
-        clearCmsToken();
-    }
+    function logout() { clearCmsToken(); }
 
     // Unicode-safe base64 decode
     function b64decode(str) {
@@ -150,10 +202,47 @@
      * Write a JSON value to a file in the repo.
      * Uses the cached SHA if available, otherwise fetches it first.
      */
+    // Direct GitHub API write — used in client mode (GitHub Pages, no server proxy)
+    function ghPutDirect(filePath, value, commitMessage, pat) {
+        var cfg    = global.GITHUB_CONFIG || {};
+        var owner  = cfg.owner  || OWNER;
+        var repo   = cfg.repo   || REPO;
+        var branch = cfg.branch || BRANCH;
+        var url    = 'https://api.github.com/repos/' + owner + '/' + repo + '/contents/' + filePath;
+        var hdrs   = {
+            'Accept': 'application/vnd.github+json',
+            'X-GitHub-Api-Version': '2022-11-28',
+            'Authorization': 'Bearer ' + pat,
+            'Content-Type': 'application/json'
+        };
+        return fetch(url + '?ref=' + branch, { headers: hdrs, cache: 'no-store' })
+            .then(function(res) {
+                if (!res.ok && res.status !== 404) throw new Error('SHA fetch failed: ' + res.status);
+                return res.status === 404 ? null : res.json();
+            })
+            .then(function(data) {
+                var body = {
+                    message: commitMessage || 'Update ' + filePath,
+                    content: b64encode(JSON.stringify(value, null, 2)),
+                    branch: branch
+                };
+                if (data && data.sha) body.sha = data.sha;
+                return fetch(url, { method: 'PUT', headers: hdrs, body: JSON.stringify(body) });
+            })
+            .then(function(res) {
+                if (!res.ok) return res.text().then(function(t) { throw new Error('GitHub PUT failed: ' + res.status + ' — ' + t); });
+                cacheInvalidate(filePath);
+                return res.json();
+            });
+    }
+
     function ghPut(filePath, value, commitMessage) {
         if (isLocal()) return localPut(filePath, value);
         var token = getCmsToken();
         if (!token) return Promise.reject(new Error('Not authenticated. Please log in.'));
+        if (getCmsMode() === 'client') {
+            return ghPutDirect(filePath, value, commitMessage, token);
+        }
         return fetch('/api/github-write', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -274,7 +363,8 @@
         saveSiteStatus:   saveSiteStatus,
         login:           login,
         logout:          logout,
-        isAuthenticated: isAuthenticated
+        isAuthenticated: isAuthenticated,
+        clientSetup:     clientSetup
     };
 
 })(window);
