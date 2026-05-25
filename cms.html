@@ -94,6 +94,14 @@
             font-family: 'Manrope', sans-serif;
         }
         .bypass-pw-input::placeholder { color: var(--muted); }
+        .btn-set-pw {
+            font-size: 0.68rem; font-weight: 800; padding: 4px 10px;
+            border-radius: 6px; border: 1px solid var(--border);
+            background: transparent; color: var(--muted); cursor: pointer;
+            font-family: 'Manrope', sans-serif; letter-spacing: 0.05em; white-space: nowrap;
+            transition: all 0.2s;
+        }
+        .btn-set-pw:hover { background: var(--grey); color: var(--dark); }
         @keyframes btn-spin { to { transform: rotate(360deg); } }
         .btn-spinner {
             display: inline-block; width: 12px; height: 12px;
@@ -1290,7 +1298,8 @@
                 <span class="site-status-dot"></span>
                 <span id="site-status-text">Live</span>
             </button>
-            <input type="password" id="bypass-pw-input" class="bypass-pw-input" placeholder="Preview password" title="Password to preview the site while offline">
+            <input type="password" id="bypass-pw-input" class="bypass-pw-input" placeholder="Access password" title="Password visitors use to access the site while offline">
+            <button class="btn-set-pw" onclick="saveBypassPassword()" title="Save access password">Set</button>
         </div>
         <button class="btn btn-save" onclick="saveCMS()">Save Changes</button>
         <button class="btn btn-reset" onclick="resetCMS()">Reset to Default</button>
@@ -4785,6 +4794,20 @@
             text.textContent = 'Offline';
         }
         if (pwInput && bypassPassword !== undefined) pwInput.value = bypassPassword || '';
+    }
+
+    function saveBypassPassword() {
+        var pwInput = document.getElementById('bypass-pw-input');
+        var pw = pwInput ? pwInput.value.trim() : '';
+        var btn = document.querySelector('.btn-set-pw');
+        if (btn) { btn.disabled = true; btn.textContent = '…'; }
+        ghStorage.saveSiteStatus(_sitePublished, pw).then(function() {
+            showStatus('✓ Access password saved', 'success');
+        }).catch(function() {
+            showStatus('Failed to save password', 'info');
+        }).finally(function() {
+            if (btn) { btn.disabled = false; btn.textContent = 'Set'; }
+        });
     }
 
     function toggleSiteStatus() {

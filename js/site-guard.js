@@ -1,7 +1,8 @@
 ﻿/**
  * site-guard.js
  * Checks site publish status. Shows a maintenance overlay when unpublished.
- * Supports a bypass password so admins can preview while the site is offline.
+ * If a bypassPassword is configured, shows a visible password input on the overlay
+ * so authorised users can access the site while it is offline.
  * Include on every public page AFTER github-storage.js (if present).
  */
 (function() {
@@ -59,25 +60,19 @@
         overlay.id = 'site-maintenance';
         overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;background:#0a0a0a;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;font-family:Manrope,sans-serif';
 
-        var bypassHTML = '';
-        if (bypassPassword) {
-            bypassHTML =
-                '<div style="margin-top:8px;display:flex;flex-direction:column;align-items:center;gap:10px;">' +
-                  '<button id="sg-bypass-btn" style="background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.18);font-size:0.68rem;letter-spacing:0.1em;font-family:Manrope,sans-serif;padding:4px 8px;transition:color 0.2s;text-transform:uppercase;" ' +
-                    'onmouseover="this.style.color=\'rgba(255,255,255,0.45)\'" onmouseout="this.style.color=\'rgba(255,255,255,0.18)\'" ' +
-                    'onclick="document.getElementById(\'sg-bypass-form\').style.display=\'flex\';this.style.display=\'none\';">' +
-                    'Admin access' +
-                  '</button>' +
-                  '<form id="sg-bypass-form" style="display:none;flex-direction:column;align-items:center;gap:8px;" onsubmit="return false;">' +
-                    '<input id="sg-bypass-input" type="password" placeholder="Enter password" autocomplete="current-password" ' +
-                      'style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);border-radius:8px;color:#fff;font-size:0.82rem;padding:8px 14px;width:200px;outline:none;font-family:Manrope,sans-serif;text-align:center;" />' +
-                    '<button id="sg-bypass-submit" type="submit" ' +
-                      'style="background:#EC262D;border:none;border-radius:8px;color:#fff;font-size:0.75rem;font-weight:800;letter-spacing:0.08em;padding:7px 22px;cursor:pointer;font-family:Manrope,sans-serif;">' +
-                      'UNLOCK' +
-                    '</button>' +
-                  '</form>' +
-                '</div>';
-        }
+        // Password form is shown directly when a bypass password is configured
+        var bypassHTML = bypassPassword
+            ? '<form id="sg-bypass-form" style="display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:4px;" onsubmit="return false;">' +
+                '<input id="sg-bypass-input" type="password" placeholder="Enter access password" autocomplete="current-password" ' +
+                  'style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);border-radius:8px;' +
+                         'color:#fff;font-size:0.82rem;padding:9px 16px;width:220px;outline:none;font-family:Manrope,sans-serif;text-align:center;" />' +
+                '<button id="sg-bypass-submit" type="submit" ' +
+                  'style="background:#EC262D;border:none;border-radius:8px;color:#fff;font-size:0.75rem;font-weight:800;' +
+                         'letter-spacing:0.08em;text-transform:uppercase;padding:8px 28px;cursor:pointer;font-family:Manrope,sans-serif;">' +
+                  'Access' +
+                '</button>' +
+              '</form>'
+            : '';
 
         overlay.innerHTML =
             '<svg width="64" height="60" viewBox="0 0 30 28" fill="none" xmlns="http://www.w3.org/2000/svg">' +
@@ -105,7 +100,11 @@
                 } else {
                     input.style.borderColor = '#EC262D';
                     input.style.animation = 'sg-shake 0.4s';
-                    setTimeout(function() { input.style.borderColor = 'rgba(255,255,255,0.15)'; input.style.animation = ''; input.value = ''; }, 600);
+                    setTimeout(function() {
+                        input.style.borderColor = 'rgba(255,255,255,0.15)';
+                        input.style.animation = '';
+                        input.value = '';
+                    }, 600);
                 }
             }
             submit.addEventListener('click', tryUnlock);
@@ -127,7 +126,7 @@
     function applyStatus(status) {
         setCachedStatus(status);
         if (status.published === false) {
-            if (hasBypass(status.bypassPassword)) return; // admin bypassed
+            if (hasBypass(status.bypassPassword)) return; // user already authenticated
             showMaintenance(status.bypassPassword || '');
         }
     }
