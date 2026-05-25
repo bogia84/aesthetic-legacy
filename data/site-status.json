@@ -1,3 +1,4 @@
 {
-  "published": false
+  "published": false,
+  "bypassPassword": "123456"
 }
