@@ -275,6 +275,23 @@
         .cf-news-item-header { display: flex; align-items: center; margin-bottom: 8px; }
         .cf-news-num { font-size: 0.7rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
         .cf-news-resolved { font-size: 0.7rem; color: #2a9d2a; font-weight: 700; margin-left: 8px; display: block; margin-top: 3px; }
+        .cf-news-preview {
+            display: flex; align-items: center; gap: 10px;
+            background: #fff; border: 1px solid var(--border); border-radius: 4px;
+            padding: 8px; margin-top: 8px;
+        }
+        .cf-news-preview-img { width: 48px; height: 58px; object-fit: cover; border-radius: 2px; flex-shrink: 0; }
+        .cf-news-preview-info { flex: 1; min-width: 0; }
+        .cf-news-preview-title {
+            font-size: 0.75rem; font-weight: 700; color: var(--dark);
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px;
+        }
+        .cf-news-override-btn {
+            font-size: 0.65rem; font-weight: 700; color: var(--muted);
+            background: none; border: none; padding: 0;
+            cursor: pointer; font-family: inherit; text-decoration: underline;
+        }
+        .cf-news-override-fields { margin-top: 8px; }
         .form-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -1847,77 +1864,105 @@
 
                 <!-- Section 5: News Items -->
                 <div class="cf-section-title">Section 5 — News / Articles</div>
-                <p class="cf-section-hint">Enter an internal Article ID or an external URL. Internal articles auto-fill title, image and date.</p>
+                <p class="cf-section-hint">Paste any external URL — title and image are fetched automatically. Internal article IDs also supported. All extra fields are optional.</p>
                 <div id="cf-news-items">
                     <div class="cf-news-item" data-news-idx="0">
-                        <div class="cf-news-item-header">
-                            <span class="cf-news-num">News #1</span>
-                        </div>
+                        <div class="cf-news-item-header"><span class="cf-news-num">News #1</span></div>
                         <div class="form-group full">
                             <label>Article ID or URL</label>
                             <input type="text" class="cf-news-id" placeholder="Article ID or https://...">
                             <span class="cf-news-resolved"></span>
                         </div>
                         <div class="cf-news-external" style="display:none;">
-                            <div class="form-grid" style="margin-top:6px;">
-                                <div class="form-group"><label>Image URL</label><input type="url" class="cf-news-img" placeholder="https://..."></div>
-                                <div class="form-group"><label>Title</label><input type="text" class="cf-news-title" placeholder="Article title..."></div>
-                                <div class="form-group"><label>Date</label><input type="text" class="cf-news-date" placeholder="e.g. Sep 4, 2021"></div>
-                                <div class="form-group"><label>Link URL</label><input type="url" class="cf-news-link" placeholder="https://..."></div>
+                            <div class="cf-news-preview">
+                                <img class="cf-news-preview-img" src="" alt="" style="display:none;">
+                                <div class="cf-news-preview-info">
+                                    <div class="cf-news-preview-title"></div>
+                                    <button class="cf-news-override-btn" type="button">Edit details manually</button>
+                                </div>
+                            </div>
+                            <div class="cf-news-override-fields" style="display:none;">
+                                <div class="form-grid" style="margin-top:6px;">
+                                    <div class="form-group"><label>Image URL</label><input type="url" class="cf-news-img" placeholder="https://..."></div>
+                                    <div class="form-group"><label>Title</label><input type="text" class="cf-news-title" placeholder="Article title..."></div>
+                                    <div class="form-group"><label>Date</label><input type="text" class="cf-news-date" placeholder="e.g. Sep 4, 2021"></div>
+                                    <div class="form-group"><label>Link URL</label><input type="url" class="cf-news-link" placeholder="https://..."></div>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="cf-news-item" data-news-idx="1">
-                        <div class="cf-news-item-header">
-                            <span class="cf-news-num">News #2</span>
-                        </div>
+                        <div class="cf-news-item-header"><span class="cf-news-num">News #2</span></div>
                         <div class="form-group full">
                             <label>Article ID or URL</label>
                             <input type="text" class="cf-news-id" placeholder="Article ID or https://...">
                             <span class="cf-news-resolved"></span>
                         </div>
                         <div class="cf-news-external" style="display:none;">
-                            <div class="form-grid" style="margin-top:6px;">
-                                <div class="form-group"><label>Image URL</label><input type="url" class="cf-news-img" placeholder="https://..."></div>
-                                <div class="form-group"><label>Title</label><input type="text" class="cf-news-title" placeholder="Article title..."></div>
-                                <div class="form-group"><label>Date</label><input type="text" class="cf-news-date" placeholder="e.g. Sep 4, 2021"></div>
-                                <div class="form-group"><label>Link URL</label><input type="url" class="cf-news-link" placeholder="https://..."></div>
+                            <div class="cf-news-preview">
+                                <img class="cf-news-preview-img" src="" alt="" style="display:none;">
+                                <div class="cf-news-preview-info">
+                                    <div class="cf-news-preview-title"></div>
+                                    <button class="cf-news-override-btn" type="button">Edit details manually</button>
+                                </div>
+                            </div>
+                            <div class="cf-news-override-fields" style="display:none;">
+                                <div class="form-grid" style="margin-top:6px;">
+                                    <div class="form-group"><label>Image URL</label><input type="url" class="cf-news-img" placeholder="https://..."></div>
+                                    <div class="form-group"><label>Title</label><input type="text" class="cf-news-title" placeholder="Article title..."></div>
+                                    <div class="form-group"><label>Date</label><input type="text" class="cf-news-date" placeholder="e.g. Sep 4, 2021"></div>
+                                    <div class="form-group"><label>Link URL</label><input type="url" class="cf-news-link" placeholder="https://..."></div>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="cf-news-item" data-news-idx="2">
-                        <div class="cf-news-item-header">
-                            <span class="cf-news-num">News #3</span>
-                        </div>
+                        <div class="cf-news-item-header"><span class="cf-news-num">News #3</span></div>
                         <div class="form-group full">
                             <label>Article ID or URL</label>
                             <input type="text" class="cf-news-id" placeholder="Article ID or https://...">
                             <span class="cf-news-resolved"></span>
                         </div>
                         <div class="cf-news-external" style="display:none;">
-                            <div class="form-grid" style="margin-top:6px;">
-                                <div class="form-group"><label>Image URL</label><input type="url" class="cf-news-img" placeholder="https://..."></div>
-                                <div class="form-group"><label>Title</label><input type="text" class="cf-news-title" placeholder="Article title..."></div>
-                                <div class="form-group"><label>Date</label><input type="text" class="cf-news-date" placeholder="e.g. Sep 4, 2021"></div>
-                                <div class="form-group"><label>Link URL</label><input type="url" class="cf-news-link" placeholder="https://..."></div>
+                            <div class="cf-news-preview">
+                                <img class="cf-news-preview-img" src="" alt="" style="display:none;">
+                                <div class="cf-news-preview-info">
+                                    <div class="cf-news-preview-title"></div>
+                                    <button class="cf-news-override-btn" type="button">Edit details manually</button>
+                                </div>
+                            </div>
+                            <div class="cf-news-override-fields" style="display:none;">
+                                <div class="form-grid" style="margin-top:6px;">
+                                    <div class="form-group"><label>Image URL</label><input type="url" class="cf-news-img" placeholder="https://..."></div>
+                                    <div class="form-group"><label>Title</label><input type="text" class="cf-news-title" placeholder="Article title..."></div>
+                                    <div class="form-group"><label>Date</label><input type="text" class="cf-news-date" placeholder="e.g. Sep 4, 2021"></div>
+                                    <div class="form-group"><label>Link URL</label><input type="url" class="cf-news-link" placeholder="https://..."></div>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="cf-news-item" data-news-idx="3">
-                        <div class="cf-news-item-header">
-                            <span class="cf-news-num">News #4</span>
-                        </div>
+                        <div class="cf-news-item-header"><span class="cf-news-num">News #4</span></div>
                         <div class="form-group full">
                             <label>Article ID or URL</label>
                             <input type="text" class="cf-news-id" placeholder="Article ID or https://...">
                             <span class="cf-news-resolved"></span>
                         </div>
                         <div class="cf-news-external" style="display:none;">
-                            <div class="form-grid" style="margin-top:6px;">
-                                <div class="form-group"><label>Image URL</label><input type="url" class="cf-news-img" placeholder="https://..."></div>
-                                <div class="form-group"><label>Title</label><input type="text" class="cf-news-title" placeholder="Article title..."></div>
-                                <div class="form-group"><label>Date</label><input type="text" class="cf-news-date" placeholder="e.g. Sep 4, 2021"></div>
-                                <div class="form-group"><label>Link URL</label><input type="url" class="cf-news-link" placeholder="https://..."></div>
+                            <div class="cf-news-preview">
+                                <img class="cf-news-preview-img" src="" alt="" style="display:none;">
+                                <div class="cf-news-preview-info">
+                                    <div class="cf-news-preview-title"></div>
+                                    <button class="cf-news-override-btn" type="button">Edit details manually</button>
+                                </div>
+                            </div>
+                            <div class="cf-news-override-fields" style="display:none;">
+                                <div class="form-grid" style="margin-top:6px;">
+                                    <div class="form-group"><label>Image URL</label><input type="url" class="cf-news-img" placeholder="https://..."></div>
+                                    <div class="form-group"><label>Title</label><input type="text" class="cf-news-title" placeholder="Article title..."></div>
+                                    <div class="form-group"><label>Date</label><input type="text" class="cf-news-date" placeholder="e.g. Sep 4, 2021"></div>
+                                    <div class="form-group"><label>Link URL</label><input type="url" class="cf-news-link" placeholder="https://..."></div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -4129,22 +4174,98 @@
         return _articles.find(function(a) { return String(a.id) === String(id); }) || null;
     }
 
+    // Auto-fetch OG metadata from an external URL via a CORS proxy
+    function fetchNewsOGData(url, row) {
+        var resolvedSpan = row.querySelector('.cf-news-resolved');
+        var extPanel = row.querySelector('.cf-news-external');
+        var previewImg = row.querySelector('.cf-news-preview-img');
+        var previewTitle = row.querySelector('.cf-news-preview-title');
+        var imgInput = row.querySelector('.cf-news-img');
+        var titleInput = row.querySelector('.cf-news-title');
+        var linkInput = row.querySelector('.cf-news-link');
+        extPanel.style.display = 'block';
+        resolvedSpan.textContent = 'Fetching…';
+        resolvedSpan.style.color = '#888';
+        var proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(url);
+        fetch(proxyUrl)
+            .then(function(r) { return r.json(); })
+            .then(function(json) {
+                var html = json.contents || '';
+                var ogImage = '';
+                var ogTitle = '';
+                var m;
+                m = html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i)
+                    || html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i);
+                if (m) ogImage = m[1];
+                m = html.match(/<meta[^>]+property=["']og:title["'][^>]+content=["']([^"']+)["']/i)
+                    || html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:title["']/i)
+                    || html.match(/<title[^>]*>([^<]+)<\/title>/i);
+                if (m) ogTitle = m[1].replace(/&#?[\w]+;/g, ' ').trim();
+                if (ogImage && !imgInput.value) {
+                    imgInput.value = ogImage;
+                    previewImg.src = ogImage;
+                    previewImg.style.display = 'block';
+                } else if (imgInput.value) {
+                    previewImg.src = imgInput.value;
+                    previewImg.style.display = 'block';
+                }
+                if (ogTitle && !titleInput.value) titleInput.value = ogTitle;
+                if (titleInput.value) previewTitle.textContent = titleInput.value;
+                if (!linkInput.value) linkInput.value = url;
+                resolvedSpan.textContent = (ogTitle || ogImage) ? '' : '⚠ Could not fetch metadata — enter details manually';
+                resolvedSpan.style.color = (ogTitle || ogImage) ? '' : '#c0392b';
+                if (!ogTitle && !ogImage) row.querySelector('.cf-news-override-fields').style.display = 'block';
+            })
+            .catch(function() {
+                resolvedSpan.textContent = '⚠ Fetch failed — enter details manually';
+                resolvedSpan.style.color = '#c0392b';
+                if (!linkInput.value) linkInput.value = url;
+                row.querySelector('.cf-news-override-fields').style.display = 'block';
+            });
+    }
+
     // Wire up news id inputs: auto-detect internal vs external URL
+    var _newsDebounceTimers = {};
     document.querySelectorAll('#cf-news-items .cf-news-id').forEach(function(input) {
+        var row = input.closest('.cf-news-item');
+        // Wire override button
+        var overrideBtn = row.querySelector('.cf-news-override-btn');
+        if (overrideBtn) {
+            overrideBtn.addEventListener('click', function() {
+                var fields = row.querySelector('.cf-news-override-fields');
+                var isOpen = fields.style.display !== 'none';
+                fields.style.display = isOpen ? 'none' : 'block';
+                overrideBtn.textContent = isOpen ? 'Edit details manually' : 'Hide override fields';
+            });
+        }
         input.addEventListener('input', function() {
-            var row = input.closest('.cf-news-item');
             var val = input.value.trim();
             var extPanel = row.querySelector('.cf-news-external');
             var resolvedSpan = row.querySelector('.cf-news-resolved');
             var isExternal = val.startsWith('http://') || val.startsWith('https://');
-            extPanel.style.display = isExternal ? 'block' : 'none';
-            if (!isExternal && val) {
-                var resolved = resolveArticleById(val);
-                resolvedSpan.textContent = resolved ? '✓ ' + resolved.title : '⚠ Article not found';
-                resolvedSpan.style.color = resolved ? '#2a9d2a' : '#c0392b';
-            } else {
-                resolvedSpan.textContent = '';
+            if (!isExternal) {
+                extPanel.style.display = 'none';
+                row.querySelector('.cf-news-override-fields').style.display = 'none';
+                row.querySelector('.cf-news-preview-img').style.display = 'none';
+                row.querySelector('.cf-news-preview-title').textContent = '';
+                if (val) {
+                    var resolved = resolveArticleById(val);
+                    resolvedSpan.textContent = resolved ? '\u2713 ' + resolved.title : '\u26a0 Article not found';
+                    resolvedSpan.style.color = resolved ? '#2a9d2a' : '#c0392b';
+                } else {
+                    resolvedSpan.textContent = '';
+                    resolvedSpan.style.color = '';
+                }
+                return;
             }
+            // External URL: debounce then auto-fetch
+            var newsIdx = row.dataset.newsIdx;
+            clearTimeout(_newsDebounceTimers[newsIdx]);
+            resolvedSpan.textContent = '...';
+            resolvedSpan.style.color = '#888';
+            _newsDebounceTimers[newsIdx] = setTimeout(function() {
+                fetchNewsOGData(val, row);
+            }, 800);
         });
     });
 
@@ -4181,6 +4302,10 @@
             var idInput = row.querySelector('.cf-news-id');
             var extPanel = row.querySelector('.cf-news-external');
             var resolvedSpan = row.querySelector('.cf-news-resolved');
+            var previewImg = row.querySelector('.cf-news-preview-img');
+            var previewTitle = row.querySelector('.cf-news-preview-title');
+            var overrideFields = row.querySelector('.cf-news-override-fields');
+            var overrideBtn = row.querySelector('.cf-news-override-btn');
             if (!item) {
                 idInput.value = '';
                 extPanel.style.display = 'none';
@@ -4189,7 +4314,8 @@
                 idInput.value = item.id || '';
                 extPanel.style.display = 'none';
                 var resolved = resolveArticleById(item.id);
-                resolvedSpan.textContent = resolved ? '✓ ' + resolved.title : '';
+                resolvedSpan.textContent = resolved ? '\u2713 ' + resolved.title : '';
+                resolvedSpan.style.color = resolved ? '#2a9d2a' : '#c0392b';
             } else {
                 idInput.value = item.url || '';
                 extPanel.style.display = 'block';
@@ -4197,7 +4323,15 @@
                 row.querySelector('.cf-news-title').value = item.title || '';
                 row.querySelector('.cf-news-date').value  = item.date  || '';
                 row.querySelector('.cf-news-link').value  = item.link  || '';
+                // Show preview with existing data
+                if (item.img) { previewImg.src = item.img; previewImg.style.display = 'block'; }
+                if (item.title) previewTitle.textContent = item.title;
                 resolvedSpan.textContent = '';
+                // Show override fields if any were set
+                if (item.img || item.title || item.date || item.link) {
+                    overrideFields.style.display = 'block';
+                    if (overrideBtn) overrideBtn.textContent = 'Hide override fields';
+                }
             }
         });
 
@@ -4257,10 +4391,19 @@
             row.querySelector('.cf-news-id').value = '';
             row.querySelector('.cf-news-external').style.display = 'none';
             row.querySelector('.cf-news-resolved').textContent = '';
+            row.querySelector('.cf-news-resolved').style.color = '';
             ['cf-news-img','cf-news-title','cf-news-date','cf-news-link'].forEach(function(cls) {
                 var el = row.querySelector('.' + cls);
                 if (el) el.value = '';
             });
+            var previewImg = row.querySelector('.cf-news-preview-img');
+            var previewTitle = row.querySelector('.cf-news-preview-title');
+            var overrideBtn = row.querySelector('.cf-news-override-btn');
+            if (previewImg) { previewImg.src = ''; previewImg.style.display = 'none'; }
+            if (previewTitle) previewTitle.textContent = '';
+            var overrideFields = row.querySelector('.cf-news-override-fields');
+            if (overrideFields) overrideFields.style.display = 'none';
+            if (overrideBtn) overrideBtn.textContent = 'Edit details manually';
         });
         // Reset gallery images
         for (var gi = 1; gi <= 8; gi++) {
