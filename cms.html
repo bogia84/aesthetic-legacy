@@ -87,6 +87,21 @@
         .site-status-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
         .site-status-pill.live   .site-status-dot { background: #16a34a; }
         .site-status-pill.offline .site-status-dot { background: #dc2626; }
+        .bypass-pw-input {
+            font-size: 0.72rem; padding: 5px 10px; border-radius: 8px;
+            border: 1px solid var(--border); background: rgba(0,0,0,0.04);
+            color: var(--dark); width: 140px; outline: none;
+            font-family: 'Manrope', sans-serif;
+        }
+        .bypass-pw-input::placeholder { color: var(--muted); }
+        @keyframes btn-spin { to { transform: rotate(360deg); } }
+        .btn-spinner {
+            display: inline-block; width: 12px; height: 12px;
+            border: 2px solid rgba(255,255,255,0.4); border-top-color: #fff;
+            border-radius: 50%; animation: btn-spin 0.7s linear infinite;
+            vertical-align: middle; margin-right: 5px;
+        }
+        .btn-save.saving { opacity: 0.7; cursor: not-allowed; }
 
         /* ---- MAIN ---- */
         .cms-main { padding: 40px; max-width: 1400px; margin: 0 auto; }
@@ -1275,6 +1290,7 @@
                 <span class="site-status-dot"></span>
                 <span id="site-status-text">Live</span>
             </button>
+            <input type="password" id="bypass-pw-input" class="bypass-pw-input" placeholder="Preview password" title="Password to preview the site while offline">
         </div>
         <button class="btn btn-save" onclick="saveCMS()">Save Changes</button>
         <button class="btn btn-reset" onclick="resetCMS()">Reset to Default</button>
@@ -4706,6 +4722,8 @@
     // ================================================================
     function saveCMS() {
         blockItems.forEach(function(b){ collectBlockFields(b.id); });
+        var btn = document.querySelector('.btn.btn-save[onclick="saveCMS()"]');
+        if (btn) { btn.disabled = true; btn.classList.add('saving'); btn.innerHTML = '<span class="btn-spinner"></span>Saving…'; }
         showStatus('Saving…', 'info');
         Promise.all([
             ghStorage.saveArticles(_articles),
@@ -4713,9 +4731,11 @@
             ghStorage.saveContributors(contributors, menOrder, womenOrder),
             ghStorage.saveHomeLayout(_homeLayout)
         ]).then(function() {
-            showStatus('✓ Saved to GitHub!', 'success');
+            showStatus('✓ Saved successfully', 'success');
         }).catch(function(e) {
             showStatus('⚠ Save failed: ' + e.message, 'error');
+        }).finally(function() {
+            if (btn) { btn.disabled = false; btn.classList.remove('saving'); btn.textContent = 'Save Changes'; }
         });
     }
 
@@ -4751,10 +4771,11 @@
     // ================================================================
     var _sitePublished = true;
 
-    function updateSiteStatusUI(isPublished) {
+    function updateSiteStatusUI(isPublished, bypassPassword) {
         _sitePublished = isPublished;
-        var btn  = document.getElementById('site-status-btn');
-        var text = document.getElementById('site-status-text');
+        var btn     = document.getElementById('site-status-btn');
+        var text    = document.getElementById('site-status-text');
+        var pwInput = document.getElementById('bypass-pw-input');
         if (!btn || !text) return;
         if (isPublished) {
             btn.className  = 'site-status-pill live';
@@ -4763,17 +4784,20 @@
             btn.className  = 'site-status-pill offline';
             text.textContent = 'Offline';
         }
+        if (pwInput && bypassPassword !== undefined) pwInput.value = bypassPassword || '';
     }
 
     function toggleSiteStatus() {
-        var next = !_sitePublished;
-        updateSiteStatusUI(next);
+        var next    = !_sitePublished;
+        var pwInput = document.getElementById('bypass-pw-input');
+        var pw      = pwInput ? pwInput.value.trim() : '';
+        updateSiteStatusUI(next, pw);
         var btn = document.getElementById('site-status-btn');
         if (btn) { btn.disabled = true; }
-        ghStorage.saveSiteStatus(next).then(function() {
+        ghStorage.saveSiteStatus(next, pw).then(function() {
             showStatus(next ? '● Site is now Live' : '● Site is now Offline', next ? 'success' : 'info');
         }).catch(function(e) {
-            updateSiteStatusUI(!next); // revert on error
+            updateSiteStatusUI(!next, pw); // revert on error
             showStatus('Failed to update status', 'info');
         }).finally(function() {
             var b = document.getElementById('site-status-btn');
@@ -4842,7 +4866,7 @@
 
             // Load current site status for the toggle button
             ghStorage.getSiteStatus().then(function(status) {
-                updateSiteStatusUI(!status || status.published !== false);
+                updateSiteStatusUI(!status || status.published !== false, status ? status.bypassPassword || '' : '');
             }).catch(function() {});
 
             populateContribDropdowns();

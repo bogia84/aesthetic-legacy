@@ -279,8 +279,8 @@
           }).catch(function() { return { published: true }; });
     }
 
-    function saveSiteStatus(published) {
-        return ghPut('data/site-status.json', { published: published }, 'CMS: update site status');
+    function saveSiteStatus(published, bypassPassword) {
+        return ghPut('data/site-status.json', { published: published, bypassPassword: bypassPassword || '' }, 'CMS: update site status');
     }
 
     // Expose on window
