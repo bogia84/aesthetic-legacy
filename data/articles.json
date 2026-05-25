@@ -8,8 +8,8 @@
     "contributorIdx": 1,
     "publishedTo": {
       "mostPopular": true,
-      "men": true,
-      "women": false
+      "men": false,
+      "women": true
     },
     "editorMode": "component",
     "createdAt": 1779076050734,
