@@ -18,7 +18,28 @@
             --text-light: #fff;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        header, main, .block-footer { opacity: 0; transition: opacity 0.2s ease; }
+
+        /* --- PAGE LOADER --- */
+        #page-loader {
+            position: fixed;
+            inset: 0;
+            background: var(--bg-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.4s ease;
+        }
+        #page-loader.hidden { opacity: 0; pointer-events: none; }
+        .loader-spinner {
+            width: 44px;
+            height: 44px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top-color: var(--primary-red);
+            border-radius: 50%;
+            animation: loader-spin 0.75s linear infinite;
+        }
+        @keyframes loader-spin { to { transform: rotate(360deg); } }
         
         body { 
             font-family: 'Manrope', sans-serif; 
@@ -689,6 +710,8 @@
 
     </main>
 
+    <div id="page-loader"><div class="loader-spinner"></div></div>
+
     <!-- SECTION 6: FOOTER -->
     <section class="block-footer">
         <div class="footer-logo-container">
@@ -742,9 +765,11 @@
     <script>
         document.addEventListener("DOMContentLoaded", async function() {
             function showMain() {
-                document.querySelectorAll('header, main, .block-footer').forEach(function(el) {
-                    el.style.opacity = '1';
-                });
+                var loader = document.getElementById('page-loader');
+                if (loader) {
+                    loader.classList.add('hidden');
+                    setTimeout(function() { if (loader.parentNode) loader.parentNode.removeChild(loader); }, 450);
+                }
             }
             try {
             const DEFAULT_CONTRIBUTORS = [
