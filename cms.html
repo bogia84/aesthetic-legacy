@@ -42,6 +42,19 @@
             transition: all 0.2s;
         }
         .back-link:hover { background: var(--dark); color: #fff; }
+        .btn-logout {
+            text-decoration: none;
+            color: #e63946;
+            font-size: 0.82rem;
+            font-weight: 700;
+            border: 1px solid #e63946;
+            padding: 8px 18px;
+            background: transparent;
+            cursor: pointer;
+            font-family: Manrope, sans-serif;
+            transition: all 0.2s;
+        }
+        .btn-logout:hover { background: #e63946; color: #fff; }
 
         /* ---- ACTION BAR ---- */
         .action-bar {
@@ -1305,6 +1318,7 @@
         <button class="btn btn-reset" onclick="resetCMS()">Reset to Default</button>
         <span class="save-status" id="save-status"></span>
         <a href="index.html" class="back-link">← Back to Site</a>
+        <button class="btn-logout" onclick="cmsLogout()">Log Out</button>
     </div>
 </header>
 
@@ -4829,6 +4843,55 @@
     }
 
     // ================================================================
+    //  LOGIN  helpers (called before the CMS data is loaded)
+    // ================================================================
+    function showLoginForm(errorMsg) {
+        var overlay = document.getElementById('cms-loading-overlay');
+        if (!overlay) return;
+        overlay.style.background = '#f5f5f5';
+        overlay.innerHTML =
+            '<div style="background:#fff;border-radius:12px;padding:40px 36px;max-width:340px;width:90%;box-shadow:0 4px 24px rgba(0,0,0,0.1);font-family:Manrope,sans-serif;">' +
+            '<div style="text-align:center;margin-bottom:28px;">' +
+                '<svg width="32" height="30" viewBox="0 0 30 28" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+                '<path d="M13.4007 7.72751H18.9762V0H10.833L13.4007 7.72751Z" fill="#0a0a0a"/>' +
+                '<path d="M5.6 27.9999L0 17.3379H18.9764V27.9999H5.6Z" fill="#0a0a0a"/>' +
+                '<path d="M29.6386 22.3755L18.9766 28V0H29.6386V22.3755Z" fill="url(#g_login)"/>' +
+                '<defs><linearGradient id="g_login" x1="23.6961" y1="28" x2="23.6961" y2="0" gradientUnits="userSpaceOnUse">' +
+                '<stop stop-color="#DB2A30"/><stop offset="1" stop-color="#F57B7F"/></linearGradient></defs></svg>' +
+                '<div style="font-size:0.88rem;font-weight:900;letter-spacing:0.14em;margin-top:10px;color:#0a0a0a;">AESTHETIC LEGACY</div>' +
+                '<div style="font-size:0.68rem;color:#999;letter-spacing:0.1em;margin-top:3px;text-transform:uppercase;">CMS Access</div>' +
+            '</div>' +
+            (errorMsg ? '<div style="background:#fee2e2;color:#dc2626;padding:10px 14px;border-radius:8px;font-size:0.78rem;margin-bottom:14px;">' + errorMsg + '</div>' : '') +
+            '<form onsubmit="cmsDoLogin();return false;">' +
+                '<input id="login-username" type="text" placeholder="Username" autocomplete="username" ' +
+                    'style="width:100%;padding:11px 14px;border:1px solid #e0e0e0;border-radius:8px;margin-bottom:10px;font-size:0.83rem;font-family:Manrope,sans-serif;box-sizing:border-box;outline:none;" />' +
+                '<input id="login-password" type="password" placeholder="Password" autocomplete="current-password" ' +
+                    'style="width:100%;padding:11px 14px;border:1px solid #e0e0e0;border-radius:8px;margin-bottom:18px;font-size:0.83rem;font-family:Manrope,sans-serif;box-sizing:border-box;outline:none;" />' +
+                '<button id="login-btn" type="submit" ' +
+                    'style="width:100%;padding:12px;background:#0a0a0a;color:#fff;border:none;border-radius:8px;font-weight:800;cursor:pointer;font-size:0.83rem;font-family:Manrope,sans-serif;letter-spacing:0.05em;">Login</button>' +
+            '</form>' +
+            '</div>';
+        setTimeout(function() { var u = document.getElementById('login-username'); if (u) u.focus(); }, 80);
+    }
+
+    function cmsDoLogin() {
+        var un  = (document.getElementById('login-username')  || {}).value || '';
+        var pw  = (document.getElementById('login-password')  || {}).value || '';
+        var btn = document.getElementById('login-btn');
+        if (btn) { btn.disabled = true; btn.textContent = 'Logging in…'; }
+        ghStorage.login(un, pw).then(function() {
+            location.reload();
+        }).catch(function(e) {
+            showLoginForm(e.message || 'Invalid username or password.');
+        });
+    }
+
+    function cmsLogout() {
+        ghStorage.logout();
+        location.reload();
+    }
+
+    // ================================================================
     //  INIT  (async — load data from GitHub then render)
     // ================================================================
     (function initCMSData() {
@@ -4838,29 +4901,22 @@
             if (!overlay) return;
             overlay.innerHTML =
                 '<div style="text-align:center;padding:40px;max-width:420px;font-family:Manrope,sans-serif;">' +
-                '<p style="color:#e63946;font-weight:700;font-size:1rem;margin-bottom:12px;">&#9888; GitHub access required</p>' +
-                '<p style="color:#555;font-size:0.82rem;margin-bottom:16px;">' + msg + '</p>' +
-                '<p style="color:#555;font-size:0.82rem;margin-bottom:8px;text-align:left;">Paste your GitHub PAT (fine-grained, Contents: Read &amp; Write):</p>' +
-                '<input id="overlay-token-input" type="password" placeholder="github_pat_..." ' +
-                    'style="width:100%;padding:10px;border:1px solid #ccc;font-size:0.82rem;margin-bottom:12px;font-family:Manrope,sans-serif;box-sizing:border-box;">' +
-                '<button onclick="(function(){' +
-                    'var t=document.getElementById(\'overlay-token-input\').value.trim();' +
-                    'if(!t)return;' +
-                    'ghStorage.setToken(t);' +
-                    'location.reload();' +
-                '})()" style="width:100%;padding:12px;background:#111;color:#fff;border:none;font-weight:700;cursor:pointer;font-size:0.9rem;font-family:Manrope,sans-serif;">Save Token &amp; Open CMS</button>' +
+                '<p style="color:#e63946;font-weight:700;font-size:1rem;margin-bottom:12px;">&#9888; Error</p>' +
+                '<p style="color:#555;font-size:0.82rem;margin-bottom:20px;">' + msg + '</p>' +
+                '<button onclick="location.reload()" style="padding:10px 24px;background:#111;color:#fff;border:none;font-weight:700;cursor:pointer;font-size:0.85rem;font-family:Manrope,sans-serif;margin-right:10px;">Retry</button>' +
+                '<button onclick="ghStorage.logout();location.reload()" style="padding:10px 24px;background:#e63946;color:#fff;border:none;font-weight:700;cursor:pointer;font-size:0.85rem;font-family:Manrope,sans-serif;">Log Out</button>' +
                 '</div>';
         }
 
-        // Show token prompt immediately if no token is present
-        if (!ghStorage.hasToken()) {
-            showOverlayError('No GitHub token found. Enter your PAT to access the CMS.');
+        // Show login form immediately if not authenticated
+        if (!ghStorage.isAuthenticated()) {
+            showLoginForm();
             return;
         }
 
         // Show error after 12 s if GitHub never responds
         var loadTimer = setTimeout(function() {
-            showOverlayError('Request timed out. Check that your token is valid and has Contents read/write permission.');
+            showOverlayError('Request timed out. Please check your connection and try again.');
         }, 12000);
 
         var p;

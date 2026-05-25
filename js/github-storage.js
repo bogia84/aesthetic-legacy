@@ -15,10 +15,6 @@
 (function(global) {
     'use strict';
 
-    var BASE = 'https://api.github.com';
-    // SHA cache so we don't need to fetch before every write
-    var _shaCache = {};
-
     // When running on localhost, read/write local files instead of GitHub API
     function isLocal() {
         var h = global.location && global.location.hostname;
@@ -45,37 +41,52 @@
     }
 
     // Public repo info — not secret, safe to hardcode
-    var OWNER     = 'bogia84';
-    var REPO      = 'aesthetic-legacy';
-    var BRANCH    = 'main';
-    var TOKEN_KEY = 'aestheticLegacyGHToken';
+    var OWNER  = 'bogia84';
+    var REPO   = 'aesthetic-legacy';
+    var BRANCH = 'main';
 
-    // Token: config.js (local dev) takes priority, else localStorage (GitHub Pages)
-    function getToken() {
-        if (global.GITHUB_CONFIG && global.GITHUB_CONFIG.token) {
-            return global.GITHUB_CONFIG.token;
-        }
-        return localStorage.getItem(TOKEN_KEY) || '';
-    }
-
-    function apiUrl(path) {
-        var cfg = global.GITHUB_CONFIG || {};
-        return BASE + '/repos/' + (cfg.owner || OWNER) + '/' + (cfg.repo || REPO) + '/contents/' + path + '?ref=' + (cfg.branch || BRANCH);
-    }
-
+    // Read-only headers for public GitHub API requests (no auth needed for public repo reads)
     function headers() {
-        var token = getToken();
-        var h = {
+        return {
             'Accept': 'application/vnd.github+json',
             'X-GitHub-Api-Version': '2022-11-28'
         };
-        if (token) h['Authorization'] = 'Bearer ' + token;
-        return h;
     }
 
-    // Unicode-safe base64 encode
-    function b64encode(str) {
-        return btoa(unescape(encodeURIComponent(str)));
+    // ---- CMS session token (stored in sessionStorage on the browser) ----
+    function getCmsToken() {
+        try { return sessionStorage.getItem('cmsToken'); } catch(e) { return null; }
+    }
+
+    function setCmsToken(t) {
+        try { sessionStorage.setItem('cmsToken', t); } catch(e) {}
+    }
+
+    function clearCmsToken() {
+        try { sessionStorage.removeItem('cmsToken'); } catch(e) {}
+    }
+
+    function isAuthenticated() {
+        if (isLocal()) return true; // no login required on localhost
+        return !!getCmsToken();
+    }
+
+    function login(username, password) {
+        return fetch('/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: username, password: password })
+        }).then(function(res) {
+            return res.json().then(function(data) {
+                if (!res.ok) throw new Error(data.error || 'Login failed');
+                setCmsToken(data.token);
+                return data;
+            });
+        });
+    }
+
+    function logout() {
+        clearCmsToken();
     }
 
     // Unicode-safe base64 decode
@@ -141,63 +152,27 @@
      */
     function ghPut(filePath, value, commitMessage) {
         if (isLocal()) return localPut(filePath, value);
-        var content = b64encode(JSON.stringify(value, null, 2));
-        var sha = _shaCache[filePath];
-
-        function fetchFreshSha() {
-            return fetch(apiUrl(filePath), { headers: headers(), cache: 'no-store' })
-                .then(function(res) {
-                    if (!res.ok && res.status !== 404) throw new Error('GitHub SHA fetch failed: ' + res.status);
-                    return res.status === 404 ? null : res.json();
-                })
-                .then(function(data) {
-                    _shaCache[filePath] = data ? data.sha : null;
-                    return _shaCache[filePath];
-                });
-        }
-
-        function doWrite(sha) {
-            var body = {
-                message: commitMessage || 'Update ' + filePath,
-                content: content,
-                branch: (global.GITHUB_CONFIG && global.GITHUB_CONFIG.branch) || BRANCH
-            };
-            if (sha) body.sha = sha;
-            return fetch(apiUrl(filePath), {
-                method: 'PUT',
-                headers: Object.assign({ 'Content-Type': 'application/json' }, headers()),
-                body: JSON.stringify(body)
-            }).then(function(res) {
-                if (res.status === 409) {
-                    // SHA conflict — re-fetch the real current SHA and retry once
-                    return fetchFreshSha().then(function(freshSha) {
-                        return doWrite(freshSha);
-                    });
-                }
-                if (!res.ok) return res.text().then(function(t) { throw new Error('GitHub PUT failed: ' + res.status + ' — ' + t); });
-                return res.json();
-            }).then(function(data) {
-                if (data && data.content && data.content.sha) {
-                    _shaCache[filePath] = data.content.sha;
+        var token = getCmsToken();
+        if (!token) return Promise.reject(new Error('Not authenticated. Please log in.'));
+        return fetch('/api/github-write', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                token: token,
+                filePath: filePath,
+                content: value,
+                commitMessage: commitMessage || 'Update ' + filePath
+            })
+        }).then(function(res) {
+            return res.json().then(function(data) {
+                if (!res.ok) {
+                    if (res.status === 401) clearCmsToken();
+                    throw new Error(data.error || 'Write failed: ' + res.status);
                 }
                 cacheInvalidate(filePath);
+                return data;
             });
-        }
-
-        // If we don't have the SHA yet, fetch it first
-        if (sha !== undefined) {
-            return doWrite(sha);
-        }
-        return fetch(apiUrl(filePath), { headers: headers(), cache: 'no-store' })
-            .then(function(res) {
-                if (res.status === 404) return null;
-                if (!res.ok) throw new Error('GitHub SHA fetch failed: ' + res.status);
-                return res.json();
-            })
-            .then(function(data) {
-                _shaCache[filePath] = data ? data.sha : null;
-                return doWrite(_shaCache[filePath]);
-            });
+        });
     }
 
     // -----------------------------------------------------------------
@@ -297,8 +272,9 @@
         saveAboutConfig:  saveAboutConfig,
         getSiteStatus:    getSiteStatus,
         saveSiteStatus:   saveSiteStatus,
-        setToken:  function(t) { localStorage.setItem(TOKEN_KEY, t); _shaCache = {}; },
-        hasToken:  function()  { return !!getToken(); }
+        login:           login,
+        logout:          logout,
+        isAuthenticated: isAuthenticated
     };
 
 })(window);
