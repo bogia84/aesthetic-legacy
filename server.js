@@ -86,11 +86,8 @@ function githubFetch(method, apiPath, pat, bodyObj) {
 // ---- POST /api/login ----
 app.post('/api/login', (req, res) => {
     const { username, password } = req.body;
-    const expectedUser = process.env.CMS_USERNAME || '';
-    const expectedPass = process.env.CMS_PASSWORD || '';
-    if (!expectedUser || !expectedPass) {
-        return res.status(500).json({ error: 'CMS_USERNAME and CMS_PASSWORD environment variables are not configured on the server.' });
-    }
+    const expectedUser = process.env.CMS_USERNAME || 'admin';
+    const expectedPass = process.env.CMS_PASSWORD || 'admin123';
     if (!safeEqual(username || '', expectedUser) || !safeEqual(password || '', expectedPass)) {
         return res.status(401).json({ error: 'Invalid username or password.' });
     }
@@ -163,7 +160,7 @@ app.get('*', (req, res) => {
 app.listen(PORT, () => {
     console.log(`Aesthetic Legacy server running at http://localhost:${PORT}`);
     if (!process.env.CMS_USERNAME || !process.env.CMS_PASSWORD) {
-        console.warn('  ⚠  CMS_USERNAME / CMS_PASSWORD not set — /api/login will return 500 until configured.');
+        console.warn('  ⚠  CMS_USERNAME / CMS_PASSWORD not set — using defaults (admin / admin123). Set env vars in production.');
     }
     if (!process.env.GITHUB_PAT) {
         console.warn('  ⚠  GITHUB_PAT not set — /api/github-write will return 500 until configured.');
