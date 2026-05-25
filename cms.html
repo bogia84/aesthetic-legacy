@@ -70,6 +70,24 @@
         .save-status.success { color: #16a34a; }
         .save-status.info { color: var(--red); }
 
+        /* ---- SITE STATUS TOGGLE ---- */
+        .site-status-wrap { display: flex; align-items: center; gap: 10px; padding: 0 16px; border-left: 1px solid var(--border); margin-left: 6px; }
+        .site-status-label { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); white-space: nowrap; }
+        .site-status-pill {
+            display: flex; align-items: center; gap: 6px;
+            font-size: 0.72rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase;
+            padding: 5px 12px; border-radius: 20px; border: none; cursor: pointer;
+            font-family: 'Manrope', sans-serif;
+            transition: background 0.2s, color 0.2s;
+        }
+        .site-status-pill.live   { background: #dcfce7; color: #16a34a; }
+        .site-status-pill.live:hover { background: #bbf7d0; }
+        .site-status-pill.offline { background: #fee2e2; color: #dc2626; }
+        .site-status-pill.offline:hover { background: #fecaca; }
+        .site-status-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+        .site-status-pill.live   .site-status-dot { background: #16a34a; }
+        .site-status-pill.offline .site-status-dot { background: #dc2626; }
+
         /* ---- MAIN ---- */
         .cms-main { padding: 40px; max-width: 1400px; margin: 0 auto; }
 
@@ -1251,6 +1269,13 @@
         <span class="header-label">CMS Dashboard</span>
     </div>
     <div class="header-right">
+        <div class="site-status-wrap">
+            <span class="site-status-label">Site</span>
+            <button class="site-status-pill live" id="site-status-btn" onclick="toggleSiteStatus()">
+                <span class="site-status-dot"></span>
+                <span id="site-status-text">Live</span>
+            </button>
+        </div>
         <button class="btn btn-save" onclick="saveCMS()">Save Changes</button>
         <button class="btn btn-reset" onclick="resetCMS()">Reset to Default</button>
         <span class="save-status" id="save-status"></span>
@@ -4722,6 +4747,45 @@
     }
 
     // ================================================================
+    //  SITE STATUS (publish / unpublish)
+    // ================================================================
+    var _sitePublished = true;
+
+    function updateSiteStatusUI(isPublished) {
+        _sitePublished = isPublished;
+        var btn  = document.getElementById('site-status-btn');
+        var text = document.getElementById('site-status-text');
+        if (!btn || !text) return;
+        if (isPublished) {
+            btn.className  = 'site-status-pill live';
+            text.textContent = 'Live';
+        } else {
+            btn.className  = 'site-status-pill offline';
+            text.textContent = 'Offline';
+        }
+    }
+
+    function toggleSiteStatus() {
+        var next = !_sitePublished;
+        updateSiteStatusUI(next);
+        var btn = document.getElementById('site-status-btn');
+        if (btn) { btn.disabled = true; }
+        ghStorage.getHomeLayout().then(function(layout) {
+            layout = layout || {};
+            layout.sitePublished = next;
+            return ghStorage.saveHomeLayout(layout);
+        }).then(function() {
+            showStatus(next ? '● Site is now Live' : '● Site is now Offline', next ? 'success' : 'info');
+        }).catch(function(e) {
+            updateSiteStatusUI(!next); // revert on error
+            showStatus('Failed to update status', 'info');
+        }).finally(function() {
+            var b = document.getElementById('site-status-btn');
+            if (b) b.disabled = false;
+        });
+    }
+
+    // ================================================================
     //  INIT  (async — load data from GitHub then render)
     // ================================================================
     (function initCMSData() {
@@ -4779,6 +4843,11 @@
             womenOrder = (cd.womenOrder && cd.womenOrder.length) ? cd.womenOrder : contributors.reduce(function(acc,c,i){ if(c.type==='women') acc.push(i); return acc; },[]);
 
             if (overlay) overlay.style.display = 'none';
+
+            // Load current site status for the toggle button
+            ghStorage.getHomeLayout().then(function(layout) {
+                updateSiteStatusUI(!layout || layout.sitePublished !== false);
+            }).catch(function() {});
 
             populateContribDropdowns();
             ['popular','men','women'].forEach(renderHomePanel);

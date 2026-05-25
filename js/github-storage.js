@@ -243,7 +243,7 @@
     function getHomeLayout() {
         return ghGet('data/home-layout.json').then(function(data) {
             if (data && typeof data === 'object') return data;
-            return { womenImage: null, womenImagePos: { x: 0, y: 0 }, menImage: null, menImagePos: { x: 0, y: 0 } };
+            return { womenImage: null, womenImagePos: { x: 0, y: 0 }, menImage: null, menImagePos: { x: 0, y: 0 }, sitePublished: true };
         });
     }
 
