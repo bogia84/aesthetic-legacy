@@ -81,11 +81,7 @@ function requireSession(req, res, next) {
 }
 
 // Auth middleware — only the master admin session can manage users
-// On localhost, also allow without token (consistent with frontend bypass)
 function requireMaster(req, res, next) {
-    const ip = req.ip || (req.connection && req.connection.remoteAddress) || '';
-    const isLocalhost = ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1';
-    if (isLocalhost) return next();
     const auth = req.headers['authorization'] || '';
     const token = auth.startsWith('Bearer ') ? auth.slice(7) : '';
     const sess = getSession(token);
@@ -140,13 +136,9 @@ app.post('/api/login', (req, res) => {
     const { username, password } = req.body;
     const users = loadUsers();
     if (!users) {
-        // Fallback to env vars if users.json is missing
-        const eu = process.env.CMS_USERNAME || 'admin';
-        const ep = process.env.CMS_PASSWORD || 'admin123';
-        if (!safeEqual(username || '', eu) || !safeEqual(password || '', ep)) {
-            return res.status(401).json({ error: 'Invalid username or password.' });
-        }
-        return res.json({ token: createSession(eu, true), isMaster: true, permissions: ['home', 'contributors', 'blog', 'about'] });
+        // users.json is missing — refuse login rather than fall back to defaults
+        console.error('  ✖  /api/login: users.json not found — refusing login');
+        return res.status(503).json({ error: 'Authentication service unavailable. Please contact the administrator.' });
     }
     const hash = hashPass(password);
     const user = users.find(u => u.username === username && !u.blocked);
@@ -237,8 +229,8 @@ app.delete('/api/users/:username', requireMaster, (req, res) => {
     res.json({ ok: true });
 });
 
-// ---- POST /api/save-json (localhost only — direct file write) ----
-app.post('/api/save-json', (req, res) => {
+// ---- POST /api/save-json (session required — direct file write for local dev) ----
+app.post('/api/save-json', requireSession, (req, res) => {
     const { filePath, content } = req.body;
     if (!filePath || !ALLOWED_DATA_FILES.includes(filePath)) {
         return res.status(400).json({ error: 'Invalid file path' });

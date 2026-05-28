@@ -31,9 +31,10 @@
     }
 
     function localPut(filePath, value) {
+        var token = getCmsToken() || '';
         return fetch('/api/save-json', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
             body: JSON.stringify({ filePath: filePath, content: value })
         }).then(function(res) {
             if (!res.ok) return res.text().then(function(t) { throw new Error('Local save failed: ' + t); });
@@ -93,16 +94,6 @@
     }
 
     function isAuthenticated() {
-        if (isLocal()) {
-            // Ensure permissions are set for the local bypass so the UI shows correctly
-            if (!sessionStorage.getItem('cmsMaster')) {
-                try {
-                    sessionStorage.setItem('cmsMaster', 'true');
-                    sessionStorage.setItem('cmsPermissions', JSON.stringify(['home', 'contributors', 'blog', 'about']));
-                } catch(e) {}
-            }
-            return true;
-        }
         return !!getCmsToken();
     }
 
@@ -134,9 +125,26 @@
     }
 
     // Save credentials to localStorage (first-time setup on GitHub Pages)
+    // Validates the PAT against the GitHub API before saving — rejects fake tokens.
     function clientSetup(username, password, pat) {
         if (!username || !password || !pat) return Promise.reject(new Error('All fields are required.'));
-        return hashString(password).then(function(hash) {
+        var cfg = global.GITHUB_CONFIG || {};
+        var owner = cfg.owner || OWNER;
+        var repo  = cfg.repo  || REPO;
+        // Verify the token has real repo access before accepting it
+        return fetch('https://api.github.com/repos/' + owner + '/' + repo, {
+            headers: {
+                'Authorization': 'Bearer ' + pat,
+                'Accept': 'application/vnd.github+json',
+                'X-GitHub-Api-Version': '2022-11-28'
+            }
+        }).then(function(res) {
+            if (!res.ok) {
+                var e = new Error('Invalid GitHub token — cannot access the repository. Please check your PAT and try again.');
+                e.isServerError = true; throw e;
+            }
+            return hashString(password);
+        }).then(function(hash) {
             localStorage.setItem('cmsSetupUser', username);
             localStorage.setItem('cmsSetupHash', hash);
             localStorage.setItem('cmsSetupPat',  pat);
