@@ -842,6 +842,7 @@
             line-height: 1.3;
         }
         .toolbar-btn:hover { background: var(--dark); color: #fff; border-color: var(--dark); }
+        .toolbar-btn.active { background: var(--dark); color: #fff; border-color: var(--dark); }
         .toolbar-sep { width: 1px; height: 20px; background: var(--border); margin: 0 3px; flex-shrink: 0; }
         .toolbar-select {
             padding: 4px 6px;
@@ -887,6 +888,16 @@
             pointer-events: none;
         }
         .editor-body img { max-width: 100%; border-radius: 2px; margin-bottom: 14px; display: block; }
+        /* Video embed wrapper */
+        .video-embed-wrapper { display: block; position: relative; margin: 12px 0; }
+        .video-embed-remove {
+            position: absolute; top: 8px; right: 8px; z-index: 10;
+            background: rgba(0,0,0,0.55); color: #fff; border: none; border-radius: 50%;
+            width: 28px; height: 28px; cursor: pointer; font-size: 15px;
+            display: flex; align-items: center; justify-content: center; padding: 0;
+            opacity: 0.75; transition: opacity 0.15s, background 0.15s;
+        }
+        .video-embed-remove:hover { opacity: 1; background: rgba(200,0,0,0.9); }
         .image-insert-panel {
             background: var(--grey);
             border: 1px solid var(--border);
@@ -2277,6 +2288,10 @@
                         <div class="toolbar-sep"></div>
                         <button class="toolbar-btn" onclick="execFmt('insertUnorderedList')" title="Bullet list">• List</button>
                         <button class="toolbar-btn" onclick="execFmt('insertOrderedList')" title="Numbered list">1. List</button>
+                        <div class="toolbar-sep"></div>
+                        <button class="toolbar-btn" id="align-btn-left"   onclick="execAlign('left')"   title="Align left">&#8676;</button>
+                        <button class="toolbar-btn" id="align-btn-center" onclick="execAlign('center')" title="Align center">&#8700;</button>
+                        <button class="toolbar-btn" id="align-btn-right"  onclick="execAlign('right')"  title="Align right">&#8677;</button>
                         <div class="toolbar-sep"></div>
                         <button class="toolbar-btn" onclick="toggleImgPanel()" title="Insert image">🖼 Image</button>
                         <div class="toolbar-sep"></div>
@@ -3745,6 +3760,18 @@
         editor.focus();
         document.execCommand('foreColor', false, color);
     }
+    function execAlign(align) {
+        var editor = document.getElementById('normal-editor-body').style.display !== 'none'
+            ? document.getElementById('normal-editor-body')
+            : document.getElementById('normal-editor-body-en');
+        editor.focus();
+        var cmd = { left: 'justifyLeft', center: 'justifyCenter', right: 'justifyRight' }[align];
+        if (cmd) document.execCommand(cmd, false, null);
+        ['left','center','right'].forEach(function(a) {
+            var btn = document.getElementById('align-btn-' + a);
+            if (btn) btn.classList.toggle('active', a === align);
+        });
+    }
     function toggleInlinePreview() {
         var col = document.getElementById('editor-right-col');
         var isOpen = col.classList.contains('open');
@@ -3934,14 +3961,32 @@
         // else: browser handles plain-text paste normally
     }
 
+    function makeVideoEmbed(src, portrait) {
+        var pb = portrait ? '177.78%' : '56.25%';
+        var maxW = portrait ? 'max-width:360px;' : '';
+        return '<div contenteditable="false" class="video-embed-wrapper" style="position:relative;padding-bottom:' + pb + ';' + maxW + 'height:0;overflow:hidden;margin:12px 0">' +
+            '<button type="button" class="video-embed-remove" onclick="this.closest(\'.video-embed-wrapper\').remove()" title="Remove video">&#x2715;</button>' +
+            '<iframe src="' + src + '" frameborder="0" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen ' +
+            'style="position:absolute;top:0;left:0;width:100%;height:100%"></iframe></div>';
+    }
+
     function tryConvertVideoUrl(url) {
+        url = url.trim();
+        // YouTube
         var yt = url.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?(?:[^&]*&)*v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
-        if (yt) {
-            return '<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;margin:12px 0">' +
-                '<iframe src="https://www.youtube.com/embed/' + yt[1] + '" frameborder="0" ' +
-                'allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen ' +
-                'style="position:absolute;top:0;left:0;width:100%;height:100%"></iframe></div>';
-        }
+        if (yt) return makeVideoEmbed('https://www.youtube.com/embed/' + yt[1] + '?rel=0');
+        // Vimeo
+        var vi = url.match(/(?:https?:\/\/)?(?:(?:www|player)\.)?vimeo\.com\/(?:video\/)?(\d+)/);
+        if (vi) return makeVideoEmbed('https://player.vimeo.com/video/' + vi[1]);
+        // TikTok
+        var tt = url.match(/(?:https?:\/\/)?(?:www\.)?tiktok\.com\/@[^/?#]+\/video\/(\d+)/);
+        if (tt) return makeVideoEmbed('https://www.tiktok.com/embed/v2/' + tt[1], true);
+        // Instagram reel / post / tv
+        var ig = url.match(/(?:https?:\/\/)?(?:www\.)?instagram\.com\/(?:p|reel|tv)\/([A-Za-z0-9_-]+)/);
+        if (ig) return makeVideoEmbed('https://www.instagram.com/p/' + ig[1] + '/embed/', true);
+        // Facebook video (watch?v= or /videos/)
+        var fb = url.match(/(?:https?:\/\/)?(?:www\.)?facebook\.com\/(?:watch\/?\?v=(\d+)|[^/?]+\/videos\/(?:\d+\/)?(\d+))/);
+        if (fb) return makeVideoEmbed('https://www.facebook.com/plugins/video.php?href=' + encodeURIComponent(url.trim()) + '&show_text=false&width=560');
         return null;
     }
 
