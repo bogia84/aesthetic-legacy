@@ -69,58 +69,25 @@
             margin-right: 6px;
         }
         .btn-users:hover { background: #2563eb; color: #fff; }
-        /* ---- USERS MODAL ---- */
-        #users-modal-overlay {
-            display: none;
-            position: fixed; inset: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 9000;
-            align-items: center;
-            justify-content: center;
-        }
-        #users-modal-overlay.open { display: flex; }
-        #users-modal {
-            background: #fff;
-            width: min(520px, 96vw);
-            max-height: 80vh;
-            overflow-y: auto;
-            padding: 32px 28px 24px;
-            font-family: Manrope, sans-serif;
-            box-shadow: 0 8px 40px rgba(0,0,0,.18);
-        }
-        #users-modal h2 { margin: 0 0 20px; font-size: 1.15rem; letter-spacing: .02em; }
-        .um-row {
-            display: flex; align-items: center; gap: 8px;
-            padding: 9px 0; border-bottom: 1px solid #f0f0f0;
-        }
-        .um-row:last-of-type { border-bottom: none; }
-        .um-name { flex: 1; font-weight: 600; font-size: .9rem; }
-        .um-badge {
-            font-size: .73rem; font-weight: 700; padding: 2px 8px;
-            border-radius: 99px;
-        }
-        .um-badge.active  { background: #d1fae5; color: #065f46; }
-        .um-badge.blocked { background: #fee2e2; color: #991b1b; }
-        .um-btn {
-            font-size: .78rem; font-weight: 600; cursor: pointer;
-            border: 1px solid #ccc; background: #fff; padding: 4px 10px;
-            font-family: Manrope, sans-serif; transition: all .15s;
-        }
-        .um-btn:hover { background: #f5f5f5; }
-        .um-btn.danger { border-color: #e63946; color: #e63946; }
-        .um-btn.danger:hover { background: #e63946; color: #fff; }
-        .um-inline-form {
-            display: flex; gap: 6px; flex-wrap: wrap;
-            padding: 8px 0 4px; align-items: center;
-        }
-        .um-inline-form input {
-            flex: 1; min-width: 140px; padding: 6px 10px;
-            border: 1px solid #ccc; font-family: Manrope, sans-serif; font-size: .85rem;
-        }
-        #um-add-form { padding-top: 18px; border-top: 2px solid #f0f0f0; margin-top: 10px; }
-        #um-add-form h3 { margin: 0 0 12px; font-size: .95rem; }
-        #um-add-form .um-inline-form input { min-width: 120px; }
-        #um-msg { font-size: .83rem; margin-top: 10px; min-height: 18px; }
+        /* ---- USER MANAGEMENT PANEL ---- */
+        .um-table { width:100%; border-collapse:collapse; font-size:13px; }
+        .um-table th { padding:10px 12px; background:#f5f5f5; border-bottom:2px solid #e0e0e0; font-weight:700; white-space:nowrap; text-align:left; }
+        .um-table td { padding:10px 12px; border-bottom:1px solid #f0f0f0; vertical-align:middle; }
+        .um-table tr:hover td { background:#fafafa; }
+        .um-perm-check { cursor:pointer; width:15px; height:15px; }
+        .um-status-badge { font-size:11px; font-weight:700; padding:2px 8px; border-radius:99px; display:inline-block; }
+        .um-status-badge.active  { background:#d1fae5; color:#065f46; }
+        .um-status-badge.blocked { background:#fee2e2; color:#991b1b; }
+        .um-action-btn { padding:4px 10px; border:1px solid #e0e0e0; border-radius:6px; font-size:12px; cursor:pointer; font-weight:600; margin-left:4px; background:#fff; font-family:Manrope,sans-serif; transition:all .15s; }
+        .um-action-btn:hover { background:#f5f5f5; }
+        .um-action-btn.danger { border-color:#e63946; color:#e63946; }
+        .um-action-btn.danger:hover { background:#e63946; color:#fff; }
+        .um-add-section { background:#f9f9f9; border:1px solid #e8e8e8; border-radius:10px; padding:20px 24px; margin-top:24px; }
+        .um-add-row { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px; }
+        .um-add-row input { padding:9px 12px; border:1px solid #e0e0e0; border-radius:8px; font-size:0.82rem; font-family:Manrope,sans-serif; min-width:160px; }
+        .um-perm-labels { display:flex; gap:16px; flex-wrap:wrap; align-items:center; margin-bottom:16px; }
+        .um-perm-label { display:flex; align-items:center; gap:5px; font-size:13px; cursor:pointer; }
+        .um-pw-tr td { background:#fafbff; padding:6px 12px; }
 
         /* ---- ACTION BAR ---- */
         .action-bar {
@@ -1410,7 +1377,6 @@
         <button class="btn btn-reset" onclick="resetCMS()">Reset to Default</button>
         <span class="save-status" id="save-status"><span class="header-spinner"></span><span id="save-status-text"></span></span>
         <a href="index.html" class="back-link">← Back to Site</a>
-        <button class="btn-users" onclick="openUsersModal()">Users</button>
         <button class="btn-logout" onclick="cmsLogout()">Log Out</button>
     </div>
 </header>
@@ -1422,7 +1388,7 @@
     <nav class="cms-sidebar">
 
         <!-- L1: Home page (collapsible) -->
-        <div class="sidebar-section">
+        <div class="sidebar-section" id="sidebar-home-section">
             <div class="nav-l1" id="l1-home" onclick="toggleL1('l1-home', 'l2-home')">
                 Home page
                 <svg class="nav-arrow open" id="arrow-home" viewBox="0 0 10 10" fill="none">
@@ -1446,14 +1412,14 @@
         </div>
 
         <!-- L1: Contributor list (direct link) -->
-        <div class="sidebar-section">
+        <div class="sidebar-section" id="sidebar-contributors-section">
             <div class="nav-l1 direct" id="nav-contributors" onclick="activatePanel('panel-contributors', 'nav-contributors')">
                 Contributor list
             </div>
         </div>
 
         <!-- L1: Blog Articles (collapsible) -->
-        <div class="sidebar-section">
+        <div class="sidebar-section" id="sidebar-blog-section">
             <div class="nav-l1" id="l1-blog" onclick="toggleL1('l1-blog', 'l2-blog')">
                 Blog Articles
                 <svg class="nav-arrow open" id="arrow-blog" viewBox="0 0 10 10" fill="none">
@@ -1471,9 +1437,16 @@
         </div>
 
         <!-- L1: About Us (direct link) -->
-        <div class="sidebar-section">
+        <div class="sidebar-section" id="sidebar-about-section">
             <div class="nav-l1 direct" id="nav-about" onclick="activatePanel('panel-about', 'nav-about')">
                 About Us
+            </div>
+        </div>
+
+        <!-- L1: User Management (master admin only) -->
+        <div class="sidebar-section" id="sidebar-users-section" style="display:none">
+            <div class="nav-l1 direct" id="nav-users" onclick="activatePanel('panel-users', 'nav-users')">
+                User Management
             </div>
         </div>
 
@@ -2485,6 +2458,29 @@
                 <button class="cms-btn" onclick="saveAboutCMS()">Save Changes</button>
                 <span id="about-save-status" style="font-size:0.78rem;color:var(--muted);"></span>
             </div>
+        </div>
+
+        <!-- ======================================================= PANEL: USER MANAGEMENT -->
+        <div class="cms-panel" id="panel-users">
+            <h2 class="panel-title">User Management</h2>
+            <p class="panel-sub">Manage CMS users and their access permissions. Only the master admin can make changes here.</p>
+            <div id="um-table-wrap"><em style="color:#999">Loading&hellip;</em></div>
+            <div class="um-add-section">
+                <h3 style="margin:0 0 16px;font-size:0.9rem;font-weight:700">Add New User</h3>
+                <div class="um-add-row">
+                    <input id="um-add-username" type="text" placeholder="Username" autocomplete="off">
+                    <input id="um-add-password" type="password" placeholder="Password" autocomplete="new-password">
+                </div>
+                <div class="um-perm-labels">
+                    <strong style="font-size:13px;color:#555">Access:</strong>
+                    <label class="um-perm-label"><input type="checkbox" id="um-add-perm-home"> Home Page</label>
+                    <label class="um-perm-label"><input type="checkbox" id="um-add-perm-contributors"> Contributors</label>
+                    <label class="um-perm-label"><input type="checkbox" id="um-add-perm-blog"> Blog Articles</label>
+                    <label class="um-perm-label"><input type="checkbox" id="um-add-perm-about"> About Us</label>
+                </div>
+                <button class="add-article-btn" onclick="umSaveNewUser()">+ Add User</button>
+            </div>
+            <div id="um-panel-msg" style="margin-top:14px;font-size:0.82rem;min-height:20px"></div>
         </div>
 
     </div><!-- /cms-panels -->
@@ -5162,6 +5158,9 @@
 
             if (overlay) overlay.style.display = 'none';
 
+            // Apply sidebar permissions for this user
+            applyPermissions(ghStorage.isMasterAdmin(), ghStorage.getPermissions());
+
             // Load current site status for the toggle button
             ghStorage.getSiteStatus().then(function(status) {
                 updateSiteStatusUI(!status || status.published !== false, status ? status.bypassPassword || '' : '');
@@ -5200,6 +5199,7 @@
             window.activatePanel = function(panelId, navId) {
                 origActivate(panelId, navId);
                 if (panelId === 'panel-home-layout') loadHomeLayoutPanel();
+                if (panelId === 'panel-users') loadUsersPanel();
             };
 
             // Live preview: hook meta field changes
@@ -5227,115 +5227,150 @@
         });
     })();
 
-    // ---- Users Management ----
-    function openUsersModal() {
-        document.getElementById('users-modal-overlay').classList.add('open');
-        loadUsersModalData();
+    // ---- User Management Panel ----
+    var ALL_PERMS = [
+        { key: 'home',         label: 'Home Page' },
+        { key: 'contributors', label: 'Contributors' },
+        { key: 'blog',         label: 'Blog Articles' },
+        { key: 'about',        label: 'About Us' }
+    ];
+
+    function umShowMsg(msg, color) {
+        var el = document.getElementById('um-panel-msg');
+        if (el) { el.textContent = msg; el.style.color = color || '#333'; }
     }
-    function closeUsersModal() {
-        document.getElementById('users-modal-overlay').classList.remove('open');
-        document.getElementById('um-msg').textContent = '';
-    }
-    function showUsersMsg(msg, color) {
-        var el = document.getElementById('um-msg');
-        el.textContent = msg;
-        el.style.color = color || '#333';
-    }
-    function loadUsersModalData() {
-        var list = document.getElementById('um-user-list');
-        list.innerHTML = '<em style="color:#999">Loading...</em>';
-        ghStorage.getUsers().then(function(users) {
-            if (!users || users.length === 0) {
-                list.innerHTML = '<p style="color:#999">No users found.</p>';
-                return;
-            }
-            list.innerHTML = '';
-            users.forEach(function(u) {
-                var row = document.createElement('div');
-                row.className = 'um-row';
-                row.id = 'um-row-' + CSS.escape(u.username);
-                var badge = u.blocked
-                    ? '<span class="um-badge blocked">Blocked</span>'
-                    : '<span class="um-badge active">Active</span>';
-                var blockBtn = u.blocked
-                    ? '<button class="um-btn" onclick="cmsToggleBlock(\'' + u.username + '\', false)">Unblock</button>'
-                    : '<button class="um-btn danger" onclick="cmsToggleBlock(\'' + u.username + '\', true)">Block</button>';
-                row.innerHTML = '<span class="um-name">' + u.username + '</span>' +
-                    badge +
-                    '<button class="um-btn" onclick="cmsTriggerChangePw(\'' + u.username + '\')">Change PW</button>' +
-                    blockBtn +
-                    '<button class="um-btn danger" onclick="cmsDeleteUser(\'' + u.username + '\')">Delete</button>';
-                list.appendChild(row);
+
+    function loadUsersPanel() {
+        var wrap = document.getElementById('um-table-wrap');
+        if (!wrap) return;
+        wrap.innerHTML = '<em style="color:#999">Loading&hellip;</em>';
+        ghStorage.getUsers().then(function(users) { renderUsersTable(users); })
+            .catch(function(err) {
+                wrap.innerHTML = '<p style="color:#e63946">' + (err.message || 'Error') + '</p>';
             });
-        }).catch(function(err) {
-            list.innerHTML = '<p style="color:#e63946">' + (err.message || 'Failed to load users.') + '</p>';
+    }
+
+    function renderUsersTable(users) {
+        var wrap = document.getElementById('um-table-wrap');
+        if (!users || !users.length) { wrap.innerHTML = '<p style="color:#999">No users found.</p>'; return; }
+        var permCols = ALL_PERMS.map(function(p) { return '<th>' + p.label + '</th>'; }).join('');
+        var html = '<div style="overflow-x:auto"><table class="um-table"><thead><tr><th>Username</th><th>Status</th>' + permCols + '<th>Actions</th></tr></thead><tbody>';
+        users.forEach(function(u) {
+            var badge = u.blocked
+                ? '<span class="um-status-badge blocked">Blocked</span>'
+                : '<span class="um-status-badge active">Active</span>';
+            var masterBadge = u.isMaster
+                ? '<span style="font-size:10px;background:#fef3c7;color:#92400e;padding:1px 6px;border-radius:8px;margin-left:6px;vertical-align:middle">master</span>'
+                : '';
+            var permCells = ALL_PERMS.map(function(p) {
+                var checked = (u.permissions || []).indexOf(p.key) !== -1;
+                var attrs = u.isMaster ? 'checked disabled title="Master always has full access"' : (checked ? 'checked' : '');
+                return '<td style="text-align:center"><input type="checkbox" class="um-perm-check" data-perm="' + p.key + '" ' + attrs
+                    + ' onchange="umTogglePerm(\'' + u.username + '\', this)"></td>';
+            }).join('');
+            var actions = '<button class="um-action-btn" onclick="umChangePw(\'' + u.username + '\')">Change PW</button>';
+            if (!u.isMaster) {
+                actions += u.blocked
+                    ? '<button class="um-action-btn" onclick="umToggleBlock(\'' + u.username + '\', false)">Unblock</button>'
+                    : '<button class="um-action-btn danger" onclick="umToggleBlock(\'' + u.username + '\', true)">Block</button>';
+                actions += '<button class="um-action-btn danger" onclick="umDeleteUser(\'' + u.username + '\')">Delete</button>';
+            }
+            html += '<tr id="um-row-' + u.username + '"><td><strong>' + u.username + '</strong>' + masterBadge + '</td><td>' + badge + '</td>' + permCells + '<td style="white-space:nowrap">' + actions + '</td></tr>';
         });
+        html += '</tbody></table></div>';
+        wrap.innerHTML = html;
     }
-    function cmsTriggerChangePw(username) {
-        var rowId = 'um-row-' + CSS.escape(username);
-        var row = document.getElementById(rowId);
+
+    function umTogglePerm(username, checkbox) {
+        var row = document.getElementById('um-row-' + username);
         if (!row) return;
-        if (row.querySelector('.um-inline-form')) { row.querySelector('.um-inline-form').remove(); return; }
-        var form = document.createElement('div');
-        form.className = 'um-inline-form';
-        form.style.flexBasis = '100%';
-        form.innerHTML = '<input type="password" placeholder="New password" autocomplete="new-password" id="um-pw-' + username + '">' +
-            '<button class="um-btn" onclick="cmsSaveChangePw(\'' + username + '\')">Save</button>';
-        row.appendChild(form);
+        var perms = [];
+        ALL_PERMS.forEach(function(p) {
+            var cb = row.querySelector('[data-perm="' + p.key + '"]');
+            if (cb && cb.checked) perms.push(p.key);
+        });
+        ghStorage.updateUser(username, { permissions: perms })
+            .then(function() { umShowMsg('Permissions updated for ' + username + '.', '#065f46'); })
+            .catch(function(err) { umShowMsg(err.message || 'Error.', '#e63946'); loadUsersPanel(); });
     }
-    function cmsSaveChangePw(username) {
+
+    function umToggleBlock(username, blocked) {
+        ghStorage.updateUser(username, { blocked: blocked })
+            .then(function() {
+                umShowMsg(username + (blocked ? ' blocked.' : ' unblocked.'), blocked ? '#991b1b' : '#065f46');
+                loadUsersPanel();
+            })
+            .catch(function(err) { umShowMsg(err.message || 'Error.', '#e63946'); });
+    }
+
+    function umDeleteUser(username) {
+        if (!confirm('Delete "' + username + '"? This cannot be undone.')) return;
+        ghStorage.deleteUser(username)
+            .then(function() { umShowMsg('User deleted.', '#991b1b'); loadUsersPanel(); })
+            .catch(function(err) { umShowMsg(err.message || 'Error.', '#e63946'); });
+    }
+
+    function umChangePw(username) {
+        var row = document.getElementById('um-row-' + username);
+        if (!row) return;
+        var existing = row.nextElementSibling;
+        if (existing && existing.classList.contains('um-pw-tr')) { existing.remove(); return; }
+        var tr = document.createElement('tr');
+        tr.className = 'um-pw-tr';
+        var td = document.createElement('td');
+        td.setAttribute('colspan', row.children.length);
+        td.innerHTML = '<div style="display:flex;gap:8px;padding:4px 0">'
+            + '<input type="password" id="um-pw-' + username + '" placeholder="New password" autocomplete="new-password" style="flex:1;padding:8px 12px;border:1px solid #e0e0e0;border-radius:6px;font-family:Manrope,sans-serif;font-size:0.82rem">'
+            + '<button class="um-action-btn" onclick="umSavePw(\'' + username + '\')">Save</button>'
+            + '<button class="um-action-btn" onclick="this.closest(\'tr\').remove()">Cancel</button>'
+            + '</div>';
+        tr.appendChild(td);
+        row.insertAdjacentElement('afterend', tr);
+        var inp = document.getElementById('um-pw-' + username);
+        if (inp) inp.focus();
+    }
+
+    function umSavePw(username) {
         var pw = (document.getElementById('um-pw-' + username) || {}).value || '';
-        if (!pw) { showUsersMsg('Please enter a new password.', '#e63946'); return; }
-        ghStorage.updateUser(username, { password: pw }).then(function() {
-            showUsersMsg('Password updated for ' + username + '.', '#065f46');
-            loadUsersModalData();
-        }).catch(function(err) { showUsersMsg(err.message || 'Error.', '#e63946'); });
+        if (!pw) { umShowMsg('Enter a new password.', '#e63946'); return; }
+        ghStorage.updateUser(username, { password: pw })
+            .then(function() { umShowMsg('Password updated.', '#065f46'); loadUsersPanel(); })
+            .catch(function(err) { umShowMsg(err.message || 'Error.', '#e63946'); });
     }
-    function cmsToggleBlock(username, blocked) {
-        ghStorage.updateUser(username, { blocked: blocked }).then(function() {
-            showUsersMsg(username + ' ' + (blocked ? 'blocked' : 'unblocked') + '.', blocked ? '#991b1b' : '#065f46');
-            loadUsersModalData();
-        }).catch(function(err) { showUsersMsg(err.message || 'Error.', '#e63946'); });
+
+    function umSaveNewUser() {
+        var username = (document.getElementById('um-add-username') || {}).value.trim();
+        var password = (document.getElementById('um-add-password') || {}).value;
+        if (!username || !password) { umShowMsg('Username and password are required.', '#e63946'); return; }
+        var permissions = ALL_PERMS.map(function(p) { return p.key; }).filter(function(k) {
+            var cb = document.getElementById('um-add-perm-' + k); return cb && cb.checked;
+        });
+        ghStorage.createUser(username, password, permissions).then(function() {
+            document.getElementById('um-add-username').value = '';
+            document.getElementById('um-add-password').value = '';
+            ALL_PERMS.forEach(function(p) { var cb = document.getElementById('um-add-perm-' + p.key); if (cb) cb.checked = false; });
+            umShowMsg('User ' + username + ' created.', '#065f46');
+            loadUsersPanel();
+        }).catch(function(err) { umShowMsg(err.message || 'Error.', '#e63946'); });
     }
-    function cmsDeleteUser(username) {
-        if (!confirm('Delete user "' + username + '"? This cannot be undone.')) return;
-        ghStorage.deleteUser(username).then(function() {
-            showUsersMsg('User ' + username + ' deleted.', '#991b1b');
-            loadUsersModalData();
-        }).catch(function(err) { showUsersMsg(err.message || 'Error.', '#e63946'); });
-    }
-    function cmsAddUser() {
-        var u = document.getElementById('um-new-username').value.trim();
-        var p = document.getElementById('um-new-password').value;
-        if (!u || !p) { showUsersMsg('Username and password are required.', '#e63946'); return; }
-        ghStorage.createUser(u, p).then(function() {
-            document.getElementById('um-new-username').value = '';
-            document.getElementById('um-new-password').value = '';
-            showUsersMsg('User ' + u + ' created.', '#065f46');
-            loadUsersModalData();
-        }).catch(function(err) { showUsersMsg(err.message || 'Error.', '#e63946'); });
+
+    function applyPermissions(isMaster, permissions) {
+        var map = {
+            home:         'sidebar-home-section',
+            contributors: 'sidebar-contributors-section',
+            blog:         'sidebar-blog-section',
+            about:        'sidebar-about-section'
+        };
+        Object.keys(map).forEach(function(perm) {
+            var el = document.getElementById(map[perm]);
+            if (el) el.style.display = permissions.indexOf(perm) !== -1 ? '' : 'none';
+        });
+        var usersEl = document.getElementById('sidebar-users-section');
+        if (usersEl) usersEl.style.display = isMaster ? '' : 'none';
     }
 </script>
 
-<!-- ============================================================ USERS MODAL -->
-<div id="users-modal-overlay" onclick="if(event.target===this)closeUsersModal()">
-  <div id="users-modal">
-    <h2>Manage Users</h2>
-    <div id="um-user-list"></div>
-    <div id="um-add-form">
-      <h3>Add New User</h3>
-      <div class="um-inline-form">
-        <input id="um-new-username" type="text" placeholder="Username" autocomplete="off">
-        <input id="um-new-password" type="password" placeholder="Password" autocomplete="new-password">
-        <button class="um-btn" onclick="cmsAddUser()">Add User</button>
-      </div>
-    </div>
-    <div id="um-msg"></div>
-    <div style="text-align:right;margin-top:16px">
-      <button class="btn-logout" onclick="closeUsersModal()">Close</button>
-    </div>
-  </div>
-</div>
+<!-- ============================================================ END OF CMS SCRIPTS -->
 
 </body>
 </html>

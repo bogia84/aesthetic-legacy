@@ -66,11 +66,13 @@
     function getCmsUser() {
         try { return sessionStorage.getItem('cmsUser'); } catch(e) { return null; }
     }
-    function setCmsSession(token, mode, username) {
+    function setCmsSession(token, mode, username, isMaster, permissions) {
         try {
             sessionStorage.setItem('cmsToken', token);
             sessionStorage.setItem('cmsMode', mode);
             if (username) sessionStorage.setItem('cmsUser', username);
+            sessionStorage.setItem('cmsMaster', isMaster ? 'true' : 'false');
+            sessionStorage.setItem('cmsPermissions', JSON.stringify(permissions || []));
         } catch(e) {}
     }
     function clearCmsToken() {
@@ -78,11 +80,29 @@
             sessionStorage.removeItem('cmsToken');
             sessionStorage.removeItem('cmsMode');
             sessionStorage.removeItem('cmsUser');
+            sessionStorage.removeItem('cmsMaster');
+            sessionStorage.removeItem('cmsPermissions');
         } catch(e) {}
     }
 
+    function isMasterAdmin() {
+        try { return sessionStorage.getItem('cmsMaster') === 'true'; } catch(e) { return false; }
+    }
+    function getPermissions() {
+        try { return JSON.parse(sessionStorage.getItem('cmsPermissions') || '[]'); } catch(e) { return []; }
+    }
+
     function isAuthenticated() {
-        if (isLocal()) return true;
+        if (isLocal()) {
+            // Ensure permissions are set for the local bypass so the UI shows correctly
+            if (!sessionStorage.getItem('cmsMaster')) {
+                try {
+                    sessionStorage.setItem('cmsMaster', 'true');
+                    sessionStorage.setItem('cmsPermissions', JSON.stringify(['home', 'contributors', 'blog', 'about']));
+                } catch(e) {}
+            }
+            return true;
+        }
         return !!getCmsToken();
     }
 
@@ -108,7 +128,7 @@
             if (!pat) {
                 var e = new Error('GitHub PAT not found. Please set up your credentials.'); e.isSetupNeeded = true; throw e;
             }
-            setCmsSession(pat, 'client');
+            setCmsSession(pat, 'client', username, true, ['home', 'contributors', 'blog', 'about']);
             return { mode: 'client' };
         });
     }
@@ -120,7 +140,7 @@
             localStorage.setItem('cmsSetupUser', username);
             localStorage.setItem('cmsSetupHash', hash);
             localStorage.setItem('cmsSetupPat',  pat);
-            setCmsSession(pat, 'client');
+            setCmsSession(pat, 'client', username, true, ['home', 'contributors', 'blog', 'about']);
             return { mode: 'client' };
         });
     }
@@ -141,7 +161,7 @@
                     var e = new Error(data.error || 'Invalid username or password.');
                     e.isServerError = true; throw e;
                 }
-                setCmsSession(data.token, 'server');
+                setCmsSession(data.token, 'server', username, data.isMaster, data.permissions);
                 return { mode: 'server' };
             });
         }).catch(function(err) {
@@ -176,14 +196,14 @@
         function store(u){ localStorage.setItem(KEY, JSON.stringify(u)); }
 
         if (method === 'GET') {
-            return Promise.resolve(load().map(function(u) { return { username: u.username, blocked: !!u.blocked }; }));
+            return Promise.resolve(load().map(function(u) { return { username: u.username, blocked: !!u.blocked, isMaster: !!u.isMaster, permissions: u.permissions || [] }; }));
         }
         if (method === 'POST') {
             var users = load();
             if (users.find(function(u) { return u.username === body.username; }))
                 return Promise.reject(new Error('Username already exists.'));
             return hashString(body.password).then(function(h) {
-                users.push({ username: body.username, passwordHash: h, blocked: false });
+                users.push({ username: body.username, passwordHash: h, blocked: false, isMaster: false, permissions: Array.isArray(body.permissions) ? body.permissions : [] });
                 store(users); return { ok: true };
             });
         }
@@ -191,7 +211,8 @@
         if (method === 'PUT') {
             var users = load(), idx = users.findIndex(function(u) { return u.username === username; });
             if (idx === -1) return Promise.reject(new Error('User not found.'));
-            if (body.blocked !== undefined) users[idx].blocked = !!body.blocked;
+            if (body.blocked !== undefined && !users[idx].isMaster) users[idx].blocked = !!body.blocked;
+            if (Array.isArray(body.permissions) && !users[idx].isMaster) users[idx].permissions = body.permissions;
             if (body.password) {
                 return hashString(body.password).then(function(h) {
                     users[idx].passwordHash = h; store(users); return { ok: true };
@@ -200,18 +221,20 @@
             store(users); return Promise.resolve({ ok: true });
         }
         if (method === 'DELETE') {
-            var users = load(), filtered = users.filter(function(u) { return u.username !== username; });
-            if (filtered.length === users.length) return Promise.reject(new Error('User not found.'));
-            if (filtered.length === 0) return Promise.reject(new Error('Cannot delete the last user.'));
+            var users = load();
+            var target = users.find(function(u) { return u.username === username; });
+            if (!target) return Promise.reject(new Error('User not found.'));
+            if (target.isMaster) return Promise.reject(new Error('Cannot delete the master admin.'));
+            var filtered = users.filter(function(u) { return u.username !== username; });
             store(filtered); return Promise.resolve({ ok: true });
         }
         return Promise.reject(new Error('Unknown operation'));
     }
 
-    function getUsers()                          { return cmsRequest('GET',    '/api/users',             null); }
-    function createUser(username, password)      { return cmsRequest('POST',   '/api/users',             { username: username, password: password }); }
-    function updateUser(username, opts)          { return cmsRequest('PUT',    '/api/users/' + username, opts); }
-    function deleteUser(username)                { return cmsRequest('DELETE', '/api/users/' + username, null); }
+    function getUsers()                                    { return cmsRequest('GET',    '/api/users',             null); }
+    function createUser(username, password, permissions)   { return cmsRequest('POST',   '/api/users',             { username: username, password: password, permissions: permissions || [] }); }
+    function updateUser(username, opts)                    { return cmsRequest('PUT',    '/api/users/' + username, opts); }
+    function deleteUser(username)                          { return cmsRequest('DELETE', '/api/users/' + username, null); }
 
     // Unicode-safe base64 decode
     function b64decode(str) {
@@ -436,6 +459,8 @@
         login:           login,
         logout:          logout,
         isAuthenticated: isAuthenticated,
+        isMasterAdmin:   isMasterAdmin,
+        getPermissions:  getPermissions,
         clientSetup:     clientSetup,
         getUsers:        getUsers,
         createUser:      createUser,

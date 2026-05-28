@@ -2,6 +2,23 @@
   {
     "username": "admin",
     "passwordHash": "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9",
-    "blocked": false
+    "blocked": false,
+    "isMaster": true,
+    "permissions": [
+      "home",
+      "contributors",
+      "blog",
+      "about"
+    ]
+  },
+  {
+    "username": "editor1",
+    "passwordHash": "937e8d5fbb48bd4949536cd65b8d35c426b80d2f830c5c308e2cdec422ae2244",
+    "blocked": false,
+    "isMaster": false,
+    "permissions": [
+      "blog",
+      "about"
+    ]
   }
 ]

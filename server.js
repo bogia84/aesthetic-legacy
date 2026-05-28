@@ -27,12 +27,20 @@ const ALLOWED_DATA_FILES = [
 const sessions    = new Map();
 const SESSION_TTL = 8 * 60 * 60 * 1000; // 8 hours
 
-function createSession() {
+function createSession(username, isMaster) {
     const token = crypto.randomBytes(32).toString('hex');
-    sessions.set(token, { expires: Date.now() + SESSION_TTL });
+    sessions.set(token, { expires: Date.now() + SESSION_TTL, username: username || '', isMaster: !!isMaster });
     // Prune expired sessions
     for (const [t, s] of sessions) { if (s.expires < Date.now()) sessions.delete(t); }
     return token;
+}
+
+function getSession(token) {
+    if (!token) return null;
+    const s = sessions.get(token);
+    if (!s) return null;
+    if (s.expires < Date.now()) { sessions.delete(token); return null; }
+    return s;
 }
 
 function validateSession(token) {
@@ -69,6 +77,19 @@ function requireSession(req, res, next) {
     const auth = req.headers['authorization'] || '';
     const token = auth.startsWith('Bearer ') ? auth.slice(7) : '';
     if (!validateSession(token)) return res.status(401).json({ error: 'Session expired. Please log in again.' });
+    next();
+}
+
+// Auth middleware — only the master admin session can manage users
+// On localhost, also allow without token (consistent with frontend bypass)
+function requireMaster(req, res, next) {
+    const ip = req.ip || (req.connection && req.connection.remoteAddress) || '';
+    const isLocalhost = ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1';
+    if (isLocalhost) return next();
+    const auth = req.headers['authorization'] || '';
+    const token = auth.startsWith('Bearer ') ? auth.slice(7) : '';
+    const sess = getSession(token);
+    if (!sess || !sess.isMaster) return res.status(403).json({ error: 'Master admin access required.' });
     next();
 }
 
@@ -110,7 +131,7 @@ function githubFetch(method, apiPath, pat, bodyObj) {
     if (!fs.existsSync(USERS_FILE)) {
         const u = process.env.CMS_USERNAME || 'admin';
         const p = process.env.CMS_PASSWORD || 'admin123';
-        saveUsers([{ username: u, passwordHash: hashPass(p), blocked: false }]);
+        saveUsers([{ username: u, passwordHash: hashPass(p), blocked: false, isMaster: true, permissions: ['home', 'contributors', 'blog', 'about'] }]);
         console.log(`  ✓  Created data/users.json with user "${u}"`);
     }
 })();
@@ -125,14 +146,14 @@ app.post('/api/login', (req, res) => {
         if (!safeEqual(username || '', eu) || !safeEqual(password || '', ep)) {
             return res.status(401).json({ error: 'Invalid username or password.' });
         }
-        return res.json({ token: createSession() });
+        return res.json({ token: createSession(eu, true), isMaster: true, permissions: ['home', 'contributors', 'blog', 'about'] });
     }
     const hash = hashPass(password);
     const user = users.find(u => u.username === username && !u.blocked);
     if (!user || !safeEqual(hash, user.passwordHash)) {
         return res.status(401).json({ error: 'Invalid username or password.' });
     }
-    res.json({ token: createSession() });
+    res.json({ token: createSession(user.username, !!user.isMaster), isMaster: !!user.isMaster, permissions: user.permissions || [] });
 });
 
 // ---- POST /api/github-write ----
@@ -178,74 +199,40 @@ app.post('/api/github-write', async (req, res) => {
     }
 });
 
-// ---- User management endpoints (require valid session) ----
-app.get('/api/users', requireSession, (req, res) => {
+// ---- User management endpoints (master admin only) ----
+app.get('/api/users', requireMaster, (req, res) => {
     const users = loadUsers() || [];
-    res.json(users.map(u => ({ username: u.username, blocked: !!u.blocked })));
+    res.json(users.map(u => ({ username: u.username, blocked: !!u.blocked, isMaster: !!u.isMaster, permissions: u.permissions || [] })));
 });
 
-app.post('/api/users', requireSession, (req, res) => {
-    const { username, password } = req.body;
+app.post('/api/users', requireMaster, (req, res) => {
+    const { username, password, permissions } = req.body;
     if (!username || !password) return res.status(400).json({ error: 'Username and password are required.' });
     const users = loadUsers() || [];
     if (users.find(u => u.username === username)) return res.status(400).json({ error: 'Username already exists.' });
-    users.push({ username, passwordHash: hashPass(password), blocked: false });
+    users.push({ username, passwordHash: hashPass(password), blocked: false, isMaster: false, permissions: Array.isArray(permissions) ? permissions : [] });
     saveUsers(users);
     res.json({ ok: true });
 });
 
-app.put('/api/users/:username', requireSession, (req, res) => {
-    const { password, blocked } = req.body;
+app.put('/api/users/:username', requireMaster, (req, res) => {
+    const { password, blocked, permissions } = req.body;
     const users = loadUsers() || [];
     const idx = users.findIndex(u => u.username === req.params.username);
     if (idx === -1) return res.status(404).json({ error: 'User not found.' });
     if (password) users[idx].passwordHash = hashPass(password);
-    if (blocked !== undefined) users[idx].blocked = !!blocked;
+    if (blocked !== undefined && !users[idx].isMaster) users[idx].blocked = !!blocked;
+    if (Array.isArray(permissions) && !users[idx].isMaster) users[idx].permissions = permissions;
     saveUsers(users);
     res.json({ ok: true });
 });
 
-app.delete('/api/users/:username', requireSession, (req, res) => {
+app.delete('/api/users/:username', requireMaster, (req, res) => {
     const users = loadUsers() || [];
+    const target = users.find(u => u.username === req.params.username);
+    if (!target) return res.status(404).json({ error: 'User not found.' });
+    if (target.isMaster) return res.status(400).json({ error: 'Cannot delete the master admin.' });
     const filtered = users.filter(u => u.username !== req.params.username);
-    if (filtered.length === users.length) return res.status(404).json({ error: 'User not found.' });
-    if (filtered.length === 0) return res.status(400).json({ error: 'Cannot delete the last user.' });
-    saveUsers(filtered);
-    res.json({ ok: true });
-});
-
-// ---- User management endpoints (require valid session) ----
-app.get('/api/users', requireSession, (req, res) => {
-    const users = loadUsers() || [];
-    res.json(users.map(u => ({ username: u.username, blocked: !!u.blocked })));
-});
-
-app.post('/api/users', requireSession, (req, res) => {
-    const { username, password } = req.body;
-    if (!username || !password) return res.status(400).json({ error: 'Username and password are required.' });
-    const users = loadUsers() || [];
-    if (users.find(u => u.username === username)) return res.status(400).json({ error: 'Username already exists.' });
-    users.push({ username, passwordHash: hashPass(password), blocked: false });
-    saveUsers(users);
-    res.json({ ok: true });
-});
-
-app.put('/api/users/:username', requireSession, (req, res) => {
-    const { password, blocked } = req.body;
-    const users = loadUsers() || [];
-    const idx = users.findIndex(u => u.username === req.params.username);
-    if (idx === -1) return res.status(404).json({ error: 'User not found.' });
-    if (password) users[idx].passwordHash = hashPass(password);
-    if (blocked !== undefined) users[idx].blocked = !!blocked;
-    saveUsers(users);
-    res.json({ ok: true });
-});
-
-app.delete('/api/users/:username', requireSession, (req, res) => {
-    const users = loadUsers() || [];
-    const filtered = users.filter(u => u.username !== req.params.username);
-    if (filtered.length === users.length) return res.status(404).json({ error: 'User not found.' });
-    if (filtered.length === 0) return res.status(400).json({ error: 'Cannot delete the last user.' });
     saveUsers(filtered);
     res.json({ ok: true });
 });
