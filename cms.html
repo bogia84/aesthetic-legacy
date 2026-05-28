@@ -145,9 +145,17 @@
         .btn-save:hover { background: var(--red); }
         .btn-reset { background: transparent; color: var(--dark); border: 1px solid var(--border); }
         .btn-reset:hover { background: var(--grey); }
-        .save-status { font-size: 0.8rem; font-weight: 700; transition: opacity 0.3s; }
+        .save-status { font-size: 0.8rem; font-weight: 700; transition: opacity 0.3s; display:inline-flex; align-items:center; gap:6px; }
         .save-status.success { color: #16a34a; }
-        .save-status.info { color: var(--red); }
+        .save-status.info { color: var(--muted); }
+        .save-status.error { color: var(--red); }
+        .header-spinner {
+            display: none; width: 13px; height: 13px;
+            border: 2px solid #ccc; border-top-color: var(--dark);
+            border-radius: 50%; animation: btn-spin 0.7s linear infinite;
+            flex-shrink: 0;
+        }
+        .save-status.info .header-spinner { display: inline-block; }
 
         /* ---- SITE STATUS TOGGLE ---- */
         .site-status-wrap { display: flex; align-items: center; gap: 10px; padding: 0 16px; border-left: 1px solid var(--border); margin-left: 6px; }
@@ -1353,6 +1361,13 @@
         }
         .lang-tab-btn.active { background: var(--dark); color: #fff; }
         .lang-tab-btn:not(.active):hover { background: #e0e0e0; color: var(--dark); }
+        .lang-copy-btn {
+            padding: 7px 14px; font-family: 'Manrope', sans-serif; font-size: 0.72rem;
+            font-weight: 800; cursor: pointer; border: none; background: transparent;
+            color: var(--muted); letter-spacing: 0.05em; border-left: 1.5px solid var(--border);
+            transition: all 0.2s; white-space: nowrap;
+        }
+        .lang-copy-btn:hover { background: #f0f0f0; color: var(--dark); }
     </style>
 </head>
 <body>
@@ -1393,7 +1408,7 @@
         </div>
         <button class="btn btn-save" onclick="saveCMS()">Save Changes</button>
         <button class="btn btn-reset" onclick="resetCMS()">Reset to Default</button>
-        <span class="save-status" id="save-status"></span>
+        <span class="save-status" id="save-status"><span class="header-spinner"></span><span id="save-status-text"></span></span>
         <a href="index.html" class="back-link">← Back to Site</a>
         <button class="btn-users" onclick="openUsersModal()">Users</button>
         <button class="btn-logout" onclick="cmsLogout()">Log Out</button>
@@ -2225,6 +2240,7 @@
             <div class="lang-tab-bar">
                 <button class="lang-tab-btn active" id="lang-btn-vn" onclick="switchEditorLang('vn')">VN</button>
                 <button class="lang-tab-btn" id="lang-btn-en" onclick="switchEditorLang('en')">EN</button>
+                <button class="lang-copy-btn" id="lang-copy-btn" onclick="copyEditorLang()" title="Copy content from the other language">Copy VN → EN</button>
             </div>
 
             <!-- Mode toggle -->
@@ -2315,10 +2331,12 @@
                     <!-- VN body -->
                     <div class="editor-body" id="normal-editor-body" contenteditable="true"
                         data-placeholder="Start writing your article here (VN)…"
+                        data-cms-editor="1"
                         onpaste="handleEditorBodyPaste(event)"></div>
                     <!-- EN body -->
                     <div class="editor-body" id="normal-editor-body-en" contenteditable="true"
                         data-placeholder="Start writing English content here (EN)…"
+                        data-cms-editor="1"
                         style="display:none;"
                         onpaste="handleEditorBodyPaste(event)"></div>
                 </div>
@@ -3234,6 +3252,21 @@
         // Update tab active state
         document.getElementById('lang-btn-vn').classList.toggle('active', lang === 'vn');
         document.getElementById('lang-btn-en').classList.toggle('active', lang === 'en');
+        // Update copy button label
+        var copyBtn = document.getElementById('lang-copy-btn');
+        if (copyBtn) copyBtn.textContent = lang === 'vn' ? 'Copy VN \u2192 EN' : 'Copy EN \u2192 VN';
+        scheduleLivePreview();
+    }
+
+    function copyEditorLang() {
+        var srcId = currentEditorLang === 'vn' ? 'normal-editor-body' : 'normal-editor-body-en';
+        var dstId = currentEditorLang === 'vn' ? 'normal-editor-body-en' : 'normal-editor-body';
+        var src = document.getElementById(srcId);
+        var dst = document.getElementById(dstId);
+        if (!src || !dst) return;
+        var label = currentEditorLang === 'vn' ? 'EN' : 'VN';
+        if (!confirm('This will replace the ' + label + ' content with the current ' + (currentEditorLang === 'vn' ? 'VN' : 'EN') + ' content. Continue?')) return;
+        dst.innerHTML = src.innerHTML;
         scheduleLivePreview();
     }
 
@@ -3887,7 +3920,9 @@
         if (htmlData) {
             e.preventDefault();
             try {
-                var cleaned = cleanPastedHtml(htmlData);
+                // Detect if this was copied from our own editor — skip cleaning to preserve all formatting
+                var fromOwnEditor = htmlData.indexOf('data-cms-editor="1"') >= 0;
+                var cleaned = fromOwnEditor ? _extractOwnEditorHtml(htmlData) : cleanPastedHtml(htmlData);
                 console.log('[paste] cleaned HTML:', cleaned ? cleaned.substring(0, 200) : '(empty)');
                 if (!cleaned || !cleaned.trim()) {
                     // cleaned is empty — fall through to plain text
@@ -3996,6 +4031,17 @@
         var fb = url.match(/(?:https?:\/\/)?(?:www\.|m\.)?facebook\.com\/(?:watch|[^/?#]+\/videos|reel|video\/embed)/i);
         if (fb) return makeVideoEmbed('https://www.facebook.com/plugins/video.php?href=' + encodeURIComponent(url) + '&show_text=false&width=560&height=315&appId');
         return null;
+    }
+
+    function _extractOwnEditorHtml(raw) {
+        // The browser wraps copied content in a <div> or similar — find the element
+        // with data-cms-editor="1" and return its innerHTML directly (no cleaning needed)
+        var tmp = document.createElement('div');
+        tmp.innerHTML = raw;
+        var marked = tmp.querySelector('[data-cms-editor="1"]');
+        if (marked) return marked.innerHTML;
+        // Fallback: strip the outer browser-added wrapper and return the inner content
+        return tmp.innerHTML;
     }
 
     function cleanPastedHtml(raw) {
@@ -4894,7 +4940,7 @@
             ghStorage.saveHomeOrder(_homeOrder),
             ghStorage.saveContributors(contributors, menOrder, womenOrder)
         ]).then(function() {
-            showStatus('✓ Reset to default.', 'info');
+            showStatus('✓ Reset to default.', 'success');
         }).catch(function(e) { showStatus('⚠ Reset failed: ' + e.message, 'error'); });
         ['popular','men','women'].forEach(renderHomePanel);
         renderContributors();
@@ -4903,10 +4949,16 @@
 
     function showStatus(msg, type) {
         var el = document.getElementById('save-status');
-        el.textContent = msg;
+        var txt = document.getElementById('save-status-text');
+        if (txt) txt.textContent = msg;
         el.className = 'save-status ' + type;
         clearTimeout(el._t);
-        el._t = setTimeout(function() { el.textContent = ''; }, 4000);
+        if (type !== 'info') {
+            el._t = setTimeout(function() {
+                if (txt) txt.textContent = '';
+                el.className = 'save-status';
+            }, 4000);
+        }
     }
 
     // ================================================================
@@ -4938,7 +4990,7 @@
         ghStorage.saveSiteStatus(_sitePublished, pw).then(function() {
             showStatus('✓ Access password saved', 'success');
         }).catch(function() {
-            showStatus('Failed to save password', 'info');
+            showStatus('Failed to save password', 'error');
         }).finally(function() {
             if (btn) { btn.disabled = false; btn.textContent = 'Set'; }
         });
@@ -4952,10 +5004,10 @@
         var btn = document.getElementById('site-status-btn');
         if (btn) { btn.disabled = true; }
         ghStorage.saveSiteStatus(next, pw).then(function() {
-            showStatus(next ? '● Site is now Live' : '● Site is now Offline', next ? 'success' : 'info');
+            showStatus(next ? '● Site is now Live' : '● Site is now Offline', next ? 'success' : 'success');
         }).catch(function(e) {
             updateSiteStatusUI(!next, pw); // revert on error
-            showStatus('Failed to update status', 'info');
+            showStatus('Failed to update status', 'error');
         }).finally(function() {
             var b = document.getElementById('site-status-btn');
             if (b) b.disabled = false;
