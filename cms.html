@@ -889,7 +889,7 @@
         }
         .editor-body img { max-width: 100%; border-radius: 2px; margin-bottom: 14px; display: block; }
         /* Video embed wrapper */
-        .video-embed-wrapper { display: block; position: relative; margin: 12px 0; }
+        .video-embed-wrapper { position: relative; margin: 12px 0; }
         .video-embed-remove {
             position: absolute; top: 8px; right: 8px; z-index: 10;
             background: rgba(0,0,0,0.55); color: #fff; border: none; border-radius: 50%;
@@ -3962,11 +3962,19 @@
     }
 
     function makeVideoEmbed(src, portrait) {
-        var pb = portrait ? '177.78%' : '56.25%';
-        var maxW = portrait ? 'max-width:360px;' : '';
-        return '<div contenteditable="false" class="video-embed-wrapper" style="position:relative;padding-bottom:' + pb + ';' + maxW + 'height:0;overflow:hidden;margin:12px 0">' +
-            '<button type="button" class="video-embed-remove" onclick="this.closest(\'.video-embed-wrapper\').remove()" title="Remove video">&#x2715;</button>' +
-            '<iframe src="' + src + '" frameborder="0" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen ' +
+        var removeBtn = '<button type="button" class="video-embed-remove" onclick="this.closest(\'.video-embed-wrapper\').remove()" title="Remove video">&#x2715;</button>';
+        var iframeAllow = 'accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture;web-share';
+        if (portrait) {
+            // Fixed-width outer div so padding-bottom % is relative to 325px, not the full editor width
+            return '<div contenteditable="false" class="video-embed-wrapper" style="display:inline-block;width:325px;max-width:100%;position:relative;margin:12px 0;vertical-align:top">' +
+                removeBtn +
+                '<div style="position:relative;padding-bottom:177.78%;height:0;overflow:hidden">' +
+                '<iframe src="' + src + '" frameborder="0" allow="' + iframeAllow + '" allowfullscreen ' +
+                'style="position:absolute;top:0;left:0;width:100%;height:100%"></iframe></div></div>';
+        }
+        return '<div contenteditable="false" class="video-embed-wrapper" style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;margin:12px 0">' +
+            removeBtn +
+            '<iframe src="' + src + '" frameborder="0" allow="' + iframeAllow + '" allowfullscreen ' +
             'style="position:absolute;top:0;left:0;width:100%;height:100%"></iframe></div>';
     }
 
@@ -3979,14 +3987,14 @@
         var vi = url.match(/(?:https?:\/\/)?(?:(?:www|player)\.)?vimeo\.com\/(?:video\/)?(\d+)/);
         if (vi) return makeVideoEmbed('https://player.vimeo.com/video/' + vi[1]);
         // TikTok
-        var tt = url.match(/(?:https?:\/\/)?(?:www\.)?tiktok\.com\/@[^/?#]+\/video\/(\d+)/);
+        var tt = url.match(/(?:https?:\/\/)?(?:(?:www|vm)\.)?tiktok\.com\/@[^/?#]+\/video\/(\d+)/);
         if (tt) return makeVideoEmbed('https://www.tiktok.com/embed/v2/' + tt[1], true);
         // Instagram reel / post / tv
         var ig = url.match(/(?:https?:\/\/)?(?:www\.)?instagram\.com\/(?:p|reel|tv)\/([A-Za-z0-9_-]+)/);
         if (ig) return makeVideoEmbed('https://www.instagram.com/p/' + ig[1] + '/embed/', true);
-        // Facebook video (watch?v= or /videos/)
-        var fb = url.match(/(?:https?:\/\/)?(?:www\.)?facebook\.com\/(?:watch\/?\?v=(\d+)|[^/?]+\/videos\/(?:\d+\/)?(\d+))/);
-        if (fb) return makeVideoEmbed('https://www.facebook.com/plugins/video.php?href=' + encodeURIComponent(url.trim()) + '&show_text=false&width=560');
+        // Facebook video — watch?v=, /videos/, /reel/, or video/embed
+        var fb = url.match(/(?:https?:\/\/)?(?:www\.|m\.)?facebook\.com\/(?:watch|[^/?#]+\/videos|reel|video\/embed)/i);
+        if (fb) return makeVideoEmbed('https://www.facebook.com/plugins/video.php?href=' + encodeURIComponent(url) + '&show_text=false&width=560&height=315&appId');
         return null;
     }
 
