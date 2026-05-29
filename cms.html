@@ -4041,8 +4041,8 @@
         // TikTok
         var tt = url.match(/(?:https?:\/\/)?(?:(?:www|vm)\.)?tiktok\.com\/@[^/?#]+\/video\/(\d+)/);
         if (tt) return makeVideoEmbed('https://www.tiktok.com/embed/v2/' + tt[1], true);
-        // Instagram reel / post / tv
-        var ig = url.match(/(?:https?:\/\/)?(?:www\.)?instagram\.com\/(?:p|reel|tv)\/([A-Za-z0-9_-]+)/);
+        // Instagram reel / reels / post / tv
+        var ig = url.match(/(?:https?:\/\/)?(?:www\.)?instagram\.com\/(?:p|reels?|tv)\/([A-Za-z0-9_-]+)/);
         if (ig) return makeVideoEmbed('https://www.instagram.com/p/' + ig[1] + '/embed/', true);
         // Facebook video — watch?v=, /videos/, /reel/, or video/embed
         var fb = url.match(/(?:https?:\/\/)?(?:www\.|m\.)?facebook\.com\/(?:watch|[^/?#]+\/videos|reel|video\/embed)/i);
