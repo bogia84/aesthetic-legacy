@@ -2666,7 +2666,7 @@
     var womenOrder = interviewees.reduce(function(acc,c,i){ if(c.type==='women') acc.push(i); return acc; },[]);
 
     function saveInterviewees() {
-        return ghStorage.saveInterviewees(interviewees, menOrder, womenOrder);
+        return ghStorage.saveInterviewees(interviewees, menOrder, womenOrder, _heroConfig);
     }
 
     function getIntervieweeName(idx) {
