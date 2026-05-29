@@ -484,15 +484,16 @@
     function getInterviewees() {
         return ghGet('data/interviewees.json').then(function(data) {
             if (data && Array.isArray(data.interviewees)) return data;
-            return { interviewees: [], menOrder: [], womenOrder: [] };
+            return { interviewees: [], menOrder: [], womenOrder: [], heroConfig: { bgImage: '', title: 'Fitness influencer', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,', overlayVisible: true } };
         });
     }
 
-    function saveInterviewees(interviewees, menOrder, womenOrder) {
+    function saveInterviewees(interviewees, menOrder, womenOrder, heroConfig) {
         return ghPut('data/interviewees.json', {
             interviewees: interviewees,
             menOrder:     menOrder,
-            womenOrder:   womenOrder
+            womenOrder:   womenOrder,
+            heroConfig:   heroConfig || { bgImage: '', title: '', description: '', overlayVisible: true }
         }, 'CMS: update interviewees');
     }
 

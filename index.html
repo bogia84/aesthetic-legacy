@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aesthetic Legacy</title>
+    <link id="site-favicon" rel="icon" href="">
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
     <style>
@@ -549,6 +550,16 @@
                     footerGraphic.style.transform = 'translate(calc(-50% + ' + (fp.x || 0) + 'px), calc(-50% + ' + (fp.y || 0) + 'px)) scale(' + fs + ')';
                     footerGraphic.style.opacity = '1';
                 }
+                // Apply footer social URLs
+                var fbLink = document.querySelector('a[aria-label="Facebook"]');
+                var xLink  = document.querySelector('a[aria-label="Twitter / X"]');
+                var igLink = document.querySelector('a[aria-label="Instagram"]');
+                if (fbLink && layout.fbUrl) fbLink.href = layout.fbUrl;
+                if (xLink  && layout.xUrl)  xLink.href  = layout.xUrl;
+                if (igLink && layout.igUrl) igLink.href = layout.igUrl;
+                // Apply favicon
+                var favicon = document.getElementById('site-favicon');
+                if (favicon && layout.faviconUrl) favicon.href = layout.faviconUrl;
             }
             // Reveal elements (flash fix — show after real data applied)
             ['swiper-popular','swiper-women','swiper-men'].forEach(function(cls) {

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About Us - Aesthetic Legacy</title>
+    <link id="site-favicon" rel="icon" href="">
     <!-- Include Manrope Font -->
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <!-- Include Swiper CSS -->
@@ -456,6 +457,7 @@
 
     <!-- HEADER (UPDATED TO MATCH HOME) -->
     <header>
+        <a href="index.html" style="text-decoration:none;color:inherit;">
         <div class="logo">
             <svg width="30" height="28" viewBox="0 0 30 28" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M13.4007 7.72751H18.9762V0H10.833L13.4007 7.72751Z" fill="#0A0A0A"/>
@@ -469,6 +471,7 @@
             </svg>
             <span>AESTHETIC LEGACY</span>
         </div>
+        </a>
         <nav id="main-nav">
             <a href="index.html">Home</a>
             <a href="about.html">About us</a>
@@ -638,19 +641,25 @@
                 <span class="follow-text">Follow Us</span>
                 <div class="social-icons">
                     <!-- Facebook Icon -->
+                    <a id="footer-fb" href="#" aria-label="Facebook" target="_blank" rel="noopener" style="color:inherit;">
                     <svg viewBox="0 0 24 24" fill="currentColor">
                         <path d="M22.675 0h-21.35c-.732 0-1.325.593-1.325 1.325v21.351c0 .731.593 1.324 1.325 1.324h11.495v-9.294h-3.128v-3.622h3.128v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.312h3.587l-.467 3.622h-3.12v9.293h6.116c.73 0 1.323-.593 1.323-1.325v-21.35c0-.732-.593-1.325-1.325-1.325z"/>
                     </svg>
+                    </a>
                     <!-- Twitter/X Icon -->
+                    <a id="footer-x" href="#" aria-label="Twitter / X" target="_blank" rel="noopener" style="color:inherit;">
                     <svg viewBox="0 0 24 24" fill="currentColor">
                         <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
                     </svg>
+                    </a>
                     <!-- Instagram Icon -->
+                    <a id="footer-ig" href="#" aria-label="Instagram" target="_blank" rel="noopener" style="color:inherit;">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
                         <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
                         <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
                     </svg>
+                    </a>
                 </div>
             </div>
         </section>
@@ -754,9 +763,23 @@
                         .catch(function() { return null; }),
                     fetch('/data/interviewees.json')
                         .then(function(r) { return r.ok ? r.json() : null; })
+                        .catch(function() { return null; }),
+                    fetch('/data/home-layout.json', { cache: 'no-store' })
+                        .then(function(r) { return r.ok ? r.json() : null; })
                         .catch(function() { return null; })
                 ]).then(function(results) {
                     applyConfig(results[0], results[1]);
+                    var layout = results[2];
+                    if (layout) {
+                        var fbLink = document.getElementById('footer-fb');
+                        var xLink  = document.getElementById('footer-x');
+                        var igLink = document.getElementById('footer-ig');
+                        if (fbLink && layout.fbUrl) fbLink.href = layout.fbUrl;
+                        if (xLink  && layout.xUrl)  xLink.href  = layout.xUrl;
+                        if (igLink && layout.igUrl) igLink.href = layout.igUrl;
+                        var favicon = document.getElementById('site-favicon');
+                        if (favicon && layout.faviconUrl) favicon.href = layout.faviconUrl;
+                    }
                 });
             })();
 

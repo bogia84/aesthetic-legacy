@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aesthetic Legacy</title>
+    <link id="site-favicon" rel="icon" href="">
     <!-- Include Manrope Font -->
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <!-- Include Swiper CSS -->
@@ -540,6 +541,7 @@
 
     <!-- HEADER -->
     <header>
+        <a href="index.html" style="text-decoration:none;color:inherit;">
         <div class="logo">
             <svg width="30" height="28" viewBox="0 0 30 28" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M13.4007 7.72751H18.9762V0H10.833L13.4007 7.72751Z" fill="#0A0A0A"/>
@@ -553,6 +555,7 @@
             </svg>
             <span>AESTHETIC LEGACY</span>
         </div>
+        </a>
         <nav id="main-nav">
             <a href="index.html">Home</a>
             <a href="about.html">About us</a>
@@ -772,6 +775,13 @@
                     setTimeout(function() { if (loader.parentNode) loader.parentNode.removeChild(loader); }, 450);
                 }
             }
+            // Apply favicon from home layout
+            ghStorage.getHomeLayout().then(function(layout) {
+                if (layout && layout.faviconUrl) {
+                    var favicon = document.getElementById('site-favicon');
+                    if (favicon) favicon.href = layout.faviconUrl;
+                }
+            }).catch(function(){});
             try {
             const DEFAULT_INTERVIEWEES = [
                 { name: "Jeremy Buendia", role: "Men's Physique Champion", type: "men", img: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&q=80&w=800", bg: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&q=80&w=1920", avatar: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&q=80&w=200", stats: ["Physique type", "Training years", "Casual approach", "Specialisation"], bio: "" },

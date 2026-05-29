@@ -1411,10 +1411,21 @@
             </div>
         </div>
 
-        <!-- L1: Interviewee list (direct link) -->
+        <!-- L1: Interviewees (collapsible) -->
         <div class="sidebar-section" id="sidebar-interviewees-section">
-            <div class="nav-l1 direct" id="nav-interviewees" onclick="activatePanel('panel-interviewees', 'nav-interviewees')">
-                Interviewee list
+            <div class="nav-l1" id="l1-interviewees" onclick="toggleL1('l1-interviewees', 'l2-interviewees')">
+                Interviewees
+                <svg class="nav-arrow open" id="arrow-interviewees" viewBox="0 0 10 10" fill="none">
+                    <path d="M3 2L7 5L3 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div class="nav-l2-group open" id="l2-interviewees">
+                <div class="nav-l2" id="nav-interviewees-hero" onclick="activatePanel('panel-interviewees-hero', 'nav-interviewees-hero')">
+                    <span class="nav-l2-dot"></span> Hero Banner
+                </div>
+                <div class="nav-l2" id="nav-interviewees" onclick="activatePanel('panel-interviewees', 'nav-interviewees')">
+                    <span class="nav-l2-dot"></span> Interviewee List
+                </div>
             </div>
         </div>
 
@@ -1621,6 +1632,63 @@
             <div class="hia-save-row">
                 <button class="cms-btn" onclick="saveHomeLayoutCMS()">Save Changes</button>
                 <span id="hl-save-status" style="font-size:0.78rem;color:var(--muted);"></span>
+            </div>
+
+            <!-- Footer Social URLs -->
+            <div style="margin-top:28px;padding-top:20px;border-top:1px solid var(--border);">
+                <h3 class="panel-sub" style="margin-bottom:14px;font-weight:700;">Footer Social Links</h3>
+                <div class="form-group" style="margin-bottom:10px;">
+                    <label for="hl-fb-url">Facebook URL</label>
+                    <input type="text" id="hl-fb-url" placeholder="https://facebook.com/..." oninput="_homeLayout.fbUrl=this.value">
+                </div>
+                <div class="form-group" style="margin-bottom:10px;">
+                    <label for="hl-x-url">X (Twitter) URL</label>
+                    <input type="text" id="hl-x-url" placeholder="https://x.com/..." oninput="_homeLayout.xUrl=this.value">
+                </div>
+                <div class="form-group" style="margin-bottom:10px;">
+                    <label for="hl-ig-url">Instagram URL</label>
+                    <input type="text" id="hl-ig-url" placeholder="https://instagram.com/..." oninput="_homeLayout.igUrl=this.value">
+                </div>
+            </div>
+
+            <!-- Favicon -->
+            <div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--border);">
+                <h3 class="panel-sub" style="margin-bottom:14px;font-weight:700;">Favicon</h3>
+                <div class="form-group" style="margin-bottom:10px;">
+                    <label for="hl-favicon-url">Favicon URL</label>
+                    <input type="text" id="hl-favicon-url" placeholder="https://... or data:image/..." oninput="_homeLayout.faviconUrl=this.value">
+                </div>
+                <p style="font-size:0.75rem;color:var(--muted);">Use a .ico, .png, or .svg URL. Supported sizes: 32×32, 64×64.</p>
+            </div>
+            <div class="hia-save-row" style="margin-top:16px;">
+                <button class="cms-btn" onclick="saveHomeLayoutCMS()">Save Changes</button>
+            </div>
+        </div>
+
+        <!-- ======================================================= PANEL: INTERVIEWEES HERO BANNER -->
+        <div class="cms-panel" id="panel-interviewees-hero">
+            <h2 class="panel-title">Interviewees — Hero Banner</h2>
+            <p class="panel-sub">Configure the hero section at the top of the Interviewees page.</p>
+
+            <div class="form-group" style="margin-bottom:14px;">
+                <label for="hero-bg-url">Background Image URL</label>
+                <input type="text" id="hero-bg-url" placeholder="https://... or leave blank for default">
+            </div>
+            <div class="form-group" style="margin-bottom:14px;">
+                <label for="hero-title">Overlay Title</label>
+                <input type="text" id="hero-title" placeholder="e.g. Fitness influencer">
+            </div>
+            <div class="form-group" style="margin-bottom:14px;">
+                <label for="hero-desc">Overlay Description</label>
+                <textarea id="hero-desc" rows="3" placeholder="Lorem ipsum..." style="width:100%;resize:vertical;"></textarea>
+            </div>
+            <div class="form-group" style="margin-bottom:18px;display:flex;align-items:center;gap:10px;">
+                <input type="checkbox" id="hero-overlay-visible" checked style="width:16px;height:16px;cursor:pointer;">
+                <label for="hero-overlay-visible" style="cursor:pointer;text-transform:none;letter-spacing:0;font-weight:500;">Show overlay (glass box)</label>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;">
+                <button class="cms-btn" onclick="saveHeroBannerCMS()">Save Changes</button>
+                <span id="hero-save-status" style="font-size:0.78rem;color:var(--muted);"></span>
             </div>
         </div>
 
@@ -3029,6 +3097,50 @@
     }
 
     // ================================================================
+    //  INTERVIEWEES HERO BANNER
+    // ================================================================
+    var _heroConfig = { bgImage: '', title: 'Fitness influencer', description: '', overlayVisible: true };
+
+    function loadHeroBannerPanel() {
+        ghStorage.getInterviewees().then(function(data) {
+            if (data && data.heroConfig) {
+                _heroConfig = data.heroConfig;
+            }
+            var bgEl  = document.getElementById('hero-bg-url');
+            var ttlEl = document.getElementById('hero-title');
+            var dscEl = document.getElementById('hero-desc');
+            var visEl = document.getElementById('hero-overlay-visible');
+            if (bgEl)  bgEl.value  = _heroConfig.bgImage  || '';
+            if (ttlEl) ttlEl.value = _heroConfig.title    || '';
+            if (dscEl) dscEl.value = _heroConfig.description || '';
+            if (visEl) visEl.checked = _heroConfig.overlayVisible !== false;
+        });
+    }
+
+    function saveHeroBannerCMS() {
+        var bgEl  = document.getElementById('hero-bg-url');
+        var ttlEl = document.getElementById('hero-title');
+        var dscEl = document.getElementById('hero-desc');
+        var visEl = document.getElementById('hero-overlay-visible');
+        _heroConfig.bgImage        = bgEl  ? bgEl.value.trim()  : '';
+        _heroConfig.title          = ttlEl ? ttlEl.value.trim() : '';
+        _heroConfig.description    = dscEl ? dscEl.value.trim() : '';
+        _heroConfig.overlayVisible = visEl ? visEl.checked : true;
+
+        var statusEl = document.getElementById('hero-save-status');
+        if (statusEl) statusEl.textContent = 'Saving\u2026';
+        ghStorage.getInterviewees().then(function(data) {
+            data.heroConfig = _heroConfig;
+            return ghStorage.saveInterviewees(data.interviewees, data.menOrder, data.womenOrder, _heroConfig);
+        }).then(function() {
+            if (statusEl) { statusEl.textContent = '\u2713 Saved!'; setTimeout(function(){ statusEl.textContent=''; }, 3000); }
+        }).catch(function(e) {
+            if (statusEl) statusEl.textContent = '\u26a0 Failed: ' + e.message;
+        });
+    }
+
+
+    // ================================================================
     //  HOME IMAGE ADJUST
     // ================================================================
     var _homeLayout = {
@@ -3041,6 +3153,15 @@
             if (layout && typeof layout === 'object' && Object.keys(layout).length) {
                 _homeLayout = layout;
             }
+            // Populate social/favicon fields
+            var fbEl = document.getElementById('hl-fb-url');
+            var xEl  = document.getElementById('hl-x-url');
+            var igEl = document.getElementById('hl-ig-url');
+            var favEl = document.getElementById('hl-favicon-url');
+            if (fbEl)  fbEl.value  = _homeLayout.fbUrl  || '';
+            if (xEl)   xEl.value   = _homeLayout.xUrl   || '';
+            if (igEl)  igEl.value  = _homeLayout.igUrl  || '';
+            if (favEl) favEl.value = _homeLayout.faviconUrl || '';
             ['women','men','footer'].forEach(function(s) {
                 var img = document.getElementById('hia-img-' + s);
                 if (img) img._hiaDrag = false;
@@ -4988,7 +5109,7 @@
         Promise.all([
             ghStorage.saveArticles(_articles),
             ghStorage.saveHomeOrder(_homeOrder),
-            ghStorage.saveInterviewees(interviewees, menOrder, womenOrder),
+            ghStorage.saveInterviewees(interviewees, menOrder, womenOrder, _heroConfig),
             ghStorage.saveHomeLayout(_homeLayout)
         ]).then(function() {
             showStatus('✓ Saved successfully', 'success');
@@ -5230,6 +5351,7 @@
             interviewees = (cd.interviewees && cd.interviewees.length) ? cd.interviewees : DEFAULT_INTERVIEWEES.slice();
             menOrder   = (cd.menOrder   && cd.menOrder.length)   ? cd.menOrder   : interviewees.reduce(function(acc,c,i){ if(c.type==='men') acc.push(i); return acc; },[]);
             womenOrder = (cd.womenOrder && cd.womenOrder.length) ? cd.womenOrder : interviewees.reduce(function(acc,c,i){ if(c.type==='women') acc.push(i); return acc; },[]);
+            if (cd.heroConfig) _heroConfig = cd.heroConfig;
 
             if (overlay) overlay.style.display = 'none';
 
@@ -5274,6 +5396,7 @@
             window.activatePanel = function(panelId, navId) {
                 origActivate(panelId, navId);
                 if (panelId === 'panel-home-layout') loadHomeLayoutPanel();
+                if (panelId === 'panel-interviewees-hero') loadHeroBannerPanel();
                 if (panelId === 'panel-users') loadUsersPanel();
             };
 
