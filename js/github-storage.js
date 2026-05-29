@@ -318,19 +318,34 @@
             'Authorization': 'Bearer ' + pat,
             'Content-Type': 'application/json'
         };
-        return fetch(url + '?ref=' + branch, { headers: hdrs, cache: 'no-store' })
+        var encodedContent = b64encode(JSON.stringify(value, null, 2));
+
+        function fetchSha() {
+            return fetch(url + '?ref=' + branch, { headers: hdrs, cache: 'no-store' })
+                .then(function(res) {
+                    if (!res.ok && res.status !== 404) throw new Error('SHA fetch failed: ' + res.status);
+                    return res.status === 404 ? null : res.json();
+                });
+        }
+
+        function doPut(sha) {
+            var body = {
+                message: commitMessage || 'Update ' + filePath,
+                content: encodedContent,
+                branch: branch
+            };
+            if (sha) body.sha = sha;
+            return fetch(url, { method: 'PUT', headers: hdrs, body: JSON.stringify(body) });
+        }
+
+        return fetchSha()
+            .then(function(data) { return doPut(data && data.sha); })
             .then(function(res) {
-                if (!res.ok && res.status !== 404) throw new Error('SHA fetch failed: ' + res.status);
-                return res.status === 404 ? null : res.json();
-            })
-            .then(function(data) {
-                var body = {
-                    message: commitMessage || 'Update ' + filePath,
-                    content: b64encode(JSON.stringify(value, null, 2)),
-                    branch: branch
-                };
-                if (data && data.sha) body.sha = data.sha;
-                return fetch(url, { method: 'PUT', headers: hdrs, body: JSON.stringify(body) });
+                if (res.status === 409) {
+                    // Stale SHA (concurrent save or git push) — re-fetch and retry once
+                    return fetchSha().then(function(data) { return doPut(data && data.sha); });
+                }
+                return res;
             })
             .then(function(res) {
                 if (!res.ok) return res.text().then(function(t) { throw new Error('GitHub PUT failed: ' + res.status + ' — ' + t); });
