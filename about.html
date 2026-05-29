@@ -709,39 +709,41 @@
                 function buildSpotlight(indices, contribs) {
                     var wrapper = document.getElementById('sec1-swiper-wrapper');
                     if (!wrapper) return;
-                    var html = '';
+                    var items = [];
                     indices.forEach(function(idx) {
                         var c = contribs[idx];
                         if (!c) return;
-                        html += '<div class="swiper-slide">' +
+                        items.push('<div class="swiper-slide">' +
                             '<a href="contributor_detail.html?index=' + idx + '" class="cs-card">' +
                             '<img src="' + (c.img || '') + '" alt="">' +
                             '<div class="cs-card-info">' +
                             '<div class="cs-card-name">' + (c.name || '') + '</div>' +
                             '<div class="cs-card-role">' + (c.role || '') + '</div>' +
-                            '</div></a></div>';
+                            '</div></a></div>');
                     });
-                    if (html) {
-                        wrapper.innerHTML = html;
-                        new Swiper('#swiper-sec1', {
-                            loop: true,
-                            loopAdditionalSlides: 5,
-                            slidesPerView: 2.5,
-                            spaceBetween: 10,
-                            speed: 5000,
-                            autoplay: {
-                                delay: 1,
-                                disableOnInteraction: false,
-                                pauseOnMouseEnter: true
-                            },
-                            allowTouchMove: false,
-                            breakpoints: {
-                                320:  { slidesPerView: 2.5, spaceBetween: 10 },
-                                768:  { slidesPerView: 4,   spaceBetween: 15 },
-                                1024: { slidesPerView: 6.2, spaceBetween: 15 }
-                            }
-                        });
-                    }
+                    if (!items.length) return;
+                    // Duplicate slides until at least 14 exist so Swiper always has
+                    // enough clones for a seamless loop at any breakpoint (max 6.2 visible).
+                    var repeated = items.slice();
+                    while (repeated.length < 14) { repeated = repeated.concat(items); }
+                    wrapper.innerHTML = repeated.join('');
+                    new Swiper('#swiper-sec1', {
+                        loop: true,
+                        slidesPerView: 2.5,
+                        spaceBetween: 10,
+                        speed: 5000,
+                        autoplay: {
+                            delay: 0,
+                            disableOnInteraction: false,
+                            pauseOnMouseEnter: true
+                        },
+                        allowTouchMove: false,
+                        breakpoints: {
+                            320:  { slidesPerView: 2.5, spaceBetween: 10 },
+                            768:  { slidesPerView: 4,   spaceBetween: 15 },
+                            1024: { slidesPerView: 6.2, spaceBetween: 15 }
+                        }
+                    });
                 }
 
                 // Fetch both files in parallel — contributors.json is 38MB so starting it
