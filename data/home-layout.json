@@ -15,5 +15,6 @@
   "menImageScale": 1,
   "menTextScale": 1,
   "menTextOpacity": 0.5,
-  "fbVisible": true
+  "fbVisible": true,
+  "igVisible": false
 }
