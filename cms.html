@@ -3914,6 +3914,27 @@
         // 2. Rich HTML (Google Docs, Word, web pages) — clean and insert
         var htmlData = cd.getData('text/html');
         if (htmlData) {
+            // Before HTML processing, check if the plain-text side is a standalone video URL
+            // (handles URLs pasted from Instagram, browser address bar, etc. that carry an <a> wrapper in HTML)
+            var ptPreCheck = cd.getData('text/plain') || '';
+            var ptPreEmbed = ptPreCheck.trim() ? tryConvertVideoUrl(ptPreCheck.trim()) : null;
+            if (ptPreEmbed) {
+                e.preventDefault();
+                var selPre = window.getSelection();
+                if (selPre && selPre.rangeCount > 0) {
+                    var rangePre = selPre.getRangeAt(0);
+                    rangePre.deleteContents();
+                    var tmpPre = document.createElement('div');
+                    tmpPre.innerHTML = ptPreEmbed;
+                    var fragPre = document.createDocumentFragment();
+                    var lastPre = null;
+                    while (tmpPre.firstChild) { lastPre = tmpPre.firstChild; fragPre.appendChild(lastPre); }
+                    rangePre.insertNode(fragPre);
+                    if (lastPre) { rangePre.setStartAfter(lastPre); rangePre.collapse(true); selPre.removeAllRanges(); selPre.addRange(rangePre); }
+                }
+                scheduleLivePreview();
+                return;
+            }
             e.preventDefault();
             try {
                 // Detect if this was copied from our own editor — skip cleaning to preserve all formatting
@@ -4011,8 +4032,8 @@
 
     function tryConvertVideoUrl(url) {
         url = url.trim();
-        // YouTube
-        var yt = url.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?(?:[^&]*&)*v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+        // YouTube (watch?v=, youtu.be/, and /shorts/)
+        var yt = url.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?(?:[^&]*&)*v=|youtu\.be\/|youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/);
         if (yt) return makeVideoEmbed('https://www.youtube.com/embed/' + yt[1] + '?rel=0');
         // Vimeo
         var vi = url.match(/(?:https?:\/\/)?(?:(?:www|player)\.)?vimeo\.com\/(?:video\/)?(\d+)/);
