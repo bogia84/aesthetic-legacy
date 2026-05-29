@@ -242,6 +242,27 @@ app.post('/api/save-json', requireSession, (req, res) => {
     });
 });
 
+// ---- POST /api/save-image (session required — write binary image to data/images/) ----
+app.post('/api/save-image', requireSession, (req, res) => {
+    const { filePath, base64Content } = req.body;
+    // Only allow writes under data/images/ and reject path traversal
+    if (!filePath || !filePath.startsWith('data/images/') || filePath.includes('..') || filePath.includes('\0')) {
+        return res.status(400).json({ error: 'Invalid file path. Must be under data/images/.' });
+    }
+    if (typeof base64Content !== 'string' || !base64Content.length) {
+        return res.status(400).json({ error: 'Missing base64Content.' });
+    }
+    const absPath = path.join(__dirname, filePath);
+    const dir = path.dirname(absPath);
+    try {
+        if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+        fs.writeFileSync(absPath, Buffer.from(base64Content, 'base64'));
+        res.json({ ok: true, path: '/' + filePath });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // ---- Static files ----
 app.use(express.static(path.join(__dirname)));
 

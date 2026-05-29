@@ -368,6 +368,95 @@
     }
 
     // -----------------------------------------------------------------
+    //  Image file upload
+    // -----------------------------------------------------------------
+
+    /**
+     * Upload a data:image/... URL to data/images/ in the repo.
+     * Returns a Promise<string> resolving to the repo-relative URL, e.g. "/data/images/img-123.jpg".
+     * If dataUrl is already a plain URL (not a data: URI) it is returned as-is.
+     */
+    function uploadImage(dataUrl, hint) {
+        if (typeof dataUrl !== 'string' || !dataUrl.startsWith('data:image/')) {
+            return Promise.resolve(dataUrl); // already a URL — nothing to do
+        }
+        var match = dataUrl.match(/^data:(image\/[a-zA-Z0-9+.-]+);base64,(.+)$/);
+        if (!match) return Promise.resolve(dataUrl);
+        var mime = match[1];
+        var b64  = match[2];
+        var ext  = mime.split('/')[1]
+                       .replace('jpeg', 'jpg')
+                       .replace('svg+xml', 'svg')
+                       .split('+')[0].split(';')[0]; // normalise exotic types
+        var ts   = Date.now();
+        var rand = (Math.floor(Math.random() * 9000) + 1000).toString();
+        var safeName = hint ? hint.replace(/[^a-zA-Z0-9_-]/g, '_').slice(0, 24) + '-' : '';
+        var name     = 'img-' + safeName + ts + '-' + rand + '.' + ext;
+        var filePath = 'data/images/' + name;
+        var commit   = 'CMS: upload ' + name;
+        var p;
+        if (isLocal()) {
+            p = _localPutImage(filePath, b64);
+        } else {
+            var token = getCmsToken();
+            if (!token) return Promise.reject(new Error('Not authenticated.'));
+            if (getCmsMode() === 'client') {
+                p = _ghPutImageDirect(filePath, b64, commit, token);
+            } else {
+                p = fetch('/api/save-image', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+                    body: JSON.stringify({ filePath: filePath, base64Content: b64, commitMessage: commit })
+                }).then(function(res) {
+                    return res.json().then(function(data) {
+                        if (!res.ok) throw new Error(data.error || 'Image upload failed: ' + res.status);
+                        return data;
+                    });
+                });
+            }
+        }
+        return p.then(function() { return '/' + filePath; });
+    }
+
+    // Direct GitHub API image write (client mode — GitHub Pages)
+    function _ghPutImageDirect(filePath, rawBase64, commitMessage, pat) {
+        var cfg    = global.GITHUB_CONFIG || {};
+        var owner  = cfg.owner  || OWNER;
+        var repo   = cfg.repo   || REPO;
+        var branch = cfg.branch || BRANCH;
+        var url    = 'https://api.github.com/repos/' + owner + '/' + repo + '/contents/' + filePath;
+        var hdrs   = {
+            'Accept': 'application/vnd.github+json',
+            'X-GitHub-Api-Version': '2022-11-28',
+            'Authorization': 'Bearer ' + pat,
+            'Content-Type': 'application/json'
+        };
+        return fetch(url + '?ref=' + branch, { headers: hdrs, cache: 'no-store' })
+            .then(function(res) { return res.ok ? res.json() : null; })
+            .then(function(existing) {
+                var body = { message: commitMessage, content: rawBase64, branch: branch };
+                if (existing && existing.sha) body.sha = existing.sha;
+                return fetch(url, { method: 'PUT', headers: hdrs, body: JSON.stringify(body) });
+            })
+            .then(function(res) {
+                if (!res.ok) return res.text().then(function(t) { throw new Error('Image PUT failed: ' + res.status + ' — ' + t); });
+                return res.json();
+            });
+    }
+
+    // Local dev image write — server saves binary file to data/images/
+    function _localPutImage(filePath, rawBase64) {
+        var token = getCmsToken() || '';
+        return fetch('/api/save-image', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+            body: JSON.stringify({ filePath: filePath, base64Content: rawBase64 })
+        }).then(function(res) {
+            if (!res.ok) return res.text().then(function(t) { throw new Error('Local image save failed: ' + t); });
+        });
+    }
+
+    // -----------------------------------------------------------------
     //  Public API
     // -----------------------------------------------------------------
 
@@ -464,6 +553,7 @@
         saveAboutConfig:  saveAboutConfig,
         getSiteStatus:    getSiteStatus,
         saveSiteStatus:   saveSiteStatus,
+        uploadImage:     uploadImage,
         login:           login,
         logout:          logout,
         isAuthenticated: isAuthenticated,

@@ -2895,7 +2895,7 @@
                 var file = e.dataTransfer.files[0];
                 if (file && file.type.indexOf('image') >= 0) {
                     var reader = new FileReader();
-                    reader.onload = function(ev){ iwSetValue(wid, ev.target.result); };
+                    reader.onload = function(ev){ _iwUploadAndSet(wid, ev.target.result); };
                     reader.readAsDataURL(file);
                 }
             });
@@ -2903,11 +2903,27 @@
     }
 
     function iwSetValue(wid, src) {
-        // Update preview
+        // Persist value into the URL text input so form reads (confirmContributor etc.) always work
+        var urlInput = document.getElementById(wid);
+        if (urlInput && urlInput.tagName === 'INPUT' && urlInput.type !== 'file') urlInput.value = src || '';
+        // Update preview — gallery pattern: iw-{wid}-preview
         var prev = document.getElementById('iw-' + wid + '-preview');
         if (prev) { prev.src = src; prev.style.display = src ? 'block' : 'none'; }
+        // Update preview — contributor main images pattern: {wid}-preview
+        var prev2 = document.getElementById(wid + '-preview');
+        if (prev2) { prev2.src = src; prev2.style.display = src ? 'block' : 'none'; }
         // Call registered callback
         if (_iwCallbacks[wid]) _iwCallbacks[wid](src);
+    }
+
+    // Upload a data URL to data/images/, show immediately for preview then swap to real URL.
+    function _iwUploadAndSet(wid, dataUrl) {
+        iwSetValue(wid, dataUrl);
+        ghStorage.uploadImage(dataUrl).then(function(url) {
+            iwSetValue(wid, url);
+        }).catch(function(err) {
+            console.warn('[img-upload] keeping base64 for', wid, ':', err.message);
+        });
     }
 
     function iwTab(tab, wid) {
@@ -2939,9 +2955,7 @@
                 e.preventDefault();
                 var reader = new FileReader();
                 reader.onload = function(ev) {
-                    var inp = document.getElementById('iw-' + wid + '-url-input') || document.getElementById(wid);
-                    if (inp) inp.value = ev.target.result;
-                    iwSetValue(wid, ev.target.result);
+                    _iwUploadAndSet(wid, ev.target.result);
                 };
                 reader.readAsDataURL(items[i].getAsFile());
                 return;
@@ -2953,7 +2967,7 @@
         var file = e.target.files[0];
         if (!file) return;
         var reader = new FileReader();
-        reader.onload = function(ev){ iwSetValue(wid, ev.target.result); };
+        reader.onload = function(ev){ _iwUploadAndSet(wid, ev.target.result); };
         reader.readAsDataURL(file);
     }
 
@@ -2973,7 +2987,7 @@
         var file = e.target.files[0];
         if (!file) return;
         var reader = new FileReader();
-        reader.onload = function(ev){ iwBlockSet(blkId, ev.target.result); };
+        reader.onload = function(ev){ _iwBlockUploadAndSet(blkId, ev.target.result); };
         reader.readAsDataURL(file);
     }
     function iwBlockB64(ta, blkId) {
@@ -2985,9 +2999,19 @@
         var file = e.dataTransfer.files[0];
         if (file && file.type.indexOf('image') >= 0) {
             var reader = new FileReader();
-            reader.onload = function(ev){ iwBlockSet(blkId, ev.target.result); };
+            reader.onload = function(ev){ _iwBlockUploadAndSet(blkId, ev.target.result); };
             reader.readAsDataURL(file);
         }
+    }
+    function _iwBlockUploadAndSet(blkId, dataUrl) {
+        iwBlockSet(blkId, dataUrl);
+        ghStorage.uploadImage(dataUrl).then(function(url) {
+            iwBlockSet(blkId, url);
+            var blkEl = document.querySelector('[data-blk-id="' + blkId + '"]');
+            if (blkEl) { var inp = blkEl.querySelector('[data-f="image"]'); if (inp) inp.value = url; }
+        }).catch(function(err) {
+            console.warn('[img-upload] block upload failed:', err.message);
+        });
     }
     function iwBlockSet(blkId, src) {
         // Update hidden data-f="image" input
@@ -3052,7 +3076,7 @@
                         var files = e.dataTransfer.files;
                         if (files && files[0] && files[0].type.indexOf('image') >= 0) {
                             var reader = new FileReader();
-                            reader.onload = function(ev) { hiaSetImage(s, ev.target.result); };
+                            reader.onload = function(ev) { _hiaUploadAndSet(s, ev.target.result); };
                             reader.readAsDataURL(files[0]);
                         }
                     });
@@ -3133,7 +3157,7 @@
         reader.onload = function(ev) {
             var urlEl = document.getElementById('hia-url-' + section);
             if (urlEl) urlEl.value = '';
-            hiaSetImage(section, ev.target.result);
+            _hiaUploadAndSet(section, ev.target.result);
         };
         reader.readAsDataURL(file);
         e.target.value = '';
@@ -3153,12 +3177,23 @@
                 reader.onload = function(ev) {
                     var urlEl = document.getElementById('hia-url-' + section);
                     if (urlEl) urlEl.value = '';
-                    hiaSetImage(section, ev.target.result);
+                    _hiaUploadAndSet(section, ev.target.result);
                 };
                 reader.readAsDataURL(items[i].getAsFile());
                 return;
             }
         }
+    }
+
+    function _hiaUploadAndSet(section, dataUrl) {
+        hiaSetImage(section, dataUrl);
+        ghStorage.uploadImage(dataUrl).then(function(url) {
+            hiaSetImage(section, url);
+            var urlEl = document.getElementById('hia-url-' + section);
+            if (urlEl) urlEl.value = url;
+        }).catch(function(err) {
+            console.warn('[img-upload] hia upload failed:', err.message);
+        });
     }
 
     function hiaScaleChange(section, value) {
@@ -3410,7 +3445,12 @@
                 e.preventDefault();
                 var reader = new FileReader();
                 reader.onload = function(ev) {
-                    document.getElementById('ed-hero').value = ev.target.result;
+                    var dataUrl = ev.target.result;
+                    var heroInp = document.getElementById('ed-hero');
+                    heroInp.value = dataUrl;
+                    ghStorage.uploadImage(dataUrl).then(function(url) {
+                        heroInp.value = url;
+                    }).catch(function() {});
                 };
                 reader.readAsDataURL(items[i].getAsFile());
                 return;
@@ -3425,8 +3465,13 @@
                 e.preventDefault();
                 var reader = new FileReader();
                 reader.onload = function(ev) {
-                    document.getElementById(fieldId).value = ev.target.result;
+                    var dataUrl = ev.target.result;
+                    document.getElementById(fieldId).value = dataUrl;
                     refreshContribPreview(fieldId, previewId);
+                    ghStorage.uploadImage(dataUrl).then(function(url) {
+                        document.getElementById(fieldId).value = url;
+                        refreshContribPreview(fieldId, previewId);
+                    }).catch(function() {});
                 };
                 reader.readAsDataURL(items[i].getAsFile());
                 return;
@@ -3717,13 +3762,7 @@
                 var reader = new FileReader();
                 var file = items[i].getAsFile();
                 reader.onload = function(ev) {
-                    // Update the URL input field value
-                    var blkEl = document.querySelector('[data-blk-id="' + blkId + '"]');
-                    if (blkEl) {
-                        var imgInput = blkEl.querySelector('[data-f="image"]');
-                        if (imgInput) imgInput.value = ev.target.result;
-                    }
-                    iwBlockSet(blkId, ev.target.result);
+                    _iwBlockUploadAndSet(blkId, ev.target.result);
                 };
                 reader.readAsDataURL(file);
                 return;
@@ -3839,6 +3878,15 @@
         var img = document.createElement('img');
         img.src = src;
         img.style.cssText = 'width:100%;border-radius:2px;margin-bottom:14px;display:block;';
+        // If it’s a data URL, upload it and swap the src once done
+        if (typeof src === 'string' && src.startsWith('data:image/')) {
+            img.style.opacity = '0.55';
+            ghStorage.uploadImage(src).then(function(url) {
+                img.src = url;
+                img.style.opacity = '';
+                scheduleLivePreview();
+            }).catch(function() { img.style.opacity = ''; });
+        }
         if (sel && sel.rangeCount > 0) {
             var range = sel.getRangeAt(0);
             range.deleteContents();
@@ -4804,9 +4852,7 @@
                 var reader = new FileReader();
                 reader.onload = (function(ww, textarea) { return function(ev) {
                     textarea.value = ev.target.result;
-                    var inp = ww ? ww.querySelector('.aiw-url input') : null;
-                    if (inp) inp.value = ev.target.result;
-                    if (ww) aiwUpdatePreview(ww, ev.target.result);
+                    _aiwUploadAndSet(ww, ev.target.result);
                 }; })(w, ta);
                 reader.readAsDataURL(items[i].getAsFile());
                 return;
@@ -4819,12 +4865,20 @@
         var w = fileInput.closest('.about-img-widget');
         var reader = new FileReader();
         reader.onload = (function(ww) { return function(ev) {
-            var data = ev.target.result;
-            var inp = ww ? ww.querySelector('.aiw-url input') : null;
-            if (inp) inp.value = data;
-            if (ww) { aiwUpdatePreview(ww, data); aiwTab(ww.querySelector('.aiw-tab'), 'url'); }
+            _aiwUploadAndSet(ww, ev.target.result);
         }; })(w);
         reader.readAsDataURL(file);
+    }
+    function _aiwUploadAndSet(w, dataUrl) {
+        var inp = w ? w.querySelector('.aiw-url input') : null;
+        if (inp) inp.value = dataUrl;
+        if (w) { aiwUpdatePreview(w, dataUrl); aiwTab(w.querySelector('.aiw-tab'), 'url'); }
+        ghStorage.uploadImage(dataUrl).then(function(url) {
+            if (inp) inp.value = url;
+            if (w) aiwUpdatePreview(w, url);
+        }).catch(function(err) {
+            console.warn('[img-upload] aiw upload failed:', err.message);
+        });
     }
     function aiwUpdatePreview(w, src) {
         var img = w ? w.querySelector('.aiw-preview') : null;
