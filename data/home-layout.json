@@ -14,5 +14,6 @@
   },
   "menImageScale": 1,
   "menTextScale": 1,
-  "menTextOpacity": 0.5
+  "menTextOpacity": 0.5,
+  "fbVisible": false
 }
