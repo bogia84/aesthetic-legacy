@@ -155,6 +155,8 @@
         .block-men .header-controls a { color: #282828; }
         .block-men .swiper-button-next:after, .block-men .swiper-button-prev:after { color: #282828; }
         .block-men .swiper-button-next, .block-men .swiper-button-prev { border-color: rgba(40,40,40,0.3); }
+        .block-men.split-block { flex-direction: row-reverse !important; }
+        .block-men .split-right { padding-left: 0; padding-right: 40px; }
 
         /* --- BLOCK 4: FOOTER --- */
         .block-footer { background: #fff; padding: 0 !important; align-items: stretch; flex-direction: row; height: 100vh; }
@@ -293,9 +295,6 @@
         
         <div class="section-header">
             <h2>Most Popular</h2>
-            <div class="header-controls">
-                <a href="#">View more</a>
-            </div>
         </div>
 
         <div class="swiper swiper-popular" style="opacity:0;transition:opacity 0.4s ease">
