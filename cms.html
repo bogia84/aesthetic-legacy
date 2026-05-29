@@ -1454,6 +1454,13 @@
             </div>
         </div>
 
+        <!-- L1: Site Settings (direct link) -->
+        <div class="sidebar-section" id="sidebar-site-settings-section">
+            <div class="nav-l1 direct" id="nav-site-settings" onclick="activatePanel('panel-site-settings', 'nav-site-settings')">
+                Site Settings
+            </div>
+        </div>
+
         <!-- L1: User Management (master admin only) -->
         <div class="sidebar-section" id="sidebar-users-section" style="display:none">
             <div class="nav-l1 direct" id="nav-users" onclick="activatePanel('panel-users', 'nav-users')">
@@ -1634,35 +1641,6 @@
                 <span id="hl-save-status" style="font-size:0.78rem;color:var(--muted);"></span>
             </div>
 
-            <!-- Footer Social URLs -->
-            <div style="margin-top:28px;padding-top:20px;border-top:1px solid var(--border);">
-                <h3 class="panel-sub" style="margin-bottom:14px;font-weight:700;">Footer Social Links</h3>
-                <div class="form-group" style="margin-bottom:10px;">
-                    <label for="hl-fb-url">Facebook URL</label>
-                    <input type="text" id="hl-fb-url" placeholder="https://facebook.com/..." oninput="_homeLayout.fbUrl=this.value">
-                </div>
-                <div class="form-group" style="margin-bottom:10px;">
-                    <label for="hl-x-url">X (Twitter) URL</label>
-                    <input type="text" id="hl-x-url" placeholder="https://x.com/..." oninput="_homeLayout.xUrl=this.value">
-                </div>
-                <div class="form-group" style="margin-bottom:10px;">
-                    <label for="hl-ig-url">Instagram URL</label>
-                    <input type="text" id="hl-ig-url" placeholder="https://instagram.com/..." oninput="_homeLayout.igUrl=this.value">
-                </div>
-            </div>
-
-            <!-- Favicon -->
-            <div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--border);">
-                <h3 class="panel-sub" style="margin-bottom:14px;font-weight:700;">Favicon</h3>
-                <div class="form-group" style="margin-bottom:10px;">
-                    <label for="hl-favicon-url">Favicon URL</label>
-                    <input type="text" id="hl-favicon-url" placeholder="https://... or data:image/..." oninput="_homeLayout.faviconUrl=this.value">
-                </div>
-                <p style="font-size:0.75rem;color:var(--muted);">Use a .ico, .png, or .svg URL. Supported sizes: 32×32, 64×64.</p>
-            </div>
-            <div class="hia-save-row" style="margin-top:16px;">
-                <button class="cms-btn" onclick="saveHomeLayoutCMS()">Save Changes</button>
-            </div>
         </div>
 
         <!-- ======================================================= PANEL: INTERVIEWEES HERO BANNER -->
@@ -2528,6 +2506,59 @@
             </div>
         </div>
 
+        <!-- ======================================================= PANEL: SITE SETTINGS -->
+        <div class="cms-panel" id="panel-site-settings">
+            <h2 class="panel-title">Site Settings</h2>
+            <p class="panel-sub">Configure footer social links, visibility, and the browser favicon.</p>
+
+            <h3 style="font-size:0.8rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;margin-bottom:18px;margin-top:4px;">Footer Social Links</h3>
+
+            <!-- Facebook -->
+            <div class="form-group" style="margin-bottom:10px;">
+                <label for="ss-fb-url">Facebook URL</label>
+                <input type="text" id="ss-fb-url" placeholder="https://facebook.com/yourpage" oninput="_homeLayout.fbUrl=this.value">
+            </div>
+            <div class="form-group" style="margin-bottom:20px;display:flex;align-items:center;gap:10px;">
+                <input type="checkbox" id="ss-fb-visible" checked style="width:16px;height:16px;cursor:pointer;" onchange="_homeLayout.fbVisible=this.checked">
+                <label for="ss-fb-visible" style="cursor:pointer;text-transform:none;letter-spacing:0;font-weight:500;">Show Facebook icon in footer</label>
+            </div>
+
+            <!-- X (Twitter) -->
+            <div class="form-group" style="margin-bottom:10px;">
+                <label for="ss-x-url">X (Twitter) URL</label>
+                <input type="text" id="ss-x-url" placeholder="https://x.com/yourhandle" oninput="_homeLayout.xUrl=this.value">
+            </div>
+            <div class="form-group" style="margin-bottom:20px;display:flex;align-items:center;gap:10px;">
+                <input type="checkbox" id="ss-x-visible" checked style="width:16px;height:16px;cursor:pointer;" onchange="_homeLayout.xVisible=this.checked">
+                <label for="ss-x-visible" style="cursor:pointer;text-transform:none;letter-spacing:0;font-weight:500;">Show X (Twitter) icon in footer</label>
+            </div>
+
+            <!-- Instagram -->
+            <div class="form-group" style="margin-bottom:10px;">
+                <label for="ss-ig-url">Instagram URL</label>
+                <input type="text" id="ss-ig-url" placeholder="https://instagram.com/yourhandle" oninput="_homeLayout.igUrl=this.value">
+            </div>
+            <div class="form-group" style="margin-bottom:26px;display:flex;align-items:center;gap:10px;">
+                <input type="checkbox" id="ss-ig-visible" checked style="width:16px;height:16px;cursor:pointer;" onchange="_homeLayout.igVisible=this.checked">
+                <label for="ss-ig-visible" style="cursor:pointer;text-transform:none;letter-spacing:0;font-weight:500;">Show Instagram icon in footer</label>
+            </div>
+
+            <!-- Favicon -->
+            <div style="padding-top:20px;border-top:1px solid var(--border);margin-bottom:24px;">
+                <h3 style="font-size:0.8rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;margin-bottom:16px;margin-top:0;">Favicon</h3>
+                <div class="form-group" style="margin-bottom:6px;">
+                    <label for="ss-favicon-url">Favicon URL</label>
+                    <input type="text" id="ss-favicon-url" placeholder="https://... or data:image/..." oninput="_homeLayout.faviconUrl=this.value">
+                </div>
+                <p style="font-size:0.75rem;color:var(--muted);margin-top:4px;">Use a .ico, .png, or .svg URL. Recommended size: 32×32 or 64×64.</p>
+            </div>
+
+            <div style="display:flex;align-items:center;gap:12px;">
+                <button class="cms-btn" onclick="saveSiteSettingsCMS()">Save Changes</button>
+                <span id="ss-save-status" style="font-size:0.78rem;color:var(--muted);"></span>
+            </div>
+        </div>
+
         <!-- ======================================================= PANEL: USER MANAGEMENT -->
         <div class="cms-panel" id="panel-users">
             <h2 class="panel-title">User Management</h2>
@@ -3145,23 +3176,40 @@
     // ================================================================
     var _homeLayout = {
         womenImage: null, womenImagePos: {x:0,y:0}, womenImageScale: 1, womenTextScale: 1, womenTextOpacity: 0.5,
-        menImage: null, menImagePos: {x:0,y:0}, menImageScale: 1, menTextScale: 1, menTextOpacity: 0.5
+        menImage: null, menImagePos: {x:0,y:0}, menImageScale: 1, menTextScale: 1, menTextOpacity: 0.5,
+        fbVisible: true, xVisible: true, igVisible: true
     };
+
+    function loadSiteSettingsPanel() {
+        ghStorage.getHomeLayout().then(function(layout) {
+            if (layout && typeof layout === 'object' && Object.keys(layout).length) {
+                _homeLayout = layout;
+            }
+            document.getElementById('ss-fb-url').value      = _homeLayout.fbUrl      || '';
+            document.getElementById('ss-x-url').value       = _homeLayout.xUrl       || '';
+            document.getElementById('ss-ig-url').value      = _homeLayout.igUrl      || '';
+            document.getElementById('ss-fb-visible').checked = _homeLayout.fbVisible !== false;
+            document.getElementById('ss-x-visible').checked  = _homeLayout.xVisible  !== false;
+            document.getElementById('ss-ig-visible').checked = _homeLayout.igVisible !== false;
+            document.getElementById('ss-favicon-url').value = _homeLayout.faviconUrl || '';
+        });
+    }
+
+    function saveSiteSettingsCMS() {
+        var statusEl = document.getElementById('ss-save-status');
+        if (statusEl) statusEl.textContent = 'Saving…';
+        ghStorage.saveHomeLayout(_homeLayout).then(function() {
+            if (statusEl) { statusEl.textContent = '✓ Saved!'; setTimeout(function(){ statusEl.textContent=''; }, 3000); }
+        }).catch(function(e) {
+            if (statusEl) statusEl.textContent = '⚠ Failed: ' + e.message;
+        });
+    }
 
     function loadHomeLayoutPanel() {
         ghStorage.getHomeLayout().then(function(layout) {
             if (layout && typeof layout === 'object' && Object.keys(layout).length) {
                 _homeLayout = layout;
             }
-            // Populate social/favicon fields
-            var fbEl = document.getElementById('hl-fb-url');
-            var xEl  = document.getElementById('hl-x-url');
-            var igEl = document.getElementById('hl-ig-url');
-            var favEl = document.getElementById('hl-favicon-url');
-            if (fbEl)  fbEl.value  = _homeLayout.fbUrl  || '';
-            if (xEl)   xEl.value   = _homeLayout.xUrl   || '';
-            if (igEl)  igEl.value  = _homeLayout.igUrl  || '';
-            if (favEl) favEl.value = _homeLayout.faviconUrl || '';
             ['women','men','footer'].forEach(function(s) {
                 var img = document.getElementById('hia-img-' + s);
                 if (img) img._hiaDrag = false;
@@ -5397,6 +5445,7 @@
                 origActivate(panelId, navId);
                 if (panelId === 'panel-home-layout') loadHomeLayoutPanel();
                 if (panelId === 'panel-interviewees-hero') loadHeroBannerPanel();
+                if (panelId === 'panel-site-settings') loadSiteSettingsPanel();
                 if (panelId === 'panel-users') loadUsersPanel();
             };
 

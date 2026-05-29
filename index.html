@@ -550,13 +550,16 @@
                     footerGraphic.style.transform = 'translate(calc(-50% + ' + (fp.x || 0) + 'px), calc(-50% + ' + (fp.y || 0) + 'px)) scale(' + fs + ')';
                     footerGraphic.style.opacity = '1';
                 }
-                // Apply footer social URLs
+                // Apply footer social URLs and visibility
                 var fbLink = document.querySelector('a[aria-label="Facebook"]');
                 var xLink  = document.querySelector('a[aria-label="Twitter / X"]');
                 var igLink = document.querySelector('a[aria-label="Instagram"]');
                 if (fbLink && layout.fbUrl) fbLink.href = layout.fbUrl;
                 if (xLink  && layout.xUrl)  xLink.href  = layout.xUrl;
                 if (igLink && layout.igUrl) igLink.href = layout.igUrl;
+                if (fbLink) fbLink.style.display = layout.fbVisible === false ? 'none' : '';
+                if (xLink)  xLink.style.display  = layout.xVisible  === false ? 'none' : '';
+                if (igLink) igLink.style.display  = layout.igVisible === false ? 'none' : '';
                 // Apply favicon
                 var favicon = document.getElementById('site-favicon');
                 if (favicon && layout.faviconUrl) favicon.href = layout.faviconUrl;

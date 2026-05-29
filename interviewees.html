@@ -594,6 +594,9 @@
                 if (fbLink && layout.fbUrl) fbLink.href = layout.fbUrl;
                 if (xLink  && layout.xUrl)  xLink.href  = layout.xUrl;
                 if (igLink && layout.igUrl) igLink.href = layout.igUrl;
+                if (fbLink) fbLink.style.display = layout.fbVisible === false ? 'none' : '';
+                if (xLink)  xLink.style.display  = layout.xVisible  === false ? 'none' : '';
+                if (igLink) igLink.style.display  = layout.igVisible === false ? 'none' : '';
                 var favicon = document.getElementById('site-favicon');
                 if (favicon && layout.faviconUrl) favicon.href = layout.faviconUrl;
             }).catch(function(){});
