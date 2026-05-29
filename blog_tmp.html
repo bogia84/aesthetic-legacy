@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -651,7 +651,7 @@
         <nav id="main-nav">
             <a href="index.html">Home</a>
             <a href="about.html">About us</a>
-            <a href="contributors.html">Contributors</a>
+            <a href="interviewees.html">Interviewees</a>
         </nav>
         <div class="hamburger" id="hamburger-menu">
             <svg width="30" height="20" viewBox="0 0 30 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -921,7 +921,7 @@
                 <aside class="blog-sidebar">
                     
                     <!-- Avatar Widget -->
-                    <a class="sidebar-avatar" id="sidebar-contributor-link" href="#" style="text-decoration:none;color:inherit;">
+                    <a class="sidebar-avatar" id="sidebar-interviewee-link" href="#" style="text-decoration:none;color:inherit;">
                         <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80" alt="Savannah Nguyen">
                         <div class="sidebar-avatar-overlay">
                             <h3>Savannah Nguyen</h3>
@@ -1092,7 +1092,7 @@
         function esc(str) { return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
         function escAttr(str) { return String(str || '').replace(/"/g,'&quot;'); }
 
-        var DEFAULT_CONTRIBUTORS = [
+        var DEFAULT_INTERVIEWEES = [
             { name: "Jeremy Buendia",  role: "Men's Physique Champion", type: "men",   img: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&q=80&w=800",  avatar: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&q=80&w=200" },
             { name: "Aminova Inna",    role: "Yoga Instructor",          type: "women", img: "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&q=80&w=800",  avatar: "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&q=80&w=200" },
             { name: "Kathryn Murphy",  role: "Bodybuilder Pro",          type: "men",   img: "https://images.unsplash.com/photo-1526506159807-1a52701b22e1?auto=format&fit=crop&q=80&w=800",  avatar: "https://images.unsplash.com/photo-1526506159807-1a52701b22e1?auto=format&fit=crop&q=80&w=200" },
@@ -1130,15 +1130,15 @@
         try {
             ghResults = await Promise.all([
                 ghStorage.getArticles(),
-                ghStorage.getContributors(),
+                ghStorage.getInterviewees(),
                 ghStorage.getHomeOrder()
             ]);
         } catch(e) { showMain(); return; }
 
         var articles    = ghResults[0];
-        var contribData = ghResults[1];
+        var intervieweeData = ghResults[1];
         var homeOrder   = ghResults[2];
-        var contributors = (contribData.contributors && contribData.contributors.length) ? contribData.contributors : DEFAULT_CONTRIBUTORS;
+        var interviewees = (intervieweeData.interviewees && intervieweeData.interviewees.length) ? intervieweeData.interviewees : DEFAULT_INTERVIEWEES;
 
         var article;
         if (isPreview) {
@@ -1160,7 +1160,7 @@
             if (_finalArtIdx >= 0) history.replaceState(null, '', 'blog_article.html?index=' + _finalArtIdx);
         }
 
-        var contrib = (article.contributorIdx !== null && article.contributorIdx !== undefined) ? contributors[article.contributorIdx] : null;
+        var interviewee = (article.intervieweeIdx !== null && article.intervieweeIdx !== undefined) ? interviewees[article.intervieweeIdx] : null;
 
         // Expose article globally for language switcher
         window._articleData = article;
@@ -1174,25 +1174,25 @@
             if (heroBg) heroBg.src = article.heroImage;
         }
 
-        // ---- SIDEBAR: contributor avatar ----
-        if (contrib) {
+        // ---- SIDEBAR: interviewee avatar ----
+        if (interviewee) {
             var avatarImg = document.querySelector('.sidebar-avatar img');
-            if (avatarImg) { avatarImg.src = contrib.avatar || contrib.img || ''; avatarImg.alt = contrib.name || ''; }
+            if (avatarImg) { avatarImg.src = interviewee.avatar || interviewee.img || ''; avatarImg.alt = interviewee.name || ''; }
             var avatarH3 = document.querySelector('.sidebar-avatar-overlay h3');
-            if (avatarH3) avatarH3.textContent = contrib.name || '';
-            var contribLink = document.getElementById('sidebar-contributor-link');
-            if (contribLink) contribLink.href = 'contributor_detail.html?index=' + article.contributorIdx;
+            if (avatarH3) avatarH3.textContent = interviewee.name || '';
+            var intervieweeLink = document.getElementById('sidebar-interviewee-link');
+            if (intervieweeLink) intervieweeLink.href = 'interviewee_detail.html?index=' + article.intervieweeIdx;
         }
 
-        // ---- SIDEBAR: latest articles from same contributor ----
+        // ---- SIDEBAR: latest articles from same interviewee ----
         var sidebarLatest = document.querySelector('.sidebar-latest-articles');
         if (sidebarLatest) {
             // Always clear static placeholder cards
             sidebarLatest.querySelectorAll('.sidebar-card').forEach(function(c) { c.remove(); });
 
-            if (contrib) {
+            if (interviewee) {
                 var siblingArticles = articles.filter(function(a) {
-                    return a.id !== article.id && a.contributorIdx === article.contributorIdx;
+                    return a.id !== article.id && a.intervieweeIdx === article.intervieweeIdx;
                 }).sort(function(a,b) { return b.createdAt - a.createdAt; }).slice(0, 4);
 
                 if (siblingArticles.length > 0) {

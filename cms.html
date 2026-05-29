@@ -237,13 +237,13 @@
             gap: 5px;
         }
 
-        /* ---- CONTRIBUTORS SECTION ---- */
-        .contrib-grid {
+        /* ---- INTERVIEWEES SECTION ---- */
+        .interviewee-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             gap: 14px;
         }
-        .contrib-card {
+        .interviewee-card {
             background: #fff;
             border: 1px solid var(--border);
             border-radius: 4px;
@@ -251,22 +251,22 @@
             display: flex;
             flex-direction: column;
         }
-        .contrib-card img {
+        .interviewee-card img {
             width: 100%;
             aspect-ratio: 4 / 5;
             object-fit: cover;
             display: block;
         }
-        .contrib-card-body {
+        .interviewee-card-body {
             padding: 10px 12px 12px;
             flex: 1;
             display: flex;
             flex-direction: column;
             gap: 4px;
         }
-        .contrib-name { font-size: 0.82rem; font-weight: 800; }
-        .contrib-role { font-size: 0.72rem; color: var(--muted); font-weight: 500; }
-        .contrib-type {
+        .interviewee-name { font-size: 0.82rem; font-weight: 800; }
+        .interviewee-role { font-size: 0.72rem; color: var(--muted); font-weight: 500; }
+        .interviewee-type {
             display: inline-block;
             font-size: 0.6rem;
             font-weight: 900;
@@ -279,8 +279,8 @@
             align-self: flex-start;
             margin-top: 4px;
         }
-        .contrib-type.women { background: var(--red); }
-        .contrib-del {
+        .interviewee-type.women { background: var(--red); }
+        .interviewee-del {
             margin-top: 8px;
             font-size: 0.7rem;
             font-weight: 700;
@@ -293,10 +293,10 @@
             transition: all 0.2s;
             font-family: 'Manrope', sans-serif;
         }
-        .contrib-del:hover { background: var(--red); color: #fff; border-color: var(--red); }
+        .interviewee-del:hover { background: var(--red); color: #fff; border-color: var(--red); }
 
-        /* ---- ADD CONTRIBUTOR FORM ---- */
-        .add-contrib-toggle {
+        /* ---- ADD INTERVIEWEE FORM ---- */
+        .add-interviewee-toggle {
             font-size: 0.78rem;
             font-weight: 700;
             font-family: 'Manrope', sans-serif;
@@ -309,8 +309,8 @@
             transition: all 0.2s;
             margin-bottom: 14px;
         }
-        .add-contrib-toggle:hover { border-color: var(--dark); color: var(--dark); }
-        .contrib-form-panel {
+        .add-interviewee-toggle:hover { border-color: var(--dark); color: var(--dark); }
+        .interviewee-form-panel {
             display: none;
             background: #fff;
             border: 1px solid var(--border);
@@ -318,8 +318,8 @@
             padding: 22px 24px;
             margin-bottom: 20px;
         }
-        .contrib-form-panel.open { display: block; }
-        /* Contributor form sub-sections */
+        .interviewee-form-panel.open { display: block; }
+        /* Interviewee form sub-sections */
         .cf-section-title {
             font-size: 0.72rem;
             font-weight: 900;
@@ -432,7 +432,7 @@
             .cms-main { padding: 20px; }
             .banner-list { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
             .form-grid { grid-template-columns: 1fr; }
-            .contrib-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+            .interviewee-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
         }
 
         /* ============================================================
@@ -523,9 +523,9 @@
         .panel-sub { font-size: 0.78rem; color: var(--muted); font-weight: 500; margin-bottom: 24px; display: flex; align-items: center; gap: 8px; }
         .panel-sub::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
-        /* Contributor tabs */
-        .contrib-tabs { display: flex; margin-bottom: 18px; border-bottom: 2px solid var(--border); }
-        .contrib-tab {
+        /* Interviewee tabs */
+        .interviewee-tabs { display: flex; margin-bottom: 18px; border-bottom: 2px solid var(--border); }
+        .interviewee-tab {
             padding: 8px 20px;
             font-family: 'Manrope', sans-serif;
             font-size: 0.75rem;
@@ -540,24 +540,24 @@
             margin-bottom: -2px;
             transition: color 0.15s, border-color 0.15s;
         }
-        .contrib-tab:hover { color: var(--dark); }
-        .contrib-tab.active { color: var(--dark); border-bottom-color: var(--dark); }
+        .interviewee-tab:hover { color: var(--dark); }
+        .interviewee-tab.active { color: var(--dark); border-bottom-color: var(--dark); }
 
-        /* Contributor grid & card overrides (drag support) */
-        .contrib-grid { padding: 16px; background: #efefef; border-radius: 4px; min-height: 80px; }
-        .contrib-card { border: 2px solid transparent; user-select: none; transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s, opacity 0.15s; }
-        .contrib-card.draggable { cursor: grab; }
-        .contrib-card.draggable:active { cursor: grabbing; }
-        .contrib-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.1); transform: translateY(-2px); }
-        .contrib-card.is-dragging { opacity: 0.35; }
-        .contrib-card.drag-over { border-color: var(--red); transform: scale(1.03); box-shadow: 0 8px 24px rgba(230,57,70,0.2); }
-        .contrib-pos { display: inline-block; font-size: 0.6rem; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; color: #fff; background: var(--muted); padding: 2px 6px; border-radius: 2px; align-self: flex-start; margin-bottom: 4px; }
-        .contrib-drag-hint { margin-top: 6px; font-size: 0.62rem; color: #ccc; display: flex; align-items: center; gap: 5px; }
-        .contrib-actions { display: flex; gap: 6px; margin-top: 10px; }
-        .contrib-btn { flex: 1; font-size: 0.68rem; font-weight: 700; color: #aaa; background: none; border: 1px solid var(--border); border-radius: 2px; padding: 5px 8px; cursor: pointer; transition: all 0.2s; font-family: 'Manrope', sans-serif; }
-        .contrib-btn-edit:hover { background: var(--dark); color: #fff; border-color: var(--dark); }
-        .contrib-btn-del:hover { background: var(--red); color: #fff; border-color: var(--red); }
-        .contrib-form-title { font-size: 0.9rem; font-weight: 900; margin-bottom: 16px; }
+        /* Interviewee grid & card overrides (drag support) */
+        .interviewee-grid { padding: 16px; background: #efefef; border-radius: 4px; min-height: 80px; }
+        .interviewee-card { border: 2px solid transparent; user-select: none; transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s, opacity 0.15s; }
+        .interviewee-card.draggable { cursor: grab; }
+        .interviewee-card.draggable:active { cursor: grabbing; }
+        .interviewee-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.1); transform: translateY(-2px); }
+        .interviewee-card.is-dragging { opacity: 0.35; }
+        .interviewee-card.drag-over { border-color: var(--red); transform: scale(1.03); box-shadow: 0 8px 24px rgba(230,57,70,0.2); }
+        .interviewee-pos { display: inline-block; font-size: 0.6rem; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; color: #fff; background: var(--muted); padding: 2px 6px; border-radius: 2px; align-self: flex-start; margin-bottom: 4px; }
+        .interviewee-drag-hint { margin-top: 6px; font-size: 0.62rem; color: #ccc; display: flex; align-items: center; gap: 5px; }
+        .interviewee-actions { display: flex; gap: 6px; margin-top: 10px; }
+        .interviewee-btn { flex: 1; font-size: 0.68rem; font-weight: 700; color: #aaa; background: none; border: 1px solid var(--border); border-radius: 2px; padding: 5px 8px; cursor: pointer; transition: all 0.2s; font-family: 'Manrope', sans-serif; }
+        .interviewee-btn-edit:hover { background: var(--dark); color: #fff; border-color: var(--dark); }
+        .interviewee-btn-del:hover { background: var(--red); color: #fff; border-color: var(--red); }
+        .interviewee-form-title { font-size: 0.9rem; font-weight: 900; margin-bottom: 16px; }
 
         /* ============================================================
            BLOG ARTICLES — list + editor panels
@@ -614,7 +614,7 @@
         .article-card-cms-body { padding: 10px 12px 12px; flex: 1; display: flex; flex-direction: column; gap: 4px; }
         .article-card-cms-title { font-size: 0.82rem; font-weight: 800; line-height: 1.3; }
         .article-card-cms-date { font-size: 0.68rem; color: var(--muted); }
-        .article-card-cms-contrib { font-size: 0.68rem; color: var(--muted); font-weight: 600; }
+        .article-card-cms-interviewee { font-size: 0.68rem; color: var(--muted); font-weight: 600; }
         .article-card-cms-badges { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
         .art-badge {
             font-size: 0.58rem; font-weight: 900; letter-spacing: 0.07em;
@@ -933,7 +933,7 @@
         .hpac-pos { display: inline-block; font-size: 0.6rem; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; color: #fff; background: var(--red); padding: 2px 6px; border-radius: 2px; margin-bottom: 6px; }
         .hpac-title { font-size: 0.78rem; font-weight: 700; line-height: 1.35; margin-bottom: 4px; }
         .hpac-date { font-size: 0.68rem; color: var(--muted); margin-bottom: 4px; }
-        .hpac-contrib { font-size: 0.65rem; color: var(--muted); font-weight: 600; }
+        .hpac-interviewee { font-size: 0.65rem; color: var(--muted); font-weight: 600; }
         .hpac-drag-hint { margin-top: 8px; font-size: 0.62rem; color: #ccc; display: flex; align-items: center; gap: 5px; }
         .hpac-actions { display: flex; gap: 6px; margin-top: 8px; }
         .hpac-btn { flex: 1; font-size: 0.68rem; font-weight: 700; color: #aaa; background: none; border: 1px solid var(--border); border-radius: 2px; padding: 5px 8px; cursor: pointer; transition: all 0.2s; font-family: 'Manrope', sans-serif; }
@@ -1118,7 +1118,7 @@
             border-radius: 3px; margin-bottom: 10px; background: var(--grey); }
         .pr-meta { font-size: 0.68rem; color: var(--muted); font-weight: 600; margin-bottom: 4px; }
         .pr-title { font-size: 0.97rem; font-weight: 900; line-height: 1.3; margin-bottom: 6px; }
-        .pr-contrib { font-size: 0.68rem; color: var(--muted); font-weight: 600; margin-bottom: 10px; }
+        .pr-interviewee { font-size: 0.68rem; color: var(--muted); font-weight: 600; margin-bottom: 10px; }
         .pr-block { margin-bottom: 12px; }
         .pr-block-head { font-size: 0.58rem; font-weight: 900; text-transform: uppercase;
             letter-spacing: 0.08em; color: #bbb; margin-bottom: 5px; }
@@ -1254,7 +1254,7 @@
         .about-block-label { font-size: 0.7rem; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
         .form-hint { font-size: 0.7rem; color: var(--muted); margin-top: 4px; }
         .form-hint code { background: var(--grey); padding: 1px 5px; border-radius: 3px; font-size: 0.68rem; }
-        /* ---- CONTRIBUTOR SLIDE SELECTOR ---- */
+        /* ---- INTERVIEWEE SLIDE SELECTOR ---- */
         .cs-picker-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; flex-wrap: wrap; gap: 8px; }
         .cs-picker-count { font-size: 0.82rem; font-weight: 700; color: var(--dark); }
         .cs-picker-toolbar-actions { display: flex; gap: 6px; }
@@ -1411,10 +1411,10 @@
             </div>
         </div>
 
-        <!-- L1: Contributor list (direct link) -->
-        <div class="sidebar-section" id="sidebar-contributors-section">
-            <div class="nav-l1 direct" id="nav-contributors" onclick="activatePanel('panel-contributors', 'nav-contributors')">
-                Contributor list
+        <!-- L1: Interviewee list (direct link) -->
+        <div class="sidebar-section" id="sidebar-interviewees-section">
+            <div class="nav-l1 direct" id="nav-interviewees" onclick="activatePanel('panel-interviewees', 'nav-interviewees')">
+                Interviewee list
             </div>
         </div>
 
@@ -1469,7 +1469,7 @@
             <p>Choose any item from the left menu to start managing your content.</p>
             <div class="cms-landing-hint">
                 <div class="cms-landing-hint-item"><span>Home page</span> → Edit article ordering &amp; adjust section images</div>
-                <div class="cms-landing-hint-item"><span>Contributor list</span> → Add, edit &amp; reorder contributors</div>
+                <div class="cms-landing-hint-item"><span>Interviewee list</span> → Add, edit &amp; reorder interviewees</div>
                 <div class="cms-landing-hint-item"><span>Blog Articles</span> → Create &amp; manage blog articles</div>
             </div>
         </div>
@@ -1624,15 +1624,15 @@
             </div>
         </div>
 
-        <!-- ======================================================= PANEL: CONTRIBUTORS -->
-        <div class="cms-panel" id="panel-contributors">
-            <h2 class="panel-title">Contributor List</h2>
-            <p class="panel-sub">Add, edit or reorder contributors — shown on the Contributors page</p>
+        <!-- ======================================================= PANEL: INTERVIEWEES -->
+        <div class="cms-panel" id="panel-interviewees">
+            <h2 class="panel-title">Interviewee List</h2>
+            <p class="panel-sub">Add, edit or reorder interviewees — shown on the Interviewees page</p>
 
             <!-- Add/Edit form -->
-            <button class="add-contrib-toggle" id="add-contrib-toggle">+ Add New Contributor</button>
-            <div class="contrib-form-panel" id="contrib-form-panel">
-                <div class="contrib-form-title" id="contrib-form-title">Add New Contributor</div>
+            <button class="add-interviewee-toggle" id="add-interviewee-toggle">+ Add New Interviewee</button>
+            <div class="interviewee-form-panel" id="interviewee-form-panel">
+                <div class="interviewee-form-title" id="interviewee-form-title">Add New Interviewee</div>
                 <div class="form-grid">
                     <div class="form-group">
                         <label for="cf-name">Name</label>
@@ -1745,7 +1745,7 @@
                     </div>
                     <div class="form-group full">
                         <label for="cf-bio">Bio <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
-                        <textarea id="cf-bio" rows="3" placeholder="Short bio about the contributor..."></textarea>
+                        <textarea id="cf-bio" rows="3" placeholder="Short bio about the interviewee..."></textarea>
                     </div>
                 </div>
 
@@ -1780,7 +1780,7 @@
 
                 <!-- Section 4: Social Gallery Images -->
                 <div class="cf-section-title">Section 4 — Social Gallery Images</div>
-                <p class="cf-section-hint">Add up to 8 images for the contributor's social gallery (4 columns × 2 rows). Leave blank to hide the slot.</p>
+                <p class="cf-section-hint">Add up to 8 images for the interviewee's social gallery (4 columns × 2 rows). Leave blank to hide the slot.</p>
                 <div class="form-grid" id="cf-gallery-grid">
                     <div class="form-group">
                         <label>Gallery Image 1 <span style="font-weight:400;text-transform:none;letter-spacing:0">(col 1 top)</span></label>
@@ -2099,21 +2099,21 @@
                 </div>
 
                 <div class="form-actions">
-                    <button class="btn btn-add-confirm" id="btn-contrib-submit" onclick="confirmContributor()">Add Contributor</button>
-                    <button class="btn btn-add-cancel" onclick="closeContribForm()">Cancel</button>
+                    <button class="btn btn-add-confirm" id="btn-interviewee-submit" onclick="confirmInterviewee()">Add Interviewee</button>
+                    <button class="btn btn-add-cancel" onclick="closeIntervieweeForm()">Cancel</button>
                     <span class="form-err" id="form-err">Please fill in Name, Role, and Card Image URL.</span>
                 </div>
             </div>
 
             <!-- Filter tabs -->
-            <div class="contrib-tabs">
-                <button class="contrib-tab active" id="tab-all" onclick="setContribTab('all')">ALL</button>
-                <button class="contrib-tab" id="tab-men" onclick="setContribTab('men')">MEN</button>
-                <button class="contrib-tab" id="tab-women" onclick="setContribTab('women')">WOMEN</button>
+            <div class="interviewee-tabs">
+                <button class="interviewee-tab active" id="tab-all" onclick="setIntervieweeTab('all')">ALL</button>
+                <button class="interviewee-tab" id="tab-men" onclick="setIntervieweeTab('men')">MEN</button>
+                <button class="interviewee-tab" id="tab-women" onclick="setIntervieweeTab('women')">WOMEN</button>
             </div>
 
             <!-- Grid -->
-            <div class="contrib-grid" id="contrib-grid"></div>
+            <div class="interviewee-grid" id="interviewee-grid"></div>
         </div>
 
         <!-- ======================================================= PANEL: BLOG LIST -->
@@ -2130,8 +2130,8 @@
                     <option value="men">Men</option>
                     <option value="women">Women</option>
                 </select>
-                <select id="bl-filter-contrib" onchange="renderBlogList()">
-                    <option value="">All contributors</option>
+                <select id="bl-filter-interviewee" onchange="renderBlogList()">
+                    <option value="">All interviewees</option>
                 </select>
             </div>
             <div class="article-grid" id="blog-article-grid"></div>
@@ -2188,8 +2188,8 @@
                     <input type="hidden" id="ed-hero">
                 </div>
                 <div class="form-group">
-                    <label for="ed-contrib">Contributor</label>
-                    <select id="ed-contrib">
+                    <label for="ed-interviewee">Interviewee</label>
+                    <select id="ed-interviewee">
                         <option value="">— None —</option>
                     </select>
                 </div>
@@ -2339,7 +2339,7 @@
         <!-- ======================================================= PANEL: ABOUT US -->
         <div class="cms-panel" id="panel-about">
             <h2 class="panel-title">About Us Page</h2>
-            <p class="panel-sub">Configure the video, section images, and contributor spotlight shown on the About Us page.</p>
+            <p class="panel-sub">Configure the video, section images, and interviewee spotlight shown on the About Us page.</p>
 
             <!-- Video -->
             <div class="about-block">
@@ -2437,10 +2437,10 @@
                 </div>
             </div>
 
-            <!-- Contributor Slide Selection -->
+            <!-- Interviewee Slide Selection -->
             <div class="about-block">
-                <div class="about-block-title">Contributor Slide</div>
-                <p class="about-block-sub">Select contributors to feature in the auto-sliding gallery on the About Us page. Click a card to select or deselect. Clicking any contributor on the slide will take visitors to their profile page.</p>
+                <div class="about-block-title">Interviewee Slide</div>
+                <p class="about-block-sub">Select interviewees to feature in the auto-sliding gallery on the About Us page. Click a card to select or deselect. Clicking any interviewee on the slide will take visitors to their profile page.</p>
 
                 <div class="cs-picker-toolbar">
                     <span class="cs-picker-count" id="cs-picker-count">0 selected</span>
@@ -2474,7 +2474,7 @@
                 <div class="um-perm-labels">
                     <strong style="font-size:13px;color:#555">Access:</strong>
                     <label class="um-perm-label"><input type="checkbox" id="um-add-perm-home"> Home Page</label>
-                    <label class="um-perm-label"><input type="checkbox" id="um-add-perm-contributors"> Contributors</label>
+                    <label class="um-perm-label"><input type="checkbox" id="um-add-perm-interviewees"> Interviewees</label>
                     <label class="um-perm-label"><input type="checkbox" id="um-add-perm-blog"> Blog Articles</label>
                     <label class="um-perm-label"><input type="checkbox" id="um-add-perm-about"> About Us</label>
                 </div>
@@ -2499,8 +2499,8 @@
                     <option value="men">Men</option>
                     <option value="women">Women</option>
                 </select>
-                <select id="picker-filter-contrib" onchange="renderPickerList()">
-                    <option value="">All contributors</option>
+                <select id="picker-filter-interviewee" onchange="renderPickerList()">
+                    <option value="">All interviewees</option>
                 </select>
             </div>
             <div class="picker-modal-list" id="picker-modal-list"></div>
@@ -2575,10 +2575,10 @@
     }
 
     // ================================================================
-    //  CONTRIBUTORS DATA  (in-memory, seeded from GitHub during init)
+    //  INTERVIEWEES DATA  (in-memory, seeded from GitHub during init)
     // ================================================================
 
-    const DEFAULT_CONTRIBUTORS = [
+    const DEFAULT_INTERVIEWEES = [
         { name: "Jeremy Buendia", role: "Men's Physique Champion", type: "men", img: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&q=80&w=800", bg: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&q=80&w=1920", avatar: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&q=80&w=200", stats: ["Physique type", "Training years", "Casual approach", "Specialisation"] },
         { name: "Aminova Inna", role: "Yoga Instructor", type: "women", img: "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&q=80&w=800", bg: "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&q=80&w=1920", avatar: "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&q=80&w=200", stats: ["Flexibility", "8 Years", "Mindfulness", "Vinyasa"] },
         { name: "Kathryn Murphy", role: "Bodybuilder Pro", type: "men", img: "https://images.unsplash.com/photo-1526506159807-1a52701b22e1?auto=format&fit=crop&q=80&w=800", bg: "https://images.unsplash.com/photo-1526506159807-1a52701b22e1?auto=format&fit=crop&q=80&w=1920", avatar: "https://images.unsplash.com/photo-1526506159807-1a52701b22e1?auto=format&fit=crop&q=80&w=200", stats: ["Mass Focus", "12 Years", "Strict approach", "Heavy lifting"] },
@@ -2593,33 +2593,33 @@
         { name: "Esther Howard", role: "Dance Fitness Coach", type: "women", img: "https://images.unsplash.com/photo-1579703473489-02ebcb7de488?auto=format&fit=crop&q=80&w=800", bg: "https://images.unsplash.com/photo-1579703473489-02ebcb7de488?auto=format&fit=crop&q=80&w=1920", avatar: "https://images.unsplash.com/photo-1579703473489-02ebcb7de488?auto=format&fit=crop&q=80&w=200", stats: ["Cardio", "5 Years", "High energy", "Zumba"] }
     ];
 
-    var contributors = DEFAULT_CONTRIBUTORS.slice();
-    var menOrder   = contributors.reduce(function(acc,c,i){ if(c.type==='men') acc.push(i); return acc; },[]);
-    var womenOrder = contributors.reduce(function(acc,c,i){ if(c.type==='women') acc.push(i); return acc; },[]);
+    var interviewees = DEFAULT_INTERVIEWEES.slice();
+    var menOrder   = interviewees.reduce(function(acc,c,i){ if(c.type==='men') acc.push(i); return acc; },[]);
+    var womenOrder = interviewees.reduce(function(acc,c,i){ if(c.type==='women') acc.push(i); return acc; },[]);
 
-    function saveContributors() {
-        return ghStorage.saveContributors(contributors, menOrder, womenOrder);
+    function saveInterviewees() {
+        return ghStorage.saveInterviewees(interviewees, menOrder, womenOrder);
     }
 
-    function getContribName(idx) {
+    function getIntervieweeName(idx) {
         if (idx === null || idx === undefined || idx === '' || isNaN(parseInt(idx,10))) return '';
-        var c = contributors[parseInt(idx,10)];
+        var c = interviewees[parseInt(idx,10)];
         return c ? c.name : '';
     }
-    function getContribType(idx) {
+    function getIntervieweeType(idx) {
         if (idx === null || idx === undefined || idx === '' || isNaN(parseInt(idx,10))) return '';
-        var c = contributors[parseInt(idx,10)];
+        var c = interviewees[parseInt(idx,10)];
         return c ? c.type : '';
     }
 
-    function populateContribDropdowns() {
-        var selects = [document.getElementById('ed-contrib'), document.getElementById('bl-filter-contrib'), document.getElementById('picker-filter-contrib')];
+    function populateIntervieweeDropdowns() {
+        var selects = [document.getElementById('ed-interviewee'), document.getElementById('bl-filter-interviewee'), document.getElementById('picker-filter-interviewee')];
         selects.forEach(function(sel) {
             if (!sel) return;
             var val = sel.value;
-            var isFilter = sel.id !== 'ed-contrib';
-            sel.innerHTML = isFilter ? '<option value="">All contributors</option>' : '<option value="">— None —</option>';
-            contributors.forEach(function(c, i) {
+            var isFilter = sel.id !== 'ed-interviewee';
+            sel.innerHTML = isFilter ? '<option value="">All interviewees</option>' : '<option value="">— None —</option>';
+            interviewees.forEach(function(c, i) {
                 var opt = document.createElement('option');
                 opt.value = i;
                 opt.textContent = c.name + ' (' + c.type + ')';
@@ -2655,14 +2655,14 @@
             var imgHtml = art.heroImage
                 ? '<img class="hpac-img" src="' + escapeAttr(art.heroImage) + '" alt="">'
                 : '<div class="hpac-img-ph">No image</div>';
-            var contribName = getContribName(art.contributorIdx);
+            var intervieweeName = getIntervieweeName(art.intervieweeIdx);
             card.innerHTML =
                 imgHtml +
                 '<div class="hpac-body">' +
                     '<span class="hpac-pos">#' + (pos + 1) + '</span>' +
                     '<div class="hpac-title">' + escapeHtml(art.title || 'Untitled') + '</div>' +
                     '<div class="hpac-date">' + escapeHtml(art.date || '') + '</div>' +
-                    (contribName ? '<div class="hpac-contrib">' + escapeHtml(contribName) + '</div>' : '') +
+                    (intervieweeName ? '<div class="hpac-interviewee">' + escapeHtml(intervieweeName) + '</div>' : '') +
                     '<div class="hpac-drag-hint">' +
                         '<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><circle cx="2" cy="2" r="1.5" fill="#ccc"/><circle cx="8" cy="2" r="1.5" fill="#ccc"/><circle cx="2" cy="8" r="1.5" fill="#ccc"/><circle cx="8" cy="8" r="1.5" fill="#ccc"/></svg>' +
                         'drag to reorder' +
@@ -2732,7 +2732,7 @@
         document.getElementById('picker-modal-title').textContent = 'Add Article to ' + title;
         document.getElementById('picker-search').value = '';
         document.getElementById('picker-filter-type').value = '';
-        populateContribDropdowns();
+        populateIntervieweeDropdowns();
         renderPickerList();
         document.getElementById('picker-modal-overlay').classList.add('open');
     }
@@ -2750,17 +2750,17 @@
         var container = document.getElementById('picker-modal-list');
         var search = (document.getElementById('picker-search').value || '').toLowerCase();
         var filterType = document.getElementById('picker-filter-type').value;
-        var filterContrib = document.getElementById('picker-filter-contrib').value;
+        var filterInterviewee = document.getElementById('picker-filter-interviewee').value;
         var order = getHomeOrder();
         var alreadyIn = pickerSection ? (order[pickerSection] || []) : [];
         var articles = getArticles().filter(function(a) {
             if (alreadyIn.indexOf(a.id) >= 0) return false;
             if (search && !(a.title || '').toLowerCase().includes(search)) return false;
             if (filterType) {
-                var ct = getContribType(a.contributorIdx);
+                var ct = getIntervieweeType(a.intervieweeIdx);
                 if (ct !== filterType) return false;
             }
-            if (filterContrib !== '' && String(a.contributorIdx) !== filterContrib) return false;
+            if (filterInterviewee !== '' && String(a.intervieweeIdx) !== filterInterviewee) return false;
             return true;
         }).sort(function(a,b){ return b.createdAt - a.createdAt; });
 
@@ -2775,12 +2775,12 @@
             var imgEl = art.heroImage
                 ? '<img class="picker-item-img" src="' + escapeAttr(art.heroImage) + '" alt="">'
                 : '<div class="picker-item-img" style="display:flex;align-items:center;justify-content:center;color:#ccc;font-size:0.65rem;font-weight:700;">No image</div>';
-            var contrib = getContribName(art.contributorIdx);
+            var interviewee = getIntervieweeName(art.intervieweeIdx);
             item.innerHTML =
                 imgEl +
                 '<div class="picker-item-info">' +
                     '<div class="picker-item-title">' + escapeHtml(art.title || 'Untitled') + '</div>' +
-                    '<div class="picker-item-meta">' + escapeHtml(art.date || '') + (contrib ? ' · ' + escapeHtml(contrib) : '') + '</div>' +
+                    '<div class="picker-item-meta">' + escapeHtml(art.date || '') + (interviewee ? ' · ' + escapeHtml(interviewee) : '') + '</div>' +
                 '</div>';
             item.addEventListener('click', function() {
                 addArticleToSection(art.id);
@@ -2808,14 +2808,14 @@
         if (!grid) return;
         var search = (document.getElementById('bl-search').value || '').toLowerCase();
         var filterType = document.getElementById('bl-filter-type').value;
-        var filterContrib = document.getElementById('bl-filter-contrib').value;
+        var filterInterviewee = document.getElementById('bl-filter-interviewee').value;
         var articles = getArticles().filter(function(a) {
             if (search && !(a.title || '').toLowerCase().includes(search)) return false;
             if (filterType) {
-                var ct = getContribType(a.contributorIdx);
+                var ct = getIntervieweeType(a.intervieweeIdx);
                 if (ct !== filterType) return false;
             }
-            if (filterContrib !== '' && String(a.contributorIdx) !== filterContrib) return false;
+            if (filterInterviewee !== '' && String(a.intervieweeIdx) !== filterInterviewee) return false;
             return true;
         }).sort(function(a,b){ return b.createdAt - a.createdAt; });
 
@@ -2830,7 +2830,7 @@
             var imgEl = art.heroImage
                 ? '<img class="article-card-cms-img" src="' + escapeAttr(art.heroImage) + '" alt="">'
                 : '<div class="article-card-cms-img-placeholder">No image</div>';
-            var contrib = getContribName(art.contributorIdx);
+            var interviewee = getIntervieweeName(art.intervieweeIdx);
             var badges = '';
             if (art.publishedTo) {
                 if (art.publishedTo.mostPopular) badges += '<span class="art-badge popular">Popular</span>';
@@ -2842,7 +2842,7 @@
                 '<div class="article-card-cms-body">' +
                     '<div class="article-card-cms-title">' + escapeHtml(art.title || 'Untitled') + '</div>' +
                     '<div class="article-card-cms-date">' + escapeHtml(art.date || '') + '</div>' +
-                    (contrib ? '<div class="article-card-cms-contrib">By ' + escapeHtml(contrib) + '</div>' : '') +
+                    (interviewee ? '<div class="article-card-cms-interviewee">By ' + escapeHtml(interviewee) + '</div>' : '') +
                     (badges ? '<div class="article-card-cms-badges">' + badges + '</div>' : '') +
                     '<div class="article-card-cms-actions">' +
                         '<button class="article-card-cms-btn article-card-cms-btn-edit" onclick="openArticleEditor(\'' + escapeAttr(art.id) + '\')">Edit</button>' +
@@ -2903,13 +2903,13 @@
     }
 
     function iwSetValue(wid, src) {
-        // Persist value into the URL text input so form reads (confirmContributor etc.) always work
+        // Persist value into the URL text input so form reads (confirmInterviewee etc.) always work
         var urlInput = document.getElementById(wid);
         if (urlInput && urlInput.tagName === 'INPUT' && urlInput.type !== 'file') urlInput.value = src || '';
         // Update preview — gallery pattern: iw-{wid}-preview
         var prev = document.getElementById('iw-' + wid + '-preview');
         if (prev) { prev.src = src; prev.style.display = src ? 'block' : 'none'; }
-        // Update preview — contributor main images pattern: {wid}-preview
+        // Update preview — interviewee main images pattern: {wid}-preview
         var prev2 = document.getElementById(wid + '-preview');
         if (prev2) { prev2.src = src; prev2.style.display = src ? 'block' : 'none'; }
         // Call registered callback
@@ -3317,8 +3317,8 @@
         iwSetValue('hero', '');
         var heroInp = document.getElementById('iw-hero-url-input');
         if (heroInp) heroInp.value = '';
-        populateContribDropdowns();
-        document.getElementById('ed-contrib').value = '';
+        populateIntervieweeDropdowns();
+        document.getElementById('ed-interviewee').value = '';
         document.getElementById('ed-pub-popular').checked = false;
         document.getElementById('ed-pub-men').checked = false;
         document.getElementById('ed-pub-women').checked = false;
@@ -3355,8 +3355,8 @@
         iwSetValue('hero', art.heroImage || '');
         var heroInp = document.getElementById('iw-hero-url-input');
         if (heroInp) heroInp.value = art.heroImage || '';
-        populateContribDropdowns();
-        document.getElementById('ed-contrib').value = art.contributorIdx !== null && art.contributorIdx !== undefined ? art.contributorIdx : '';
+        populateIntervieweeDropdowns();
+        document.getElementById('ed-interviewee').value = art.intervieweeIdx !== null && art.intervieweeIdx !== undefined ? art.intervieweeIdx : '';
         document.getElementById('ed-pub-popular').checked = !!(art.publishedTo && art.publishedTo.mostPopular);
         document.getElementById('ed-pub-men').checked = !!(art.publishedTo && art.publishedTo.men);
         document.getElementById('ed-pub-women').checked = !!(art.publishedTo && art.publishedTo.women);
@@ -3385,15 +3385,15 @@
         } else {
             blockItemsEn = blockItems.map(function(b){ return { id: b.id, type: b.type, fields: Object.assign({}, b.fields) }; });
         }
-        var contribVal = document.getElementById('ed-contrib').value;
-        var contribIdx = (contribVal !== '' && !isNaN(parseInt(contribVal,10))) ? parseInt(contribVal,10) : null;
+        var intervieweeVal = document.getElementById('ed-interviewee').value;
+        var intervieweeIdx = (intervieweeVal !== '' && !isNaN(parseInt(intervieweeVal,10))) ? parseInt(intervieweeVal,10) : null;
         var art = {
             id:           editorArticleId || generateArticleId(),
             title:        title,
             titleEn:      document.getElementById('ed-title-en').value.trim(),
             date:         document.getElementById('ed-date').value.trim(),
             heroImage:    document.getElementById('ed-hero').value.trim(),
-            contributorIdx: contribIdx,
+            intervieweeIdx: intervieweeIdx,
             publishedTo: {
                 mostPopular: document.getElementById('ed-pub-popular').checked,
                 men:         document.getElementById('ed-pub-men').checked,
@@ -3458,7 +3458,7 @@
         }
     }
 
-    function handleContribImagePaste(e, fieldId, previewId) {
+    function handleIntervieweeImagePaste(e, fieldId, previewId) {
         var items = (e.clipboardData || e.originalEvent.clipboardData).items;
         for (var i = 0; i < items.length; i++) {
             if (items[i].type.indexOf('image') >= 0) {
@@ -3467,10 +3467,10 @@
                 reader.onload = function(ev) {
                     var dataUrl = ev.target.result;
                     document.getElementById(fieldId).value = dataUrl;
-                    refreshContribPreview(fieldId, previewId);
+                    refreshIntervieweePreview(fieldId, previewId);
                     ghStorage.uploadImage(dataUrl).then(function(url) {
                         document.getElementById(fieldId).value = url;
-                        refreshContribPreview(fieldId, previewId);
+                        refreshIntervieweePreview(fieldId, previewId);
                     }).catch(function() {});
                 };
                 reader.readAsDataURL(items[i].getAsFile());
@@ -3479,7 +3479,7 @@
         }
     }
 
-    function refreshContribPreview(fieldId, previewId) {
+    function refreshIntervieweePreview(fieldId, previewId) {
         var val = document.getElementById(fieldId).value.trim();
         // Update widget preview
         var prev = document.getElementById(previewId);
@@ -4249,11 +4249,11 @@
         var title      = (document.getElementById('ed-title') || {}).value || '';
         var date       = (document.getElementById('ed-date')  || {}).value || '';
         var heroUrl    = (document.getElementById('ed-hero')  || {}).value || '';
-        var contribSel = document.getElementById('ed-contrib');
-        var contribName = '';
-        if (contribSel && contribSel.value !== '') {
-            var idx = parseInt(contribSel.value, 10);
-            if (!isNaN(idx)) contribName = getContribName(idx);
+        var intervieweeSel = document.getElementById('ed-interviewee');
+        var intervieweeName = '';
+        if (intervieweeSel && intervieweeSel.value !== '') {
+            var idx = parseInt(intervieweeSel.value, 10);
+            if (!isNaN(idx)) intervieweeName = getIntervieweeName(idx);
         }
 
         if (!title && !heroUrl && !blockItems.length) {
@@ -4267,7 +4267,7 @@
         }
         if (date)        html += '<div class="pr-meta">' + escapeHtml(date) + '</div>';
         if (title)       html += '<div class="pr-title">' + escapeHtml(title) + '</div>';
-        if (contribName) html += '<div class="pr-contrib">By ' + escapeHtml(contribName) + '</div>';
+        if (intervieweeName) html += '<div class="pr-interviewee">By ' + escapeHtml(intervieweeName) + '</div>';
 
         blockItems.forEach(function(blk) {
             var f = blk.fields;
@@ -4341,16 +4341,16 @@
         } else {
             blockItemsEn = blockItems.map(function(b){ return { id: b.id, type: b.type, fields: Object.assign({}, b.fields) }; });
         }
-        var contribSel = document.getElementById('ed-contrib');
-        var contribIdx = (contribSel && contribSel.value !== '' && !isNaN(parseInt(contribSel.value, 10)))
-            ? parseInt(contribSel.value, 10) : null;
+        var intervieweeSel = document.getElementById('ed-interviewee');
+        var intervieweeIdx = (intervieweeSel && intervieweeSel.value !== '' && !isNaN(parseInt(intervieweeSel.value, 10)))
+            ? parseInt(intervieweeSel.value, 10) : null;
         var draft = {
             id:              editorArticleId || ('preview-' + Date.now()),
             title:           (document.getElementById('ed-title') || {}).value || '',
             titleEn:         (document.getElementById('ed-title-en') || {}).value || '',
             date:            (document.getElementById('ed-date')  || {}).value || '',
             heroImage:       (document.getElementById('ed-hero')  || {}).value || '',
-            contributorIdx:  contribIdx,
+            intervieweeIdx:  intervieweeIdx,
             publishedTo:     { mostPopular: false, men: false, women: false },
             editorMode:      editorMode,
             createdAt:       Date.now(),
@@ -4364,93 +4364,93 @@
     }
 
     // ================================================================
-    //  CONTRIBUTOR TABS & GRID
+    //  INTERVIEWEE TABS & GRID
     // ================================================================
-    var activeContribTab = 'all';
+    var activeIntervieweeTab = 'all';
 
-    function setContribTab(tab) {
-        activeContribTab = tab;
+    function setIntervieweeTab(tab) {
+        activeIntervieweeTab = tab;
         ['all','men','women'].forEach(function(t) {
             document.getElementById('tab-' + t).classList.toggle('active', t === tab);
         });
-        renderContributors();
+        renderInterviewees();
     }
 
-    var contribDragSrc = null;
+    var intervieweeDragSrc = null;
 
     function getDisplayList() {
-        if (activeContribTab === 'men')
-            return menOrder.map(function(i) { return { contribIdx: i, c: contributors[i] }; });
-        if (activeContribTab === 'women')
-            return womenOrder.map(function(i) { return { contribIdx: i, c: contributors[i] }; });
-        return contributors.map(function(c, i) { return { contribIdx: i, c: c }; });
+        if (activeIntervieweeTab === 'men')
+            return menOrder.map(function(i) { return { intervieweeIdx: i, c: interviewees[i] }; });
+        if (activeIntervieweeTab === 'women')
+            return womenOrder.map(function(i) { return { intervieweeIdx: i, c: interviewees[i] }; });
+        return interviewees.map(function(c, i) { return { intervieweeIdx: i, c: c }; });
     }
 
-    function renderContributors() {
-        var grid = document.getElementById('contrib-grid');
+    function renderInterviewees() {
+        var grid = document.getElementById('interviewee-grid');
         grid.innerHTML = '';
         getDisplayList().forEach(function(item, displayPos) {
-            var c = item.c; var ci = item.contribIdx;
+            var c = item.c; var ci = item.intervieweeIdx;
             var card = document.createElement('div');
-            card.className = 'contrib-card draggable';
+            card.className = 'interviewee-card draggable';
             card.draggable = true;
             card.dataset.displayPos = displayPos;
-            card.dataset.contribIdx = ci;
+            card.dataset.intervieweeIdx = ci;
             card.innerHTML =
                 '<img src="' + escapeAttr(c.img) + '" alt="' + escapeAttr(c.name) + '" loading="lazy">' +
-                '<div class="contrib-card-body">' +
-                    '<span class="contrib-pos">#' + (displayPos + 1) + '</span>' +
-                    '<div class="contrib-name">' + escapeHtml(c.name) + '</div>' +
-                    '<div class="contrib-role">' + escapeHtml(c.role) + '</div>' +
-                    '<span class="contrib-type ' + escapeAttr(c.type) + '">' + escapeHtml(c.type) + '</span>' +
-                    '<div class="contrib-drag-hint">' +
+                '<div class="interviewee-card-body">' +
+                    '<span class="interviewee-pos">#' + (displayPos + 1) + '</span>' +
+                    '<div class="interviewee-name">' + escapeHtml(c.name) + '</div>' +
+                    '<div class="interviewee-role">' + escapeHtml(c.role) + '</div>' +
+                    '<span class="interviewee-type ' + escapeAttr(c.type) + '">' + escapeHtml(c.type) + '</span>' +
+                    '<div class="interviewee-drag-hint">' +
                         '<svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true"><circle cx="2" cy="2" r="1.5" fill="#ccc"/><circle cx="8" cy="2" r="1.5" fill="#ccc"/><circle cx="2" cy="8" r="1.5" fill="#ccc"/><circle cx="8" cy="8" r="1.5" fill="#ccc"/></svg>' +
                         'drag to reorder' +
                     '</div>' +
-                    '<div class="contrib-actions">' +
-                        '<button class="contrib-btn contrib-btn-edit" onclick="editContributor(' + ci + ')">Edit</button>' +
-                        '<button class="contrib-btn contrib-btn-del" onclick="deleteContributor(' + ci + ')">Remove</button>' +
+                    '<div class="interviewee-actions">' +
+                        '<button class="interviewee-btn interviewee-btn-edit" onclick="editInterviewee(' + ci + ')">Edit</button>' +
+                        '<button class="interviewee-btn interviewee-btn-del" onclick="deleteInterviewee(' + ci + ')">Remove</button>' +
                     '</div>' +
                 '</div>';
-            makeContribDraggable(card);
+            makeIntervieweeDraggable(card);
             grid.appendChild(card);
         });
     }
 
-    function makeContribDraggable(card) {
+    function makeIntervieweeDraggable(card) {
         card.addEventListener('dragstart', function(e) {
-            contribDragSrc = this;
+            intervieweeDragSrc = this;
             e.dataTransfer.effectAllowed = 'move';
             this.classList.add('is-dragging');
         });
         card.addEventListener('dragend', function() {
             this.classList.remove('is-dragging');
-            document.querySelectorAll('.contrib-card').forEach(function(c) { c.classList.remove('drag-over'); });
-            contribDragSrc = null;
+            document.querySelectorAll('.interviewee-card').forEach(function(c) { c.classList.remove('drag-over'); });
+            intervieweeDragSrc = null;
         });
         card.addEventListener('dragover', function(e) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; });
-        card.addEventListener('dragenter', function(e) { e.preventDefault(); if (this !== contribDragSrc) this.classList.add('drag-over'); });
+        card.addEventListener('dragenter', function(e) { e.preventDefault(); if (this !== intervieweeDragSrc) this.classList.add('drag-over'); });
         card.addEventListener('dragleave', function() { this.classList.remove('drag-over'); });
         card.addEventListener('drop', function(e) {
             e.stopPropagation(); e.preventDefault();
             this.classList.remove('drag-over');
-            if (!contribDragSrc || contribDragSrc === this) return;
-            var srcPos = parseInt(contribDragSrc.dataset.displayPos, 10);
+            if (!intervieweeDragSrc || intervieweeDragSrc === this) return;
+            var srcPos = parseInt(intervieweeDragSrc.dataset.displayPos, 10);
             var tgtPos = parseInt(this.dataset.displayPos, 10);
             if (srcPos === tgtPos) return;
-            applyContribReorder(srcPos, tgtPos);
-            saveContributors();
-            renderContributors();
+            applyIntervieweeReorder(srcPos, tgtPos);
+            saveInterviewees();
+            renderInterviewees();
         });
     }
 
-    function applyContribReorder(srcPos, tgtPos) {
-        if (activeContribTab === 'all') {
-            var item = contributors.splice(srcPos, 1)[0];
-            contributors.splice(tgtPos, 0, item);
-            menOrder   = contributors.reduce(function(acc, c, i) { if (c.type === 'men')   acc.push(i); return acc; }, []);
-            womenOrder = contributors.reduce(function(acc, c, i) { if (c.type === 'women') acc.push(i); return acc; }, []);
-        } else if (activeContribTab === 'men') {
+    function applyIntervieweeReorder(srcPos, tgtPos) {
+        if (activeIntervieweeTab === 'all') {
+            var item = interviewees.splice(srcPos, 1)[0];
+            interviewees.splice(tgtPos, 0, item);
+            menOrder   = interviewees.reduce(function(acc, c, i) { if (c.type === 'men')   acc.push(i); return acc; }, []);
+            womenOrder = interviewees.reduce(function(acc, c, i) { if (c.type === 'women') acc.push(i); return acc; }, []);
+        } else if (activeIntervieweeTab === 'men') {
             var item = menOrder.splice(srcPos, 1)[0];
             menOrder.splice(tgtPos, 0, item);
         } else {
@@ -4460,9 +4460,9 @@
     }
 
     // ================================================================
-    //  CONTRIBUTOR CRUD
+    //  INTERVIEWEE CRUD
     // ================================================================
-    var editContribIdx = null;
+    var editIntervieweeIdx = null;
 
     function resolveArticleById(id) {
         if (!id) return null;
@@ -4564,18 +4564,18 @@
         });
     });
 
-    function editContributor(ci) {
-        var c = contributors[ci]; if (!c) return;
-        editContribIdx = ci;
+    function editInterviewee(ci) {
+        var c = interviewees[ci]; if (!c) return;
+        editIntervieweeIdx = ci;
         document.getElementById('cf-name').value   = c.name   || '';
         document.getElementById('cf-role').value   = c.role   || '';
         document.getElementById('cf-type').value   = c.type   || 'men';
         document.getElementById('cf-img').value    = c.img    || '';
         document.getElementById('cf-avatar').value = c.avatar || '';
         document.getElementById('cf-bg').value     = c.bg     || '';
-        refreshContribPreview('cf-img',    'cf-img-preview');
-        refreshContribPreview('cf-avatar', 'cf-avatar-preview');
-        refreshContribPreview('cf-bg',     'cf-bg-preview');
+        refreshIntervieweePreview('cf-img',    'cf-img-preview');
+        refreshIntervieweePreview('cf-avatar', 'cf-avatar-preview');
+        refreshIntervieweePreview('cf-bg',     'cf-bg-preview');
         document.getElementById('cf-stat1').value  = (c.stats && c.stats[0]) || '';
         document.getElementById('cf-stat2').value  = (c.stats && c.stats[1]) || '';
         document.getElementById('cf-stat3').value  = (c.stats && c.stats[2]) || '';
@@ -4636,45 +4636,45 @@
             iwSetValue('cf-gallery-' + gIdx, gi[gIdx - 1] || '');
         }
 
-        document.getElementById('contrib-form-title').textContent = 'Edit Contributor';
-        document.getElementById('btn-contrib-submit').textContent = 'Update Contributor';
+        document.getElementById('interviewee-form-title').textContent = 'Edit Interviewee';
+        document.getElementById('btn-interviewee-submit').textContent = 'Update Interviewee';
         document.getElementById('form-err').classList.remove('show');
-        document.getElementById('contrib-form-panel').classList.add('open');
-        document.getElementById('add-contrib-toggle').style.display = 'none';
-        document.getElementById('contrib-form-panel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        document.getElementById('interviewee-form-panel').classList.add('open');
+        document.getElementById('add-interviewee-toggle').style.display = 'none';
+        document.getElementById('interviewee-form-panel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
-    function deleteContributor(ci) {
-        if (!confirm('Remove "' + contributors[ci].name + '" from contributors?')) return;
-        contributors.splice(ci, 1);
+    function deleteInterviewee(ci) {
+        if (!confirm('Remove "' + interviewees[ci].name + '" from interviewees?')) return;
+        interviewees.splice(ci, 1);
         menOrder   = menOrder.filter(function(i) { return i !== ci; }).map(function(i) { return i > ci ? i - 1 : i; });
         womenOrder = womenOrder.filter(function(i) { return i !== ci; }).map(function(i) { return i > ci ? i - 1 : i; });
-        saveContributors();
-        renderContributors();
-        populateContribDropdowns();
+        saveInterviewees();
+        renderInterviewees();
+        populateIntervieweeDropdowns();
     }
 
-    function openContribForm() {
-        editContribIdx = null;
-        document.getElementById('contrib-form-title').textContent = 'Add New Contributor';
-        document.getElementById('btn-contrib-submit').textContent = 'Add Contributor';
-        document.getElementById('contrib-form-panel').classList.add('open');
-        document.getElementById('add-contrib-toggle').style.display = 'none';
+    function openIntervieweeForm() {
+        editIntervieweeIdx = null;
+        document.getElementById('interviewee-form-title').textContent = 'Add New Interviewee';
+        document.getElementById('btn-interviewee-submit').textContent = 'Add Interviewee';
+        document.getElementById('interviewee-form-panel').classList.add('open');
+        document.getElementById('add-interviewee-toggle').style.display = 'none';
     }
 
-    function closeContribForm() {
-        editContribIdx = null;
-        document.getElementById('contrib-form-panel').classList.remove('open');
-        document.getElementById('add-contrib-toggle').style.display = '';
-        document.getElementById('contrib-form-title').textContent = 'Add New Contributor';
-        document.getElementById('btn-contrib-submit').textContent = 'Add Contributor';
+    function closeIntervieweeForm() {
+        editIntervieweeIdx = null;
+        document.getElementById('interviewee-form-panel').classList.remove('open');
+        document.getElementById('add-interviewee-toggle').style.display = '';
+        document.getElementById('interviewee-form-title').textContent = 'Add New Interviewee';
+        document.getElementById('btn-interviewee-submit').textContent = 'Add Interviewee';
         document.getElementById('form-err').classList.remove('show');
         ['cf-name','cf-role','cf-img','cf-avatar','cf-bg','cf-stat1','cf-stat2','cf-stat3','cf-stat4','cf-bio'].forEach(function(id) {
             document.getElementById(id).value = '';
         });
-        refreshContribPreview('cf-img',    'cf-img-preview');
-        refreshContribPreview('cf-avatar', 'cf-avatar-preview');
-        refreshContribPreview('cf-bg',     'cf-bg-preview');
+        refreshIntervieweePreview('cf-img',    'cf-img-preview');
+        refreshIntervieweePreview('cf-avatar', 'cf-avatar-preview');
+        refreshIntervieweePreview('cf-bg',     'cf-bg-preview');
         document.getElementById('cf-type').value = 'men';
         // Reset social links
         ['facebook','youtube','instagram','linkedin','twitter','tiktok'].forEach(function(p) {
@@ -4706,7 +4706,7 @@
         }
     }
 
-    function confirmContributor() {
+    function confirmInterviewee() {
         var name   = document.getElementById('cf-name').value.trim();
         var role   = document.getElementById('cf-role').value.trim();
         var type   = document.getElementById('cf-type').value;
@@ -4763,30 +4763,30 @@
         }
 
         var data = { name: name, role: role, type: type, img: img, avatar: avatar || img, bg: bg || img, stats: [stat1 || 'Stat 1', stat2 || 'Stat 2', stat3 || 'Stat 3', stat4 || 'Stat 4'], bio: bio, socialLinks: socialLinks, newsItems: newsItems, galleryImages: galleryImages };
-        if (editContribIdx !== null) {
-            var oldType = contributors[editContribIdx].type;
-            contributors[editContribIdx] = data;
+        if (editIntervieweeIdx !== null) {
+            var oldType = interviewees[editIntervieweeIdx].type;
+            interviewees[editIntervieweeIdx] = data;
             if (oldType !== type) {
-                if (oldType === 'men') { menOrder = menOrder.filter(function(i) { return i !== editContribIdx; }); womenOrder.push(editContribIdx); }
-                else { womenOrder = womenOrder.filter(function(i) { return i !== editContribIdx; }); menOrder.push(editContribIdx); }
+                if (oldType === 'men') { menOrder = menOrder.filter(function(i) { return i !== editIntervieweeIdx; }); womenOrder.push(editIntervieweeIdx); }
+                else { womenOrder = womenOrder.filter(function(i) { return i !== editIntervieweeIdx; }); menOrder.push(editIntervieweeIdx); }
             }
         } else {
-            var newIdx = contributors.length;
-            contributors.push(data);
+            var newIdx = interviewees.length;
+            interviewees.push(data);
             if (type === 'men') menOrder.push(newIdx); else womenOrder.push(newIdx);
         }
         showStatus('Saving…', 'info');
-        saveContributors().then(function() {
-            showStatus('✓ Contributor saved!', 'success');
+        saveInterviewees().then(function() {
+            showStatus('✓ Interviewee saved!', 'success');
         }).catch(function(e) {
             showStatus('⚠ Save failed: ' + e.message, 'error');
         });
-        renderContributors();
-        populateContribDropdowns();
-        closeContribForm();
+        renderInterviewees();
+        populateIntervieweeDropdowns();
+        closeIntervieweeForm();
     }
 
-    document.getElementById('add-contrib-toggle').addEventListener('click', openContribForm);
+    document.getElementById('add-interviewee-toggle').addEventListener('click', openIntervieweeForm);
 
     // ================================================================
     //  SIDEBAR NAVIGATION
@@ -4812,7 +4812,7 @@
         activeNavId   = navId;
         // Refresh content when navigating to these panels
         if (panelId === 'panel-blog-list') {
-            populateContribDropdowns();
+            populateIntervieweeDropdowns();
             renderBlogList();
         }
         if (panelId === 'panel-about') {
@@ -4887,7 +4887,7 @@
         else { img.src = ''; img.style.display = 'none'; }
     }
 
-    var _aboutConfig = { videoUrl: '', videoCover: '', sec3Image: '', sec4Image: '', sec5Image: '', spotlightContribs: [] };
+    var _aboutConfig = { videoUrl: '', videoCover: '', sec3Image: '', sec4Image: '', sec5Image: '', spotlightInterviewees: [] };
 
     function loadAboutPanel() {
         ghStorage.getAboutConfig().then(function(cfg) {
@@ -4898,7 +4898,7 @@
                     sec3Image:        cfg.sec3Image        || '',
                     sec4Image:        cfg.sec4Image        || '',
                     sec5Image:        cfg.sec5Image        || '',
-                    spotlightContribs: Array.isArray(cfg.spotlightContribs) ? cfg.spotlightContribs.slice() : []
+                    spotlightInterviewees: Array.isArray(cfg.spotlightInterviewees) ? cfg.spotlightInterviewees.slice() : []
                 };
             }
             var f = function(id, v) { var el = document.getElementById(id); if (el) el.value = v; };
@@ -4921,8 +4921,8 @@
         var countEl = document.getElementById('cs-picker-count');
         if (!container) return;
         container.innerHTML = '';
-        contributors.forEach(function(c, i) {
-            var isSelected = _aboutConfig.spotlightContribs.indexOf(i) >= 0;
+        interviewees.forEach(function(c, i) {
+            var isSelected = _aboutConfig.spotlightInterviewees.indexOf(i) >= 0;
             var card = document.createElement('div');
             card.className = 'cs-picker-card' + (isSelected ? ' selected' : '');
             card.title = (isSelected ? 'Remove' : 'Add') + ': ' + (c.name || '');
@@ -4936,26 +4936,26 @@
             card.onclick = (function(idx) { return function() { csPickerToggle(idx); }; })(i);
             container.appendChild(card);
         });
-        if (countEl) countEl.textContent = _aboutConfig.spotlightContribs.length + ' selected';
+        if (countEl) countEl.textContent = _aboutConfig.spotlightInterviewees.length + ' selected';
     }
 
     function csPickerToggle(idx) {
-        var pos = _aboutConfig.spotlightContribs.indexOf(idx);
+        var pos = _aboutConfig.spotlightInterviewees.indexOf(idx);
         if (pos >= 0) {
-            _aboutConfig.spotlightContribs.splice(pos, 1);
+            _aboutConfig.spotlightInterviewees.splice(pos, 1);
         } else {
-            _aboutConfig.spotlightContribs.push(idx);
+            _aboutConfig.spotlightInterviewees.push(idx);
         }
         renderCsPickerGrid();
     }
 
     function csPickerSelectAll() {
-        _aboutConfig.spotlightContribs = contributors.map(function(_, i) { return i; });
+        _aboutConfig.spotlightInterviewees = interviewees.map(function(_, i) { return i; });
         renderCsPickerGrid();
     }
 
     function csPickerDeselectAll() {
-        _aboutConfig.spotlightContribs = [];
+        _aboutConfig.spotlightInterviewees = [];
         renderCsPickerGrid();
     }
 
@@ -4988,7 +4988,7 @@
         Promise.all([
             ghStorage.saveArticles(_articles),
             ghStorage.saveHomeOrder(_homeOrder),
-            ghStorage.saveContributors(contributors, menOrder, womenOrder),
+            ghStorage.saveInterviewees(interviewees, menOrder, womenOrder),
             ghStorage.saveHomeLayout(_homeLayout)
         ]).then(function() {
             showStatus('✓ Saved successfully', 'success');
@@ -5000,21 +5000,21 @@
     }
 
     function resetCMS() {
-        if (!confirm('Reset all orders, articles, and contributors to default? This cannot be undone.')) return;
+        if (!confirm('Reset all orders, articles, and interviewees to default? This cannot be undone.')) return;
         _articles  = [];
         _homeOrder = { popular: [], men: [], women: [] };
-        contributors = DEFAULT_CONTRIBUTORS.slice();
-        menOrder   = contributors.reduce(function(acc,c,i){ if(c.type==='men') acc.push(i); return acc; },[]);
-        womenOrder = contributors.reduce(function(acc,c,i){ if(c.type==='women') acc.push(i); return acc; },[]);
+        interviewees = DEFAULT_INTERVIEWEES.slice();
+        menOrder   = interviewees.reduce(function(acc,c,i){ if(c.type==='men') acc.push(i); return acc; },[]);
+        womenOrder = interviewees.reduce(function(acc,c,i){ if(c.type==='women') acc.push(i); return acc; },[]);
         Promise.all([
             ghStorage.saveArticles(_articles),
             ghStorage.saveHomeOrder(_homeOrder),
-            ghStorage.saveContributors(contributors, menOrder, womenOrder)
+            ghStorage.saveInterviewees(interviewees, menOrder, womenOrder)
         ]).then(function() {
             showStatus('✓ Reset to default.', 'success');
         }).catch(function(e) { showStatus('⚠ Reset failed: ' + e.message, 'error'); });
         ['popular','men','women'].forEach(renderHomePanel);
-        renderContributors();
+        renderInterviewees();
         renderBlogList();
     }
 
@@ -5214,7 +5214,7 @@
             p = Promise.all([
                 ghStorage.getArticles(),
                 ghStorage.getHomeOrder(),
-                ghStorage.getContributors()
+                ghStorage.getInterviewees()
             ]);
         } catch (syncErr) {
             clearTimeout(loadTimer);
@@ -5227,9 +5227,9 @@
             _articles  = results[0];
             _homeOrder = results[1];
             var cd = results[2];
-            contributors = (cd.contributors && cd.contributors.length) ? cd.contributors : DEFAULT_CONTRIBUTORS.slice();
-            menOrder   = (cd.menOrder   && cd.menOrder.length)   ? cd.menOrder   : contributors.reduce(function(acc,c,i){ if(c.type==='men') acc.push(i); return acc; },[]);
-            womenOrder = (cd.womenOrder && cd.womenOrder.length) ? cd.womenOrder : contributors.reduce(function(acc,c,i){ if(c.type==='women') acc.push(i); return acc; },[]);
+            interviewees = (cd.interviewees && cd.interviewees.length) ? cd.interviewees : DEFAULT_INTERVIEWEES.slice();
+            menOrder   = (cd.menOrder   && cd.menOrder.length)   ? cd.menOrder   : interviewees.reduce(function(acc,c,i){ if(c.type==='men') acc.push(i); return acc; },[]);
+            womenOrder = (cd.womenOrder && cd.womenOrder.length) ? cd.womenOrder : interviewees.reduce(function(acc,c,i){ if(c.type==='women') acc.push(i); return acc; },[]);
 
             if (overlay) overlay.style.display = 'none';
 
@@ -5241,9 +5241,9 @@
                 updateSiteStatusUI(!status || status.published !== false, status ? status.bypassPassword || '' : '');
             }).catch(function() {});
 
-            populateContribDropdowns();
+            populateIntervieweeDropdowns();
             ['popular','men','women'].forEach(renderHomePanel);
-            renderContributors();
+            renderInterviewees();
 
             // Register image widget: hero
             iwRegister('hero', function(src) {
@@ -5251,7 +5251,7 @@
                 scheduleLivePreview();
             });
 
-            // Register image widget: contributor fields
+            // Register image widget: interviewee fields
             ['cf-img','cf-avatar','cf-bg'].forEach(function(fid) {
                 iwRegister(fid, function(src) {
                     var inp = document.getElementById(fid);
@@ -5259,7 +5259,7 @@
                 });
             });
 
-            // Register image widget: contributor gallery fields
+            // Register image widget: interviewee gallery fields
             for (var _gIdx = 1; _gIdx <= 8; _gIdx++) {
                 (function(idx) {
                     iwRegister('cf-gallery-' + idx, function(src) {
@@ -5282,7 +5282,7 @@
                 var el = document.getElementById(id);
                 if (el) el.addEventListener('input', scheduleLivePreview);
             });
-            ['ed-contrib','ed-pub-popular','ed-pub-men','ed-pub-women'].forEach(function(id) {
+            ['ed-interviewee','ed-pub-popular','ed-pub-men','ed-pub-women'].forEach(function(id) {
                 var el = document.getElementById(id);
                 if (el) el.addEventListener('change', scheduleLivePreview);
             });
@@ -5305,7 +5305,7 @@
     // ---- User Management Panel ----
     var ALL_PERMS = [
         { key: 'home',         label: 'Home Page' },
-        { key: 'contributors', label: 'Contributors' },
+        { key: 'interviewees', label: 'Interviewees' },
         { key: 'blog',         label: 'Blog Articles' },
         { key: 'about',        label: 'About Us' }
     ];
@@ -5432,7 +5432,7 @@
     function applyPermissions(isMaster, permissions) {
         var map = {
             home:         'sidebar-home-section',
-            contributors: 'sidebar-contributors-section',
+            interviewees: 'sidebar-interviewees-section',
             blog:         'sidebar-blog-section',
             about:        'sidebar-about-section'
         };

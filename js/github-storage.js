@@ -1,4 +1,4 @@
-/**
+﻿/**
  * github-storage.js
  * Async read/write for the three data files stored in the GitHub repo.
  * Requires js/config.js to be loaded first (GITHUB_CONFIG global).
@@ -8,8 +8,8 @@
  *   saveArticles(arr)                      → void
  *   getHomeOrder()                         → {popular, men, women}
  *   saveHomeOrder(order)                   → void
- *   getContributors()                      → {contributors, menOrder, womenOrder}
- *   saveContributors(contributors, menOrder, womenOrder) → void
+ *   getInterviewees()                      → {interviewees, menOrder, womenOrder}
+ *   saveInterviewees(interviewees, menOrder, womenOrder) → void
  */
 
 (function(global) {
@@ -119,7 +119,7 @@
             if (!pat) {
                 var e = new Error('GitHub PAT not found. Please set up your credentials.'); e.isSetupNeeded = true; throw e;
             }
-            setCmsSession(pat, 'client', username, true, ['home', 'contributors', 'blog', 'about']);
+            setCmsSession(pat, 'client', username, true, ['home', 'interviewees', 'blog', 'about']);
             return { mode: 'client' };
         });
     }
@@ -148,7 +148,7 @@
             localStorage.setItem('cmsSetupUser', username);
             localStorage.setItem('cmsSetupHash', hash);
             localStorage.setItem('cmsSetupPat',  pat);
-            setCmsSession(pat, 'client', username, true, ['home', 'contributors', 'blog', 'about']);
+            setCmsSession(pat, 'client', username, true, ['home', 'interviewees', 'blog', 'about']);
             return { mode: 'client' };
         });
     }
@@ -481,19 +481,19 @@
         return ghPut('data/home-order.json', order, 'CMS: update home order');
     }
 
-    function getContributors() {
-        return ghGet('data/contributors.json').then(function(data) {
-            if (data && Array.isArray(data.contributors)) return data;
-            return { contributors: [], menOrder: [], womenOrder: [] };
+    function getInterviewees() {
+        return ghGet('data/interviewees.json').then(function(data) {
+            if (data && Array.isArray(data.interviewees)) return data;
+            return { interviewees: [], menOrder: [], womenOrder: [] };
         });
     }
 
-    function saveContributors(contributors, menOrder, womenOrder) {
-        return ghPut('data/contributors.json', {
-            contributors: contributors,
+    function saveInterviewees(interviewees, menOrder, womenOrder) {
+        return ghPut('data/interviewees.json', {
+            interviewees: interviewees,
             menOrder:     menOrder,
             womenOrder:   womenOrder
-        }, 'CMS: update contributors');
+        }, 'CMS: update interviewees');
     }
 
     function getHomeLayout() {
@@ -510,7 +510,7 @@
     function getAboutConfig() {
         return ghGet('data/about-config.json').then(function(data) {
             if (data && typeof data === 'object') return data;
-            return { videoUrl: '', videoCover: '', sec3Image: '', sec4Image: '', sec5Image: '', spotlightContribs: [] };
+            return { videoUrl: '', videoCover: '', sec3Image: '', sec4Image: '', sec5Image: '', spotlightInterviewees: [] };
         });
     }
 
@@ -545,8 +545,8 @@
         saveArticles:     saveArticles,
         getHomeOrder:     getHomeOrder,
         saveHomeOrder:    saveHomeOrder,
-        getContributors:  getContributors,
-        saveContributors: saveContributors,
+        getInterviewees:  getInterviewees,
+        saveInterviewees: saveInterviewees,
         getHomeLayout:    getHomeLayout,
         saveHomeLayout:   saveHomeLayout,
         getAboutConfig:   getAboutConfig,

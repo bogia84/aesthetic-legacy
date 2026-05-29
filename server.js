@@ -1,4 +1,4 @@
-const express = require('express');
+﻿const express = require('express');
 const cors    = require('cors');
 const path    = require('path');
 const fs      = require('fs');
@@ -17,7 +17,7 @@ app.use(express.urlencoded({ extended: true, limit: '100mb' }));
 const ALLOWED_DATA_FILES = [
     'data/home-layout.json',
     'data/articles.json',
-    'data/contributors.json',
+    'data/interviewees.json',
     'data/home-order.json',
     'data/about-config.json',
     'data/site-status.json'
@@ -127,7 +127,7 @@ function githubFetch(method, apiPath, pat, bodyObj) {
     if (!fs.existsSync(USERS_FILE)) {
         const u = process.env.CMS_USERNAME || 'admin';
         const p = process.env.CMS_PASSWORD || 'admin123';
-        saveUsers([{ username: u, passwordHash: hashPass(p), blocked: false, isMaster: true, permissions: ['home', 'contributors', 'blog', 'about'] }]);
+        saveUsers([{ username: u, passwordHash: hashPass(p), blocked: false, isMaster: true, permissions: ['home', 'interviewees', 'blog', 'about'] }]);
         console.log(`  ✓  Created data/users.json with user "${u}"`);
     }
 })();
