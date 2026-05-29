@@ -689,7 +689,7 @@
 
             // Load About Config
             (function() {
-                function applyConfig(cfg) {
+                function applyConfig(cfg, contribData) {
                     if (!cfg) return;
                     if (cfg.videoCover) {
                         var cover = document.querySelector('.video-cover');
@@ -701,14 +701,8 @@
                     if (cfg.sec3Image) { var el = document.getElementById('about-sec3-img'); if (el) el.src = cfg.sec3Image; }
                     if (cfg.sec4Image) { var el = document.getElementById('about-sec4-img'); if (el) el.src = cfg.sec4Image; }
                     if (cfg.sec5Image) { var el = document.getElementById('about-sec5-img'); if (el) el.src = cfg.sec5Image; }
-                    if (cfg.spotlightContribs && cfg.spotlightContribs.length > 0) {
-                        fetch('/data/contributors.json')
-                            .then(function(r) { return r.ok ? r.json() : null; })
-                            .then(function(data) {
-                                if (data && Array.isArray(data.contributors)) {
-                                    buildSpotlight(cfg.spotlightContribs, data.contributors);
-                                }
-                            }).catch(function() {});
+                    if (cfg.spotlightContribs && cfg.spotlightContribs.length > 0 && contribData && Array.isArray(contribData.contributors)) {
+                        buildSpotlight(cfg.spotlightContribs, contribData.contributors);
                     }
                 }
 
@@ -750,10 +744,18 @@
                     }
                 }
 
-                fetch('/data/about-config.json', { cache: 'no-store' })
-                    .then(function(r) { return r.ok ? r.json() : null; })
-                    .then(applyConfig)
-                    .catch(function() {});
+                // Fetch both files in parallel — contributors.json is 38MB so starting it
+                // immediately alongside about-config saves the full sequential wait.
+                Promise.all([
+                    fetch('/data/about-config.json', { cache: 'no-store' })
+                        .then(function(r) { return r.ok ? r.json() : null; })
+                        .catch(function() { return null; }),
+                    fetch('/data/contributors.json')
+                        .then(function(r) { return r.ok ? r.json() : null; })
+                        .catch(function() { return null; })
+                ]).then(function(results) {
+                    applyConfig(results[0], results[1]);
+                });
             })();
 
             // Mobile Menu Logic (Synced with Home)
