@@ -721,7 +721,7 @@
                         if (!c) return;
                         html += '<div class="swiper-slide">' +
                             '<a href="contributor_detail.html?index=' + idx + '" class="cs-card">' +
-                            '<img src="' + (c.img || '') + '" alt="" loading="lazy">' +
+                            '<img src="' + (c.img || '') + '" alt="">' +
                             '<div class="cs-card-info">' +
                             '<div class="cs-card-name">' + (c.name || '') + '</div>' +
                             '<div class="cs-card-role">' + (c.role || '') + '</div>' +
@@ -731,11 +731,12 @@
                         wrapper.innerHTML = html;
                         new Swiper('#swiper-sec1', {
                             loop: true,
-                            slidesPerView: 'auto',
-                            spaceBetween: 15,
-                            speed: 8000,
+                            loopAdditionalSlides: 5,
+                            slidesPerView: 2.5,
+                            spaceBetween: 10,
+                            speed: 5000,
                             autoplay: {
-                                delay: 0,
+                                delay: 1,
                                 disableOnInteraction: false,
                                 pauseOnMouseEnter: false
                             },
