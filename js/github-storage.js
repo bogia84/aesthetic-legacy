@@ -249,7 +249,7 @@
         return decodeURIComponent(escape(atob(str)));
     }
 
-    var CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+    var CACHE_TTL = 30 * 1000; // 30 seconds
     var CACHE_PREFIX = 'alCache_';
 
     function cacheGet(filePath) {
@@ -287,7 +287,8 @@
         var owner  = cfg.owner  || OWNER;
         var repo   = cfg.repo   || REPO;
         var branch = cfg.branch || BRANCH;
-        var rawUrl = 'https://raw.githubusercontent.com/' + owner + '/' + repo + '/' + branch + '/' + filePath;
+        var rawUrl = 'https://raw.githubusercontent.com/' + owner + '/' + repo + '/' + branch + '/' + filePath
+            + '?_=' + Math.floor(Date.now() / 30000);
 
         return fetch(rawUrl)
             .then(function(res) {
