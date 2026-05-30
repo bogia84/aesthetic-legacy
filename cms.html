@@ -4929,13 +4929,13 @@
         }
 
         showStatus('Saving…', 'info');
-        // Ensure any still-uploading data: URIs are fully resolved before saving
-        Promise.all([
-            ghStorage.uploadImage(img),
-            ghStorage.uploadImage(avatar || img),
-            ghStorage.uploadImage(bg || img)
-        ]).then(function(urls) {
-            var data = { name: name, role: role, type: type, img: urls[0], avatar: urls[1], bg: urls[2], stats: [stat1 || 'Stat 1', stat2 || 'Stat 2', stat3 || 'Stat 3', stat4 || 'Stat 4'], bio: bio, socialLinks: socialLinks, newsItems: newsItems, galleryImages: galleryImages };
+        // Upload any data: URIs to data/images/; fall back to original value if upload fails
+        function safeImg(v) { return ghStorage.uploadImage(v).catch(function() { return v; }); }
+        var galPromises = galleryImages.map(function(g) { return safeImg(g); });
+        Promise.all([safeImg(img), safeImg(avatar || img), safeImg(bg || img)].concat(galPromises))
+        .then(function(urls) {
+            var galUrls = urls.slice(3);
+            var data = { name: name, role: role, type: type, img: urls[0], avatar: urls[1], bg: urls[2], stats: [stat1 || 'Stat 1', stat2 || 'Stat 2', stat3 || 'Stat 3', stat4 || 'Stat 4'], bio: bio, socialLinks: socialLinks, newsItems: newsItems, galleryImages: galUrls };
             if (editIntervieweeIdx !== null) {
                 var oldType = interviewees[editIntervieweeIdx].type;
                 interviewees[editIntervieweeIdx] = data;

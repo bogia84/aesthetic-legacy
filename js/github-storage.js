@@ -350,7 +350,7 @@
             })
             .then(function(res) {
                 if (!res.ok) return res.text().then(function(t) { throw new Error('GitHub PUT failed: ' + res.status + ' — ' + t); });
-                cacheInvalidate(filePath);
+                cacheSet(filePath, value); // seed cache with written value — next read bypasses stale CDN
                 return res.json();
             });
     }
@@ -377,7 +377,7 @@
                     if (res.status === 401) clearCmsToken();
                     throw new Error(data.error || 'Write failed: ' + res.status);
                 }
-                cacheInvalidate(filePath);
+                cacheSet(filePath, value); // seed cache with written value — next read bypasses stale CDN
                 return data;
             });
         });
