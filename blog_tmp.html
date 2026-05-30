@@ -1191,7 +1191,11 @@
                 document.body.appendChild(_draftBanner);
             }
             var _finalArtIdx = articleIndexParam !== null ? parseInt(articleIndexParam, 10) : articles.indexOf(article);
-            if (_finalArtIdx >= 0) history.replaceState(null, '', 'blog_article.html?index=' + _finalArtIdx);
+            if (_finalArtIdx >= 0) {
+                var _replaceUrl = 'blog_article.html?index=' + _finalArtIdx;
+                if (article.status === 'draft') _replaceUrl += '&preview=' + article.id;
+                history.replaceState(null, '', _replaceUrl);
+            }
         }
 
         var interviewee = (article.intervieweeIdx !== null && article.intervieweeIdx !== undefined) ? interviewees[article.intervieweeIdx] : null;

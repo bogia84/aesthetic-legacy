@@ -673,8 +673,8 @@
             }
 
             // --- Section 3: Filterable Grid Logic ---
-            var gridData = allInterviewees.map(function(c, i) {
-                return { name: c.name, type: c.type, img: c.img, index: i };
+            var gridData = intervieweesData.map(function(c) {
+                return { name: c.name, type: c.type, img: c.img, index: allInterviewees.indexOf(c) };
             });
 
             const gridContainer = document.getElementById('banner-grid-container');

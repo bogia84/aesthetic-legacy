@@ -817,9 +817,17 @@
 
             (function populateInterviewee() {
                 var params = new URLSearchParams(window.location.search);
+                var idParam = params.get('id');
                 var idx = parseInt(params.get('index'), 10);
-                var c = (!isNaN(idx) && interviewees[idx]) ? interviewees[idx] : interviewees[0];
-                var realIdx = !isNaN(idx) ? idx : 0;
+                var c, realIdx;
+                if (idParam) {
+                    var _found = interviewees.reduce(function(acc, iee, i) { return acc || (iee.id === idParam ? { iee: iee, i: i } : null); }, null);
+                    c = _found ? _found.iee : interviewees[0];
+                    realIdx = _found ? _found.i : 0;
+                } else {
+                    c = (!isNaN(idx) && interviewees[idx]) ? interviewees[idx] : interviewees[0];
+                    realIdx = !isNaN(idx) ? idx : 0;
+                }
 
                 // Draft protection: block access unless caller has the interviewee's own ID as token
                 if (c.status === 'draft') {

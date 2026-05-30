@@ -2678,7 +2678,7 @@
         ['popular','men','women'].forEach(function(section) {
             var flag = section === 'popular' ? 'mostPopular' : section;
             var inSection = order[section].indexOf(article.id) >= 0;
-            var shouldBe  = !!(article.publishedTo && article.publishedTo[flag]);
+            var shouldBe  = article.status !== 'draft' && !!(article.publishedTo && article.publishedTo[flag]);
             if (shouldBe && !inSection) {
                 order[section].unshift(article.id);
             } else if (!shouldBe && inSection) {
@@ -2992,9 +2992,9 @@
         ['popular','men','women'].forEach(renderHomePanel);
     }
 
-    function copyDraftLink(artId, artIdx) {
+    function copyDraftLink(artId) {
         var baseUrl = window.location.href.replace(/[?#].*$/, '').replace(/cms\.html$/, '');
-        var link = baseUrl + 'blog_article.html?index=' + artIdx + '&preview=' + artId;
+        var link = baseUrl + 'blog_article.html?id=' + artId + '&preview=' + artId;
         navigator.clipboard.writeText(link).then(function() {
             showStatus('✓ Draft link copied to clipboard!', 'success');
         }).catch(function() {
@@ -3004,7 +3004,7 @@
 
     function copyIntervieweeDraftLink(ieeId, ieeIdx) {
         var baseUrl = window.location.href.replace(/[?#].*$/, '').replace(/cms\.html$/, '');
-        var link = baseUrl + 'interviewee_detail.html?index=' + ieeIdx + '&preview=' + ieeId;
+        var link = baseUrl + 'interviewee_detail.html?id=' + ieeId + '&preview=' + ieeId;
         navigator.clipboard.writeText(link).then(function() {
             showStatus('✓ Draft link copied to clipboard!', 'success');
         }).catch(function() {
