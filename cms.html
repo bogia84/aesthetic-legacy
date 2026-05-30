@@ -3160,10 +3160,7 @@
 
         var statusEl = document.getElementById('hero-save-status');
         if (statusEl) statusEl.textContent = 'Saving\u2026';
-        ghStorage.getInterviewees().then(function(data) {
-            data.heroConfig = _heroConfig;
-            return ghStorage.saveInterviewees(data.interviewees, data.menOrder, data.womenOrder, _heroConfig);
-        }).then(function() {
+        ghStorage.saveInterviewees(interviewees, menOrder, womenOrder, _heroConfig).then(function() {
             if (statusEl) { statusEl.textContent = '\u2713 Saved!'; setTimeout(function(){ statusEl.textContent=''; }, 3000); }
         }).catch(function(e) {
             if (statusEl) statusEl.textContent = '\u26a0 Failed: ' + e.message;
@@ -4931,28 +4928,35 @@
             galleryImages.push(gEl ? gEl.value.trim() : '');
         }
 
-        var data = { name: name, role: role, type: type, img: img, avatar: avatar || img, bg: bg || img, stats: [stat1 || 'Stat 1', stat2 || 'Stat 2', stat3 || 'Stat 3', stat4 || 'Stat 4'], bio: bio, socialLinks: socialLinks, newsItems: newsItems, galleryImages: galleryImages };
-        if (editIntervieweeIdx !== null) {
-            var oldType = interviewees[editIntervieweeIdx].type;
-            interviewees[editIntervieweeIdx] = data;
-            if (oldType !== type) {
-                if (oldType === 'men') { menOrder = menOrder.filter(function(i) { return i !== editIntervieweeIdx; }); womenOrder.push(editIntervieweeIdx); }
-                else { womenOrder = womenOrder.filter(function(i) { return i !== editIntervieweeIdx; }); menOrder.push(editIntervieweeIdx); }
-            }
-        } else {
-            var newIdx = interviewees.length;
-            interviewees.push(data);
-            if (type === 'men') menOrder.push(newIdx); else womenOrder.push(newIdx);
-        }
         showStatus('Saving…', 'info');
-        saveInterviewees().then(function() {
+        // Ensure any still-uploading data: URIs are fully resolved before saving
+        Promise.all([
+            ghStorage.uploadImage(img),
+            ghStorage.uploadImage(avatar || img),
+            ghStorage.uploadImage(bg || img)
+        ]).then(function(urls) {
+            var data = { name: name, role: role, type: type, img: urls[0], avatar: urls[1], bg: urls[2], stats: [stat1 || 'Stat 1', stat2 || 'Stat 2', stat3 || 'Stat 3', stat4 || 'Stat 4'], bio: bio, socialLinks: socialLinks, newsItems: newsItems, galleryImages: galleryImages };
+            if (editIntervieweeIdx !== null) {
+                var oldType = interviewees[editIntervieweeIdx].type;
+                interviewees[editIntervieweeIdx] = data;
+                if (oldType !== type) {
+                    if (oldType === 'men') { menOrder = menOrder.filter(function(i) { return i !== editIntervieweeIdx; }); womenOrder.push(editIntervieweeIdx); }
+                    else { womenOrder = womenOrder.filter(function(i) { return i !== editIntervieweeIdx; }); menOrder.push(editIntervieweeIdx); }
+                }
+            } else {
+                var newIdx = interviewees.length;
+                interviewees.push(data);
+                if (type === 'men') menOrder.push(newIdx); else womenOrder.push(newIdx);
+            }
+            renderInterviewees();
+            populateIntervieweeDropdowns();
+            closeIntervieweeForm();
+            return saveInterviewees();
+        }).then(function() {
             showStatus('✓ Interviewee saved!', 'success');
         }).catch(function(e) {
             showStatus('⚠ Save failed: ' + e.message, 'error');
         });
-        renderInterviewees();
-        populateIntervieweeDropdowns();
-        closeIntervieweeForm();
     }
 
     document.getElementById('add-interviewee-toggle').addEventListener('click', openIntervieweeForm);
