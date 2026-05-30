@@ -115,18 +115,41 @@
             gap: 40px;
             width: 100%;
             max-width: 1072px; /* 734 + 298 + 40 gap */
+            align-items: flex-start;
         }
 
         /* Left Side: Main Content (734px) */
         .blog-main-content {
             flex: 0 0 734px; 
             max-width: 734px;
+            min-width: 0;
         }
 
         /* Right Side: Sidebar (298px) */
         .blog-sidebar {
             flex: 0 0 298px; 
             max-width: 298px;
+            min-width: 0;
+        }
+
+        /* Keep CMS-normal-mode embeds/media from overflowing into sidebar */
+        .normal-content-body,
+        .normal-content-body * {
+            max-width: 100%;
+        }
+        .normal-content-body iframe,
+        .normal-content-body video,
+        .normal-content-body img,
+        .normal-content-body embed,
+        .normal-content-body object {
+            max-width: 100%;
+            border: 0;
+        }
+        .normal-content-body .video-embed-wrapper {
+            overflow: hidden;
+        }
+        .normal-content-body .video-embed-remove {
+            display: none !important;
         }
 
         /* --- Blog Detail Blocks --- */
@@ -1322,6 +1345,23 @@
         var mainContent = document.querySelector('.blog-main-content');
         if (!mainContent) { showMain(); return; }
 
+        function sanitizeNormalArticleHtml(rawHtml) {
+            var tmp = document.createElement('div');
+            tmp.innerHTML = rawHtml || '';
+            // Remove editor-only close buttons that should not appear on live pages
+            tmp.querySelectorAll('.video-embed-remove').forEach(function(btn) { btn.remove(); });
+            // Normalize embeds so social iframe widgets don't show scrollbars/overflow
+            tmp.querySelectorAll('iframe').forEach(function(ifr) {
+                ifr.setAttribute('frameborder', '0');
+                ifr.setAttribute('scrolling', 'no');
+                ifr.setAttribute('allowfullscreen', '');
+                ifr.style.border = '0';
+                ifr.style.maxWidth = '100%';
+                ifr.style.overflow = 'hidden';
+            });
+            return tmp.innerHTML;
+        }
+
         if (article.editorMode === 'normal') {
             // --- NORMAL MODE: inject HTML directly ---
             // Clear all block elements (header, stats, content, pullquote, routine, social)
@@ -1334,7 +1374,7 @@
             var wrapper = document.createElement('div');
             wrapper.className = 'normal-content-body';
             wrapper.style.cssText = 'font-family:inherit;line-height:1.75;color:#282828;';
-            wrapper.innerHTML = article.normalContent || '';
+            wrapper.innerHTML = sanitizeNormalArticleHtml(article.normalContent || '');
             mainContent.insertBefore(wrapper, normalHeaderEl.nextSibling);
         } else {
             // --- COMPONENT MODE: populate template blocks ---
@@ -1566,7 +1606,7 @@
         if (article.editorMode === 'normal') {
             var wrapper = mainContent.querySelector('.normal-content-body');
             if (!wrapper) { wrapper = document.createElement('div'); wrapper.className = 'normal-content-body'; wrapper.style.cssText = 'font-family:inherit;line-height:1.75;color:#282828;'; mainContent.insertBefore(wrapper, mainContent.firstChild); }
-            wrapper.innerHTML = (lang === 'en' && article.normalContentEn) ? article.normalContentEn : (article.normalContent || '');
+            wrapper.innerHTML = sanitizeNormalArticleHtml((lang === 'en' && article.normalContentEn) ? article.normalContentEn : (article.normalContent || ''));
         } else {
             // Component mode: re-render blocks
             var blocks = lang === 'en' && article.blocksEn && article.blocksEn.length ? article.blocksEn : (article.blocks || []);
