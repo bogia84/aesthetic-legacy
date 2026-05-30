@@ -564,7 +564,7 @@
 
             var intervieweeData = await ghStorage.getInterviewees().catch(function(){ return { interviewees: [] }; });
             var allInterviewees = (intervieweeData.interviewees && intervieweeData.interviewees.length) ? intervieweeData.interviewees : DEFAULT_INTERVIEWEES;
-            var intervieweesData = allInterviewees;
+            var intervieweesData = allInterviewees.filter(function(iee) { return iee.status !== 'draft'; });
 
             // Apply hero config from interviewees data
             var heroConfig = intervieweeData.heroConfig || {};

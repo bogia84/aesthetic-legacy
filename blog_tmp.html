@@ -1176,6 +1176,20 @@
                 article = articles.find(function(a) { return a.id === articleId; });
             }
             if (!article) { showMain(); return; } // article not found → show static template
+            // Draft protection: block access unless caller has the article's own ID as token
+            if (article.status === 'draft') {
+                var _previewToken = params.get('preview');
+                if (_previewToken !== article.id) {
+                    document.title = 'Not Published';
+                    document.body.innerHTML = '<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:sans-serif;background:#f5f5f5;"><div style="text-align:center;padding:40px;"><h2 style="font-weight:900;">This article is not yet published.</h2><p><a href="index.html" style="color:#2d7ef7;">← Back to Home</a></p></div></div>';
+                    return;
+                }
+                // Valid draft token — show draft banner
+                var _draftBanner = document.createElement('div');
+                _draftBanner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;background:#ff9500;color:#fff;text-align:center;font-size:0.78rem;font-weight:700;padding:8px;letter-spacing:0.05em;';
+                _draftBanner.textContent = 'DRAFT PREVIEW — This article has not been published';
+                document.body.appendChild(_draftBanner);
+            }
             var _finalArtIdx = articleIndexParam !== null ? parseInt(articleIndexParam, 10) : articles.indexOf(article);
             if (_finalArtIdx >= 0) history.replaceState(null, '', 'blog_article.html?index=' + _finalArtIdx);
         }

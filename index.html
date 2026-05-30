@@ -498,7 +498,10 @@
             if (order && articles && articles.length) {
                 var map = {};
                 var indexMap = {};
-                articles.forEach(function(a, i) { map[a.id] = a; indexMap[a.id] = i; });
+                articles.forEach(function(a, i) {
+                    if (a.status === 'draft') return; // skip draft articles
+                    map[a.id] = a; indexMap[a.id] = i;
+                });
                 var p = replaceSection('swiper-popular', order.popular, map, indexMap);
                 var w = replaceSection('swiper-women',   order.women,   map, indexMap);
                 var m = replaceSection('swiper-men',     order.men,     map, indexMap);

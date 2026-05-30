@@ -624,6 +624,7 @@
         .art-badge.popular { background: #e6a817; }
         .art-badge.men { background: var(--dark); }
         .art-badge.women { background: var(--red); }
+        .art-badge.draft { background: #888; }
         .article-card-cms-actions { display: flex; gap: 6px; margin-top: 8px; }
         .article-card-cms-btn {
             flex: 1; font-size: 0.68rem; font-weight: 700; color: #aaa;
@@ -633,6 +634,10 @@
         }
         .article-card-cms-btn-edit:hover { background: var(--dark); color: #fff; border-color: var(--dark); }
         .article-card-cms-btn-del:hover { background: var(--red); color: #fff; border-color: var(--red); }
+        .article-card-cms-btn-link:hover { background: #2563eb; color: #fff; border-color: #2563eb; }
+        .interviewee-btn-link:hover { background: #2563eb; color: #fff; border-color: #2563eb; }
+        .btn-draft { padding: 8px 14px; font-family: 'Manrope', sans-serif; font-size: 0.78rem; font-weight: 800; cursor: pointer; border: 1.5px solid #888; border-radius: 4px; background: #888; color: #fff; text-transform: uppercase; letter-spacing: 0.04em; transition: all 0.2s; }
+        .btn-draft:hover { background: #555; border-color: #555; }
 
         /* Article editor panel */
         .editor-meta-grid {
@@ -1678,7 +1683,10 @@
             <!-- Add/Edit form -->
             <button class="add-interviewee-toggle" id="add-interviewee-toggle">+ Add New Interviewee</button>
             <div class="interviewee-form-panel" id="interviewee-form-panel">
-                <div class="interviewee-form-title" id="interviewee-form-title">Add New Interviewee</div>
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+                    <div class="interviewee-form-title" id="interviewee-form-title" style="margin-bottom:0;">Add New Interviewee</div>
+                    <button class="btn-preview-toggle" onclick="toggleIntervieweePreviewDrawer()">&#128065; Live Preview</button>
+                </div>
                 <div class="form-grid">
                     <div class="form-group">
                         <label for="cf-name">Name</label>
@@ -2145,9 +2153,22 @@
                 </div>
 
                 <div class="form-actions">
-                    <button class="btn btn-add-confirm" id="btn-interviewee-submit" onclick="confirmInterviewee()">Add Interviewee</button>
+                    <button class="btn btn-draft" id="btn-interviewee-draft" onclick="confirmInterviewee('draft')">Save as Draft</button>
+                    <button class="btn btn-add-confirm" id="btn-interviewee-submit" onclick="confirmInterviewee('published')">Publish</button>
                     <button class="btn btn-add-cancel" onclick="closeIntervieweeForm()">Cancel</button>
                     <span class="form-err" id="form-err">Please fill in Name, Role, and Card Image URL.</span>
+                </div>
+            </div>
+
+            <!-- Interviewee Live Preview Drawer -->
+            <div class="preview-drawer-backdrop" id="iee-preview-backdrop" onclick="toggleIntervieweePreviewDrawer()"></div>
+            <div class="preview-drawer" id="iee-preview-drawer">
+                <div class="preview-drawer-header">
+                    <span class="preview-drawer-label">Interviewee Preview</span>
+                    <button class="preview-drawer-close" onclick="toggleIntervieweePreviewDrawer()">&times;</button>
+                </div>
+                <div class="preview-drawer-body" id="iee-preview-body">
+                    <div class="preview-placeholder">Fill in the form to see a preview</div>
                 </div>
             </div>
 
@@ -2363,7 +2384,8 @@
 
             <!-- Save/Cancel -->
             <div class="editor-actions-bar">
-                <button class="btn btn-save" onclick="saveArticleEditor()">Save Article</button>
+                <button class="btn btn-draft" id="btn-save-draft" onclick="saveArticleEditor('draft')">Save as Draft</button>
+                <button class="btn btn-save" id="btn-publish-article" onclick="saveArticleEditor('published')">Publish</button>
                 <button class="btn btn-preview" onclick="previewInNewTab()">Preview</button>
                 <button class="btn btn-reset" onclick="cancelArticleEditor()">Cancel</button>
                 <span class="form-err" id="editor-err">Please enter an article title.</span>
@@ -2923,6 +2945,7 @@
             grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#ccc;font-size:0.82rem;font-weight:700;">No articles yet — click "+ New Article" to create one.</div>';
             return;
         }
+        var artAllArticles = getArticles();
         articles.forEach(function(art) {
             var card = document.createElement('div');
             card.className = 'article-card-cms';
@@ -2931,11 +2954,16 @@
                 : '<div class="article-card-cms-img-placeholder">No image</div>';
             var interviewee = getIntervieweeName(art.intervieweeIdx);
             var badges = '';
+            if (art.status === 'draft') badges += '<span class="art-badge draft">Draft</span>';
             if (art.publishedTo) {
                 if (art.publishedTo.mostPopular) badges += '<span class="art-badge popular">Popular</span>';
                 if (art.publishedTo.men)         badges += '<span class="art-badge men">Men</span>';
                 if (art.publishedTo.women)       badges += '<span class="art-badge women">Women</span>';
             }
+            var artListIdx = artAllArticles.findIndex(function(a){ return a.id === art.id; });
+            var draftLinkBtn = (art.status === 'draft')
+                ? '<button class="article-card-cms-btn article-card-cms-btn-link" onclick="copyDraftLink(\'' + escapeAttr(art.id) + '\',' + artListIdx + ')">Copy Link</button>'
+                : '';
             card.innerHTML =
                 imgEl +
                 '<div class="article-card-cms-body">' +
@@ -2945,6 +2973,7 @@
                     (badges ? '<div class="article-card-cms-badges">' + badges + '</div>' : '') +
                     '<div class="article-card-cms-actions">' +
                         '<button class="article-card-cms-btn article-card-cms-btn-edit" onclick="openArticleEditor(\'' + escapeAttr(art.id) + '\')">Edit</button>' +
+                        draftLinkBtn +
                         '<button class="article-card-cms-btn article-card-cms-btn-del" onclick="deleteArticle(\'' + escapeAttr(art.id) + '\')">Delete</button>' +
                     '</div>' +
                 '</div>';
@@ -2961,6 +2990,26 @@
         removeArticleFromHomeOrder(id);
         renderBlogList();
         ['popular','men','women'].forEach(renderHomePanel);
+    }
+
+    function copyDraftLink(artId, artIdx) {
+        var baseUrl = window.location.href.replace(/[?#].*$/, '').replace(/cms\.html$/, '');
+        var link = baseUrl + 'blog_article.html?index=' + artIdx + '&preview=' + artId;
+        navigator.clipboard.writeText(link).then(function() {
+            showStatus('✓ Draft link copied to clipboard!', 'success');
+        }).catch(function() {
+            showStatus('Draft link: ' + link, 'info');
+        });
+    }
+
+    function copyIntervieweeDraftLink(ieeId, ieeIdx) {
+        var baseUrl = window.location.href.replace(/[?#].*$/, '').replace(/cms\.html$/, '');
+        var link = baseUrl + 'interviewee_detail.html?index=' + ieeIdx + '&preview=' + ieeId;
+        navigator.clipboard.writeText(link).then(function() {
+            showStatus('✓ Draft link copied to clipboard!', 'success');
+        }).catch(function() {
+            showStatus('Draft link: ' + link, 'info');
+        });
     }
 
     // ================================================================
@@ -3537,7 +3586,7 @@
         document.getElementById('normal-editor-body-en').style.display = 'none';
     }
 
-    function saveArticleEditor() {
+    function saveArticleEditor(statusParam) {
         var title = document.getElementById('ed-title').value.trim();
         if (!title) {
             document.getElementById('editor-err').classList.add('show');
@@ -3553,6 +3602,8 @@
         }
         var intervieweeVal = document.getElementById('ed-interviewee').value;
         var intervieweeIdx = (intervieweeVal !== '' && !isNaN(parseInt(intervieweeVal,10))) ? parseInt(intervieweeVal,10) : null;
+        var existingArt = editorArticleId ? getArticleById(editorArticleId) : null;
+        var artStatus = statusParam || (existingArt && existingArt.status) || 'draft';
         var art = {
             id:           editorArticleId || generateArticleId(),
             title:        title,
@@ -3565,8 +3616,9 @@
                 men:         document.getElementById('ed-pub-men').checked,
                 women:       document.getElementById('ed-pub-women').checked
             },
+            status:       artStatus,
             editorMode:   editorMode,
-            createdAt:    editorArticleId ? (getArticleById(editorArticleId) || {}).createdAt || Date.now() : Date.now(),
+            createdAt:    editorArticleId ? (existingArt || {}).createdAt || Date.now() : Date.now(),
             blocks:       dedupeHeaderBlocks(blockItemsVn.map(function(b){ return Object.assign({type: b.type}, b.fields); })),
             blocksEn:     dedupeHeaderBlocks(blockItemsEn.map(function(b){ return Object.assign({type: b.type}, b.fields); })),
             normalContent: document.getElementById('normal-editor-body').innerHTML,
@@ -3577,7 +3629,7 @@
         if (idx >= 0) articles[idx] = art; else articles.push(art);
         showStatus('Saving…', 'info');
         Promise.all([saveArticles(articles), syncHomeOrderOnSave(art)]).then(function() {
-            showStatus('✓ Article saved!', 'success');
+            showStatus(artStatus === 'draft' ? '✓ Saved as draft!' : '✓ Article published!', 'success');
         }).catch(function(e) {
             showStatus('⚠ Save failed: ' + e.message, 'error');
         });
@@ -3652,6 +3704,7 @@
         if (!prev) return;
         if (val) { prev.src = val; prev.style.display = 'block'; }
         else { prev.src = ''; prev.style.display = 'none'; }
+        updateIntervieweePreview();
     }
 
     // ================================================================
@@ -4016,6 +4069,54 @@
     }
     // Keep legacy alias so any residual references won't break
     function togglePreviewDrawer() { toggleInlinePreview(); }
+
+    function toggleIntervieweePreviewDrawer() {
+        var drawer = document.getElementById('iee-preview-drawer');
+        var backdrop = document.getElementById('iee-preview-backdrop');
+        if (!drawer) return;
+        var isOpen = drawer.classList.contains('open');
+        drawer.classList.toggle('open', !isOpen);
+        if (backdrop) backdrop.classList.toggle('open', !isOpen);
+        if (!isOpen) updateIntervieweePreview();
+    }
+
+    function updateIntervieweePreview() {
+        var drawer = document.getElementById('iee-preview-drawer');
+        var body = document.getElementById('iee-preview-body');
+        if (!body || !drawer || !drawer.classList.contains('open')) return;
+        var name   = document.getElementById('cf-name').value.trim() || 'Name';
+        var role   = document.getElementById('cf-role').value.trim() || 'Role';
+        var type   = document.getElementById('cf-type').value;
+        var img    = document.getElementById('cf-img').value.trim();
+        var avatar = document.getElementById('cf-avatar').value.trim() || img;
+        var bg     = document.getElementById('cf-bg').value.trim() || img;
+        var stat1  = document.getElementById('cf-stat1').value.trim() || 'Stat 1';
+        var stat2  = document.getElementById('cf-stat2').value.trim() || 'Stat 2';
+        var stat3  = document.getElementById('cf-stat3').value.trim() || 'Stat 3';
+        var stat4  = document.getElementById('cf-stat4').value.trim() || 'Stat 4';
+        var bio    = document.getElementById('cf-bio').value.trim();
+        var typeColor = type === 'men' ? '#111' : '#c0392b';
+        body.innerHTML =
+            '<div style="font-size:0.7rem;font-weight:900;text-transform:uppercase;color:#aaa;letter-spacing:0.1em;margin-bottom:8px;">Card Preview</div>' +
+            '<div style="border:1px solid #eee;border-radius:6px;overflow:hidden;margin-bottom:16px;">' +
+                (img ? '<img src="' + escapeAttr(img) + '" style="width:100%;aspect-ratio:3/4;object-fit:cover;display:block;" onerror="this.style.display=\'none\'">' : '<div style="width:100%;aspect-ratio:3/4;background:#f0f0f0;display:flex;align-items:center;justify-content:center;color:#ccc;font-size:0.7rem;">No Image</div>') +
+            '<div style="padding:10px;">' +
+                '<div style="font-weight:900;font-size:0.9rem;">' + escapeHtml(name) + '</div>' +
+                '<div style="font-size:0.75rem;color:#888;">' + escapeHtml(role) + '</div>' +
+                '<div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;margin-top:4px;padding:2px 6px;background:' + typeColor + ';color:#fff;display:inline-block;border-radius:3px;">' + escapeHtml(type) + '</div>' +
+            '</div>' +
+            '</div>' +
+            '<div style="font-size:0.7rem;font-weight:900;text-transform:uppercase;color:#aaa;letter-spacing:0.1em;margin-bottom:8px;">Profile Preview</div>' +
+            '<div style="border:1px solid #eee;border-radius:6px;overflow:hidden;">' +
+                (bg ? '<div style="position:relative;"><img src="' + escapeAttr(bg) + '" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block;" onerror="this.style.display=\'none\'"><div style="position:absolute;inset:0;background:rgba(0,0,0,0.45);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;padding:10px;"><div style="font-size:1.05rem;font-weight:900;text-align:center;">' + escapeHtml(name) + '</div><div style="font-size:0.73rem;opacity:0.85;">' + escapeHtml(role) + '</div></div></div>' : '') +
+                '<div style="padding:12px;">' +
+                    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;">' +
+                        [stat1,stat2,stat3,stat4].map(function(s){ return '<div style="padding:6px 8px;background:#f8f8f8;border-radius:4px;font-size:0.72rem;font-weight:700;text-align:center;">' + escapeHtml(s) + '</div>'; }).join('') +
+                    '</div>' +
+                    (bio ? '<div style="font-size:0.76rem;color:#444;line-height:1.5;">' + escapeHtml(bio).replace(/\\n/g,'<br>') + '</div>' : '<div style="font-size:0.72rem;color:#ccc;">No bio entered</div>') +
+                '</div>' +
+            '</div>';
+    }
     function toggleImgPanel() {
         var panel = document.getElementById('img-insert-panel');
         panel.classList.toggle('open');
@@ -4562,9 +4663,14 @@
             card.draggable = true;
             card.dataset.displayPos = displayPos;
             card.dataset.intervieweeIdx = ci;
+            var draftBadge = (c.status === 'draft') ? '<span class="art-badge draft" style="margin-bottom:4px;display:inline-block;">Draft</span>' : '';
+            var draftLinkBtn = (c.status === 'draft' && c.id)
+                ? '<button class="interviewee-btn interviewee-btn-link" onclick="copyIntervieweeDraftLink(\'' + escapeAttr(c.id) + '\',' + ci + ')">Copy Link</button>'
+                : '';
             card.innerHTML =
                 '<img src="' + escapeAttr(c.img) + '" alt="' + escapeAttr(c.name) + '" loading="lazy">' +
                 '<div class="interviewee-card-body">' +
+                    draftBadge +
                     '<span class="interviewee-pos">#' + (displayPos + 1) + '</span>' +
                     '<div class="interviewee-name">' + escapeHtml(c.name) + '</div>' +
                     '<div class="interviewee-role">' + escapeHtml(c.role) + '</div>' +
@@ -4575,6 +4681,7 @@
                     '</div>' +
                     '<div class="interviewee-actions">' +
                         '<button class="interviewee-btn interviewee-btn-edit" onclick="editInterviewee(' + ci + ')">Edit</button>' +
+                        draftLinkBtn +
                         '<button class="interviewee-btn interviewee-btn-del" onclick="deleteInterviewee(' + ci + ')">Remove</button>' +
                     '</div>' +
                 '</div>';
@@ -4803,7 +4910,9 @@
         }
 
         document.getElementById('interviewee-form-title').textContent = 'Edit Interviewee';
-        document.getElementById('btn-interviewee-submit').textContent = 'Update Interviewee';
+        document.getElementById('btn-interviewee-submit').textContent = (c.status === 'published') ? 'Update Published' : 'Publish';
+        var _draftBtnEdit = document.getElementById('btn-interviewee-draft');
+        if (_draftBtnEdit) _draftBtnEdit.textContent = (c.status === 'published') ? 'Unpublish (Save as Draft)' : 'Save as Draft';
         document.getElementById('form-err').classList.remove('show');
         document.getElementById('interviewee-form-panel').classList.add('open');
         document.getElementById('add-interviewee-toggle').style.display = 'none';
@@ -4823,7 +4932,9 @@
     function openIntervieweeForm() {
         editIntervieweeIdx = null;
         document.getElementById('interviewee-form-title').textContent = 'Add New Interviewee';
-        document.getElementById('btn-interviewee-submit').textContent = 'Add Interviewee';
+        document.getElementById('btn-interviewee-submit').textContent = 'Publish';
+        var _draftBtnOpen = document.getElementById('btn-interviewee-draft');
+        if (_draftBtnOpen) _draftBtnOpen.textContent = 'Save as Draft';
         document.getElementById('interviewee-form-panel').classList.add('open');
         document.getElementById('add-interviewee-toggle').style.display = 'none';
     }
@@ -4833,7 +4944,9 @@
         document.getElementById('interviewee-form-panel').classList.remove('open');
         document.getElementById('add-interviewee-toggle').style.display = '';
         document.getElementById('interviewee-form-title').textContent = 'Add New Interviewee';
-        document.getElementById('btn-interviewee-submit').textContent = 'Add Interviewee';
+        document.getElementById('btn-interviewee-submit').textContent = 'Publish';
+        var _draftBtnReset = document.getElementById('btn-interviewee-draft');
+        if (_draftBtnReset) _draftBtnReset.textContent = 'Save as Draft';
         document.getElementById('form-err').classList.remove('show');
         ['cf-name','cf-role','cf-img','cf-avatar','cf-bg','cf-stat1','cf-stat2','cf-stat3','cf-stat4','cf-bio'].forEach(function(id) {
             document.getElementById(id).value = '';
@@ -4872,7 +4985,7 @@
         }
     }
 
-    function confirmInterviewee() {
+    function confirmInterviewee(statusArg) {
         var name   = document.getElementById('cf-name').value.trim();
         var role   = document.getElementById('cf-role').value.trim();
         var type   = document.getElementById('cf-type').value;
@@ -4935,7 +5048,7 @@
         Promise.all([safeImg(img), safeImg(avatar || img), safeImg(bg || img)].concat(galPromises))
         .then(function(urls) {
             var galUrls = urls.slice(3);
-            var data = { name: name, role: role, type: type, img: urls[0], avatar: urls[1], bg: urls[2], stats: [stat1 || 'Stat 1', stat2 || 'Stat 2', stat3 || 'Stat 3', stat4 || 'Stat 4'], bio: bio, socialLinks: socialLinks, newsItems: newsItems, galleryImages: galUrls };
+            var data = { id: (editIntervieweeIdx !== null && interviewees[editIntervieweeIdx].id) || ('iee-' + Date.now() + '-' + Math.floor(Math.random()*10000)), status: statusArg || 'draft', name: name, role: role, type: type, img: urls[0], avatar: urls[1], bg: urls[2], stats: [stat1 || 'Stat 1', stat2 || 'Stat 2', stat3 || 'Stat 3', stat4 || 'Stat 4'], bio: bio, socialLinks: socialLinks, newsItems: newsItems, galleryImages: galUrls };
             if (editIntervieweeIdx !== null) {
                 var oldType = interviewees[editIntervieweeIdx].type;
                 interviewees[editIntervieweeIdx] = data;
@@ -4953,13 +5066,20 @@
             closeIntervieweeForm();
             return saveInterviewees();
         }).then(function() {
-            showStatus('✓ Interviewee saved!', 'success');
+            showStatus(statusArg === 'published' ? '✓ Interviewee published!' : '✓ Saved as draft!', 'success');
         }).catch(function(e) {
             showStatus('⚠ Save failed: ' + e.message, 'error');
         });
     }
 
     document.getElementById('add-interviewee-toggle').addEventListener('click', openIntervieweeForm);
+
+    // Wire interviewee form inputs to live preview drawer
+    var _ieeFormPanel = document.getElementById('interviewee-form-panel');
+    if (_ieeFormPanel) {
+        _ieeFormPanel.addEventListener('input', function() { updateIntervieweePreview(); });
+        _ieeFormPanel.addEventListener('change', function() { updateIntervieweePreview(); });
+    }
 
     // ================================================================
     //  SIDEBAR NAVIGATION

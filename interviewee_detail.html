@@ -821,6 +821,21 @@
                 var c = (!isNaN(idx) && interviewees[idx]) ? interviewees[idx] : interviewees[0];
                 var realIdx = !isNaN(idx) ? idx : 0;
 
+                // Draft protection: block access unless caller has the interviewee's own ID as token
+                if (c.status === 'draft') {
+                    var _previewToken = params.get('preview');
+                    if (_previewToken !== c.id) {
+                        document.title = 'Not Published';
+                        document.body.innerHTML = '<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:sans-serif;background:#f5f5f5;"><div style="text-align:center;padding:40px;"><h2 style="font-weight:900;">This profile is not yet published.</h2><p><a href="interviewees.html" style="color:#2d7ef7;">← Back to Interviewees</a></p></div></div>';
+                        return;
+                    }
+                    // Valid draft token — show draft banner
+                    var _draftBanner = document.createElement('div');
+                    _draftBanner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;background:#ff9500;color:#fff;text-align:center;font-size:0.78rem;font-weight:700;padding:8px;letter-spacing:0.05em;';
+                    _draftBanner.textContent = 'DRAFT PREVIEW — This profile has not been published';
+                    document.body.appendChild(_draftBanner);
+                }
+
                 document.title = c.name + ' - Aesthetic Legacy';
 
                 var heroBg = document.getElementById('detail-hero-bg');
