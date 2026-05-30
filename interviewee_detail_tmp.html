@@ -839,10 +839,27 @@
 
             (function populateInterviewee() {
                 var params = new URLSearchParams(window.location.search);
-                var idx = parseInt(params.get('index'), 10);
-                var c = (!isNaN(idx) && interviewees[idx]) ? interviewees[idx] : interviewees[0];
-                var realIdx = !isNaN(idx) ? idx : 0;
-                history.replaceState(null, '', 'interviewee_detail.html?index=' + realIdx);
+                var c, realIdx;
+
+                // Preview mode: use localStorage data instead of GitHub
+                if (params.get('preview') === '1') {
+                    var _previewData = null;
+                    try { _previewData = JSON.parse(localStorage.getItem('aestheticLegacyPreviewInterviewee') || 'null'); } catch(e) {}
+                    localStorage.removeItem('aestheticLegacyPreviewInterviewee');
+                    if (_previewData) {
+                        var _banner = document.createElement('div');
+                        _banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;background:#ff9500;color:#fff;text-align:center;font-size:0.78rem;font-weight:700;padding:8px;letter-spacing:0.05em;';
+                        _banner.textContent = 'DRAFT PREVIEW — This profile has not been published';
+                        document.body.appendChild(_banner);
+                        c = _previewData;
+                        realIdx = 0;
+                    } else { showMain(); return; }
+                } else {
+                    var idx = parseInt(params.get('index'), 10);
+                    c = (!isNaN(idx) && interviewees[idx]) ? interviewees[idx] : interviewees[0];
+                    realIdx = !isNaN(idx) ? idx : 0;
+                    history.replaceState(null, '', 'interviewee_detail.html?index=' + realIdx);
+                }
 
                 document.title = c.name + ' - Aesthetic Legacy';
 

@@ -2154,6 +2154,7 @@
 
                 <div class="form-actions">
                     <button class="btn btn-draft" id="btn-interviewee-draft" onclick="confirmInterviewee('draft')">Save as Draft</button>
+                    <button class="btn btn-preview-toggle" onclick="previewInterviewee()">Preview</button>
                     <button class="btn btn-add-confirm" id="btn-interviewee-submit" onclick="confirmInterviewee('published')">Publish</button>
                     <button class="btn btn-add-cancel" onclick="closeIntervieweeForm()">Cancel</button>
                     <span class="form-err" id="form-err">Please fill in Name, Role, and Card Image URL.</span>
@@ -4960,6 +4961,52 @@
         for (var gi = 1; gi <= 8; gi++) {
             iwSetValue('cf-gallery-' + gi, '');
         }
+    }
+
+    function previewInterviewee() {
+        var socialPlatforms = ['facebook','youtube','instagram','linkedin','twitter','tiktok'];
+        var socialLinks = {};
+        socialPlatforms.forEach(function(p) {
+            socialLinks[p] = {
+                enabled: document.getElementById('cf-social-' + p + '-enabled').checked,
+                url: document.getElementById('cf-social-' + p + '-url').value.trim()
+            };
+        });
+        var galleryImages = [];
+        for (var gi = 1; gi <= 8; gi++) {
+            var gEl = document.getElementById('cf-gallery-' + gi);
+            galleryImages.push(gEl ? gEl.value.trim() : '');
+        }
+        var newsItems = [];
+        document.querySelectorAll('#cf-news-items .cf-news-item').forEach(function(row) {
+            var idOrUrl = row.querySelector('.cf-news-id').value.trim();
+            if (!idOrUrl) return;
+            var isExternal = idOrUrl.startsWith('http://') || idOrUrl.startsWith('https://');
+            newsItems.push(isExternal
+                ? { source: 'url', url: idOrUrl, img: row.querySelector('.cf-news-img').value.trim(), title: row.querySelector('.cf-news-title').value.trim(), date: row.querySelector('.cf-news-date').value.trim(), link: row.querySelector('.cf-news-link').value.trim() || idOrUrl }
+                : { source: 'article', id: idOrUrl });
+        });
+        var img = document.getElementById('cf-img').value.trim();
+        var draft = {
+            name:          document.getElementById('cf-name').value.trim() || 'Preview',
+            role:          document.getElementById('cf-role').value.trim(),
+            type:          document.getElementById('cf-type').value,
+            img:           img,
+            avatar:        document.getElementById('cf-avatar').value.trim() || img,
+            bg:            document.getElementById('cf-bg').value.trim() || img,
+            stats: [
+                document.getElementById('cf-stat1').value.trim() || 'Stat 1',
+                document.getElementById('cf-stat2').value.trim() || 'Stat 2',
+                document.getElementById('cf-stat3').value.trim() || 'Stat 3',
+                document.getElementById('cf-stat4').value.trim() || 'Stat 4'
+            ],
+            bio:           document.getElementById('cf-bio').value.trim(),
+            socialLinks:   socialLinks,
+            newsItems:     newsItems,
+            galleryImages: galleryImages
+        };
+        localStorage.setItem('aestheticLegacyPreviewInterviewee', JSON.stringify(draft));
+        window.open('interviewee_detail_tmp.html?preview=1', '_blank');
     }
 
     function confirmInterviewee(statusArg) {
