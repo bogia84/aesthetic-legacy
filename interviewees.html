@@ -611,7 +611,7 @@
                 });
 
                 const gallerySwiper = new Swiper('.swiper-gallery', {
-                    loop: true, slidesPerView: 'auto', spaceBetween: 25, centeredSlides: true, grabCursor: true
+                    slidesPerView: 'auto', spaceBetween: 25, centeredSlides: true, grabCursor: true, initialSlide: 0
                 });
 
                 const profileLink = document.getElementById('gallery-profile-link');
@@ -621,7 +621,7 @@
                     var avatarEl = e.target.closest('.avatar-container');
                     if (avatarEl) {
                         var idx = parseInt(avatarEl.dataset.index, 10);
-                        gallerySwiper.slideToLoop(idx, 300);
+                        gallerySwiper.slideTo(idx, 300);
                     }
                 });
 
