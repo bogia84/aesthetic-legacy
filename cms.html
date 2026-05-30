@@ -1693,6 +1693,10 @@
                         <input type="text" id="cf-name" placeholder="e.g. Alex Johnson">
                     </div>
                     <div class="form-group">
+                        <label for="cf-slug">Custom URL Slug <span style="font-weight:400;text-transform:none;font-size:0.78rem;color:#888;">(optional, e.g. <code>alex-johnson</code>)</span></label>
+                        <input type="text" id="cf-slug" placeholder="e.g. alex-johnson" oninput="this.value=slugify(this.value)">
+                    </div>
+                    <div class="form-group">
                         <label for="cf-role">Role</label>
                         <input type="text" id="cf-role" placeholder="e.g. Personal Trainer">
                     </div>
@@ -2227,6 +2231,10 @@
                     <input type="text" id="ed-date" placeholder="e.g. May 10, 2026">
                 </div>
                 <div class="form-group">
+                    <label for="ed-slug">Custom URL Slug <span style="font-weight:400;text-transform:none;font-size:0.78rem;color:#888;">(optional, e.g. <code>my-article</code>)</span></label>
+                    <input type="text" id="ed-slug" placeholder="e.g. my-article-slug" oninput="this.value=slugify(this.value)">
+                </div>
+                <div class="form-group">
                     <label>Hero Image</label>
                     <div class="img-widget" id="iw-hero">
                         <div class="img-widget-dropzone" id="iw-hero-zone">
@@ -2655,6 +2663,9 @@
     }
     function generateArticleId() {
         return 'art-' + Date.now() + '-' + Math.floor(Math.random() * 10000);
+    }
+    function slugify(s) {
+        return String(s || '').toLowerCase().replace(/[^a-z0-9_-]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 100);
     }
     function getArticleById(id) {
         return _articles.find(function(a) { return a.id === id; }) || null;
@@ -3507,6 +3518,7 @@
         document.getElementById('ed-title').value = '';
         document.getElementById('ed-title-en').value = '';
         document.getElementById('ed-date').value = new Date().toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
+        document.getElementById('ed-slug').value = '';
         document.getElementById('ed-hero').value = '';
         iwSetValue('hero', '');
         var heroInp = document.getElementById('iw-hero-url-input');
@@ -3545,6 +3557,7 @@
         document.getElementById('ed-title').value = art.title || '';
         document.getElementById('ed-title-en').value = art.titleEn || '';
         document.getElementById('ed-date').value = art.date || '';
+        document.getElementById('ed-slug').value = art.slug || '';
         document.getElementById('ed-hero').value = art.heroImage || '';
         iwSetValue('hero', art.heroImage || '');
         var heroInp = document.getElementById('iw-hero-url-input');
@@ -3583,9 +3596,19 @@
         var intervieweeIdx = (intervieweeVal !== '' && !isNaN(parseInt(intervieweeVal,10))) ? parseInt(intervieweeVal,10) : null;
         var existingArt = editorArticleId ? getArticleById(editorArticleId) : null;
         var artStatus = statusParam || (existingArt && existingArt.status) || 'draft';
+        var newSlug = slugify(document.getElementById('ed-slug').value.trim());
+        // Duplicate slug check
+        if (newSlug) {
+            var _slugConflict = getArticles().find(function(a) { return a.slug === newSlug && a.id !== (editorArticleId || ''); });
+            if (_slugConflict) {
+                showStatus('⚠ Slug "' + newSlug + '" is already used by another article.', 'error');
+                return;
+            }
+        }
         var art = {
             id:           editorArticleId || generateArticleId(),
             title:        title,
+            slug:         newSlug || undefined,
             titleEn:      document.getElementById('ed-title-en').value.trim(),
             date:         document.getElementById('ed-date').value.trim(),
             heroImage:    document.getElementById('ed-hero').value.trim(),
@@ -4821,6 +4844,7 @@
         document.getElementById('cf-name').value   = c.name   || '';
         document.getElementById('cf-role').value   = c.role   || '';
         document.getElementById('cf-type').value   = c.type   || 'men';
+        document.getElementById('cf-slug').value   = c.slug   || '';
         document.getElementById('cf-img').value    = c.img    || '';
         document.getElementById('cf-avatar').value = c.avatar || '';
         document.getElementById('cf-bg').value     = c.bg     || '';
@@ -4926,7 +4950,7 @@
         var _draftBtnReset = document.getElementById('btn-interviewee-draft');
         if (_draftBtnReset) _draftBtnReset.textContent = 'Save as Draft';
         document.getElementById('form-err').classList.remove('show');
-        ['cf-name','cf-role','cf-img','cf-avatar','cf-bg','cf-stat1','cf-stat2','cf-stat3','cf-stat4','cf-bio'].forEach(function(id) {
+        ['cf-name','cf-role','cf-slug','cf-img','cf-avatar','cf-bg','cf-stat1','cf-stat2','cf-stat3','cf-stat4','cf-bio'].forEach(function(id) {
             document.getElementById(id).value = '';
         });
         refreshIntervieweePreview('cf-img',    'cf-img-preview');
@@ -5013,6 +5037,7 @@
         var name   = document.getElementById('cf-name').value.trim();
         var role   = document.getElementById('cf-role').value.trim();
         var type   = document.getElementById('cf-type').value;
+        var cfSlug = slugify(document.getElementById('cf-slug').value.trim());
         var img    = document.getElementById('cf-img').value.trim();
         var avatar = document.getElementById('cf-avatar').value.trim();
         var bg     = document.getElementById('cf-bg').value.trim();
@@ -5023,6 +5048,11 @@
         var bio    = document.getElementById('cf-bio').value.trim();
         if (!name || !role || !img) { document.getElementById('form-err').classList.add('show'); return; }
         document.getElementById('form-err').classList.remove('show');
+        // Duplicate slug check
+        if (cfSlug) {
+            var _ieeSlugConflict = interviewees.find(function(iee, i) { return iee.slug === cfSlug && i !== editIntervieweeIdx; });
+            if (_ieeSlugConflict) { showStatus('⚠ Slug "' + cfSlug + '" is already used by another interviewee.', 'error'); return; }
+        }
 
         // Collect social links
         var socialPlatforms = ['facebook','youtube','instagram','linkedin','twitter','tiktok'];
@@ -5072,7 +5102,7 @@
         Promise.all([safeImg(img), safeImg(avatar || img), safeImg(bg || img)].concat(galPromises))
         .then(function(urls) {
             var galUrls = urls.slice(3);
-            var data = { id: (editIntervieweeIdx !== null && interviewees[editIntervieweeIdx].id) || ('iee-' + Date.now() + '-' + Math.floor(Math.random()*10000)), status: statusArg || 'draft', name: name, role: role, type: type, img: urls[0], avatar: urls[1], bg: urls[2], stats: [stat1 || 'Stat 1', stat2 || 'Stat 2', stat3 || 'Stat 3', stat4 || 'Stat 4'], bio: bio, socialLinks: socialLinks, newsItems: newsItems, galleryImages: galUrls };
+            var data = { id: (editIntervieweeIdx !== null && interviewees[editIntervieweeIdx].id) || ('iee-' + Date.now() + '-' + Math.floor(Math.random()*10000)), status: statusArg || 'draft', name: name, role: role, slug: cfSlug || undefined, type: type, img: urls[0], avatar: urls[1], bg: urls[2], stats: [stat1 || 'Stat 1', stat2 || 'Stat 2', stat3 || 'Stat 3', stat4 || 'Stat 4'], bio: bio, socialLinks: socialLinks, newsItems: newsItems, galleryImages: galUrls };
             if (editIntervieweeIdx !== null) {
                 var oldType = interviewees[editIntervieweeIdx].type;
                 interviewees[editIntervieweeIdx] = data;

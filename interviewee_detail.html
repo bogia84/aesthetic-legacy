@@ -820,10 +820,17 @@
                 var idParam = params.get('id');
                 var idx = parseInt(params.get('index'), 10);
                 var c, realIdx;
+                // Detect custom slug: first query key when not id/index/preview
+                var _slugKey = (!idParam && isNaN(idx) && params.get('preview') !== '1') ? (params.keys().next().value || null) : null;
+                if (_slugKey === 'index' || _slugKey === 'id' || _slugKey === 'preview') _slugKey = null;
                 if (idParam) {
                     var _found = interviewees.reduce(function(acc, iee, i) { return acc || (iee.id === idParam ? { iee: iee, i: i } : null); }, null);
                     c = _found ? _found.iee : interviewees[0];
                     realIdx = _found ? _found.i : 0;
+                } else if (_slugKey) {
+                    var _foundBySlug = interviewees.reduce(function(acc, iee, i) { return acc || (iee.slug && iee.slug === _slugKey ? {iee:iee,i:i} : null); }, null);
+                    c = _foundBySlug ? _foundBySlug.iee : interviewees[0];
+                    realIdx = _foundBySlug ? _foundBySlug.i : 0;
                 } else {
                     c = (!isNaN(idx) && interviewees[idx]) ? interviewees[idx] : interviewees[0];
                     realIdx = !isNaN(idx) ? idx : 0;
@@ -939,7 +946,7 @@
                                     img: art.heroImage || '',
                                     title: art.title || '',
                                     date: art.date || '',
-                                    link: 'blog_article.html?index=' + _artI
+                                    link: articleUrl(art)
                                 });
                             }
                         } else if (item.source === 'url' && item.url) {
@@ -976,9 +983,22 @@
             }
 
             // --- Section 3: Populate Articles from localStorage then init Swiper ---
+            // ---- article URL helper ----
+            function articleUrl(art) {
+                return art.slug ? 'blog_article.html?' + art.slug : 'blog_article.html?index=' + allArticles.indexOf(art);
+            }
+
             (function populateArticleCarousel() {
                 var params = new URLSearchParams(window.location.search);
                 var idx = parseInt(params.get('index'), 10);
+                // Resolve slug if no valid index
+                if (isNaN(idx) || !interviewees[idx]) {
+                    var _sk = params.keys().next().value || null;
+                    if (_sk && _sk !== 'index' && _sk !== 'id' && _sk !== 'preview') {
+                        var _fi = interviewees.reduce(function(acc, iee, i) { return acc !== null ? acc : (iee.slug && iee.slug === _sk ? i : null); }, null);
+                        if (_fi !== null) idx = _fi;
+                    }
+                }
                 var articlesSection = document.querySelector('.interviewee-articles-section');
                 var swiperWrapper = document.querySelector('.article-swiper .swiper-wrapper');
                 if (!swiperWrapper || !articlesSection) return;
@@ -1000,7 +1020,7 @@
                     slide.className = 'swiper-slide';
 
                     var link = document.createElement('a');
-                    link.href = 'blog_article.html?index=' + allArticles.indexOf(art);
+                    link.href = articleUrl(art);
                     link.style.cssText = 'text-decoration:none;display:block;height:100%;';
 
                     var card = document.createElement('div');

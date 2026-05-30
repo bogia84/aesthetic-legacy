@@ -1132,6 +1132,9 @@
         var articleId = params.get('id');
         var articleIndexParam = params.get('index');
         var isPreview = params.get('preview') === '1';
+        // Custom slug: treat the first query key as a slug when no id/index/preview param
+        var articleSlugParam = (!articleId && articleIndexParam === null && !isPreview) ? (params.keys().next().value || null) : null;
+        if (articleSlugParam === 'id' || articleSlugParam === 'index' || articleSlugParam === 'preview') articleSlugParam = null;
 
         // Preview draft is ephemeral — kept in localStorage, not GitHub
         var previewDraft = null;
@@ -1142,7 +1145,7 @@
             } catch(e) {}
             if (!previewDraft) { showMain(); return; }
         } else {
-            if (!articleId && articleIndexParam === null) { showMain(); return; }
+            if (!articleId && articleIndexParam === null && !articleSlugParam) { showMain(); return; }
         }
 
         // Fetch all persistent data from GitHub
@@ -1172,6 +1175,8 @@
             if (articleIndexParam !== null) {
                 var _artIdx = parseInt(articleIndexParam, 10);
                 article = articles[_artIdx] || null;
+            } else if (articleSlugParam) {
+                article = articles.find(function(a) { return a.slug && a.slug === articleSlugParam; }) || null;
             } else {
                 article = articles.find(function(a) { return a.id === articleId; });
             }
@@ -1192,7 +1197,7 @@
             }
             var _finalArtIdx = articleIndexParam !== null ? parseInt(articleIndexParam, 10) : articles.indexOf(article);
             if (_finalArtIdx >= 0) {
-                var _replaceUrl = 'blog_article.html?index=' + _finalArtIdx;
+                var _replaceUrl = article.slug ? 'blog_article.html?' + article.slug : 'blog_article.html?index=' + _finalArtIdx;
                 if (article.status === 'draft') _replaceUrl += '&preview=' + article.id;
                 history.replaceState(null, '', _replaceUrl);
             }
@@ -1212,6 +1217,14 @@
             if (heroBg) heroBg.src = article.heroImage;
         }
 
+        // ---- URL helpers ----
+        function articleUrl(art) {
+            return art.slug ? 'blog_article.html?' + art.slug : 'blog_article.html?index=' + articles.indexOf(art);
+        }
+        function intervieweeUrl(iee, idx) {
+            return (iee && iee.slug) ? 'interviewee_detail.html?' + iee.slug : 'interviewee_detail.html?index=' + idx;
+        }
+
         // ---- SIDEBAR: interviewee avatar ----
         if (interviewee) {
             var avatarImg = document.querySelector('.sidebar-avatar img');
@@ -1219,7 +1232,7 @@
             var avatarH3 = document.querySelector('.sidebar-avatar-overlay h3');
             if (avatarH3) avatarH3.textContent = interviewee.name || '';
             var intervieweeLink = document.getElementById('sidebar-interviewee-link');
-            if (intervieweeLink) intervieweeLink.href = 'interviewee_detail.html?index=' + article.intervieweeIdx;
+            if (intervieweeLink) intervieweeLink.href = intervieweeUrl(interviewee, article.intervieweeIdx);
         }
 
         // ---- SIDEBAR: latest articles from same interviewee ----
@@ -1236,7 +1249,7 @@
                 if (siblingArticles.length > 0) {
                     siblingArticles.forEach(function(sa) {
                         var link = document.createElement('a');
-                        link.href = 'blog_article.html?index=' + articles.indexOf(sa);
+                        link.href = articleUrl(sa);
                         link.style.cssText = 'text-decoration:none;display:block;';
                         var card = document.createElement('div');
                         card.className = 'sidebar-card';
@@ -1279,7 +1292,7 @@
                     grid.innerHTML = '';
                     popularArticles.forEach(function(pa) {
                         var a = document.createElement('a');
-                        a.href = 'blog_article.html?index=' + articles.indexOf(pa);
+                        a.href = articleUrl(pa);
                         a.style.cssText = 'text-decoration:none;display:block;';
                         var card = document.createElement('div');
                         card.className = 'popular-card';

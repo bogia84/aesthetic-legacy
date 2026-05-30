@@ -638,7 +638,7 @@
                     document.getElementById('stat-2').textContent = data.stats[1];
                     document.getElementById('stat-3').textContent = data.stats[2];
                     document.getElementById('stat-4').textContent = data.stats[3];
-                    if (profileLink) profileLink.href = 'interviewee_detail.html?index=0';
+                    if (profileLink) profileLink.href = data.slug ? 'interviewee_detail.html?' + data.slug : 'interviewee_detail.html?index=0';
                     setTimeout(function() {
                         bgImage.style.opacity = 1;
                         infoCard.style.opacity = 1;
@@ -665,7 +665,7 @@
                         document.getElementById('stat-2').textContent = data.stats[1];
                         document.getElementById('stat-3').textContent = data.stats[2];
                         document.getElementById('stat-4').textContent = data.stats[3];
-                        if (profileLink) profileLink.href = 'interviewee_detail.html?index=' + realIndex;
+                        if (profileLink) profileLink.href = data.slug ? 'interviewee_detail.html?' + data.slug : 'interviewee_detail.html?index=' + realIndex;
                         bgImage.style.opacity = 1;
                         infoCard.classList.remove('animating');
                     }, 400); 
@@ -674,7 +674,7 @@
 
             // --- Section 3: Filterable Grid Logic ---
             var gridData = intervieweesData.map(function(c) {
-                return { name: c.name, type: c.type, img: c.img, index: allInterviewees.indexOf(c) };
+                return { name: c.name, type: c.type, img: c.img, index: allInterviewees.indexOf(c), slug: c.slug || '' };
             });
 
             const gridContainer = document.getElementById('banner-grid-container');
@@ -694,7 +694,7 @@
                 itemsToShow.forEach((item, index) => {
                     const card = document.createElement('a');
                     card.className = 'banner-card';
-                    card.href = 'interviewee_detail.html?index=' + item.index;
+                    card.href = item.slug ? 'interviewee_detail.html?' + item.slug : 'interviewee_detail.html?index=' + item.index;
                     card.style.animationDelay = `${index * 0.05}s`; 
                     card.innerHTML = `
                         <img src="${item.img}" alt="${item.name}">

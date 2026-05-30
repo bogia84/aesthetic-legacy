@@ -476,7 +476,7 @@
             var slide = document.createElement('div');
             slide.className = 'swiper-slide';
             slide.style.cursor = 'pointer';
-            slide.onclick = function() { location.href = 'blog_article.html?index=' + idx; };
+            slide.onclick = function() { location.href = art.slug ? 'blog_article.html?' + art.slug : 'blog_article.html?index=' + idx; };
             slide.innerHTML = '<img src="' + escapeHtml(img) + '" alt="' + escapeHtml(title) + '">'
                 + '<div class="slide-content"><div class="text-bg"><p>' + escapeHtml(title) + '</p><span>' + escapeHtml(date) + '</span></div></div>';
             return slide;
