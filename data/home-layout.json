@@ -16,5 +16,6 @@
   "menTextScale": 1,
   "menTextOpacity": 0.5,
   "fbVisible": true,
-  "igVisible": false
+  "xVisible": true,
+  "igVisible": true
 }
