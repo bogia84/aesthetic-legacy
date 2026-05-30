@@ -4334,17 +4334,16 @@
         var removeBtn = '<button type="button" class="video-embed-remove" onclick="this.closest(\'.video-embed-wrapper\').remove()" title="Remove video">&#x2715;</button>';
         var iframeAllow = 'accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture;web-share';
         if (portrait) {
-            // Fixed-width outer div so padding-bottom % is relative to 325px, not the full editor width
+            // Portrait social embeds render best with explicit height (ratio wrappers can crop content)
             return '<div contenteditable="false" class="video-embed-wrapper" style="display:inline-block;width:325px;max-width:100%;position:relative;margin:12px 0;vertical-align:top">' +
                 removeBtn +
-                '<div style="position:relative;padding-bottom:177.78%;height:0;overflow:hidden">' +
                 '<iframe src="' + src + '" frameborder="0" allow="' + iframeAllow + '" allowfullscreen ' +
-                'scrolling="no" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;overflow:hidden"></iframe></div></div>';
+                'scrolling="no" style="display:block;width:100%;height:760px;border:0"></iframe></div>';
         }
         return '<div contenteditable="false" class="video-embed-wrapper" style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;margin:12px 0">' +
             removeBtn +
             '<iframe src="' + src + '" frameborder="0" allow="' + iframeAllow + '" allowfullscreen ' +
-            'scrolling="no" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;overflow:hidden"></iframe></div>';
+            'scrolling="no" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0"></iframe></div>';
     }
 
     function sanitizeEditorHtmlForPublish(rawHtml) {
@@ -4352,14 +4351,37 @@
         tmp.innerHTML = rawHtml || '';
         // Remove CMS-only close buttons from published content
         tmp.querySelectorAll('.video-embed-remove').forEach(function(btn) { btn.remove(); });
+        tmp.querySelectorAll('.video-embed-wrapper button').forEach(function(btn) { btn.remove(); });
+        tmp.querySelectorAll('button').forEach(function(btn) {
+            var txt = (btn.textContent || '').trim();
+            if (txt !== '✕' && txt !== '×' && txt !== 'x' && txt !== 'X') return;
+            var p = btn.parentElement;
+            if (p && p.querySelector('iframe,video,embed,object')) { btn.remove(); return; }
+            var n = btn.nextElementSibling;
+            if (n && /^(iframe|video|embed|object)$/i.test(n.tagName || '')) { btn.remove(); }
+        });
         // Normalize iframe attributes to prevent embedded social widgets from showing scrollbars
         tmp.querySelectorAll('iframe').forEach(function(ifr) {
+            var src = (ifr.getAttribute('src') || '').toLowerCase();
+            var isPortraitSocial = src.indexOf('tiktok.com/embed') >= 0 || src.indexOf('instagram.com') >= 0;
             ifr.setAttribute('frameborder', '0');
             ifr.setAttribute('scrolling', 'no');
             ifr.setAttribute('allowfullscreen', '');
             ifr.style.border = '0';
-            ifr.style.overflow = 'hidden';
             ifr.style.maxWidth = '100%';
+            if (isPortraitSocial) {
+                var wrapper = ifr.closest('.video-embed-wrapper');
+                if (wrapper) {
+                    wrapper.style.width = '325px';
+                    wrapper.style.maxWidth = '100%';
+                    wrapper.style.overflow = 'visible';
+                    wrapper.style.height = 'auto';
+                }
+                ifr.style.position = 'static';
+                ifr.style.width = '100%';
+                ifr.style.height = '760px';
+                ifr.style.display = 'block';
+            }
         });
         return tmp.innerHTML;
     }

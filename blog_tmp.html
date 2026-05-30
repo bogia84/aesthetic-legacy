@@ -145,9 +145,6 @@
             max-width: 100%;
             border: 0;
         }
-        .normal-content-body .video-embed-wrapper {
-            overflow: hidden;
-        }
         .normal-content-body .video-embed-remove {
             display: none !important;
         }
@@ -1350,14 +1347,51 @@
             tmp.innerHTML = rawHtml || '';
             // Remove editor-only close buttons that should not appear on live pages
             tmp.querySelectorAll('.video-embed-remove').forEach(function(btn) { btn.remove(); });
+            tmp.querySelectorAll('.video-embed-wrapper button').forEach(function(btn) { btn.remove(); });
+            tmp.querySelectorAll('button[title*="Remove"],button[title*="remove"]').forEach(function(btn) {
+                var oc = (btn.getAttribute('onclick') || '');
+                if (oc.indexOf('video-embed-wrapper') >= 0) btn.remove();
+            });
+            // Legacy content may have plain <button>✕</button> next to iframes without classes.
+            tmp.querySelectorAll('button').forEach(function(btn) {
+                var txt = (btn.textContent || '').trim();
+                if (txt !== '✕' && txt !== '×' && txt !== 'x' && txt !== 'X') return;
+                var p = btn.parentElement;
+                if (p && p.querySelector('iframe,video,embed,object')) { btn.remove(); return; }
+                var n = btn.nextElementSibling;
+                if (n && /^(iframe|video|embed|object)$/i.test(n.tagName || '')) { btn.remove(); }
+            });
             // Normalize embeds so social iframe widgets don't show scrollbars/overflow
             tmp.querySelectorAll('iframe').forEach(function(ifr) {
+                var src = (ifr.getAttribute('src') || '').toLowerCase();
+                var isPortraitSocial = src.indexOf('tiktok.com/embed') >= 0 || src.indexOf('instagram.com') >= 0;
                 ifr.setAttribute('frameborder', '0');
                 ifr.setAttribute('scrolling', 'no');
                 ifr.setAttribute('allowfullscreen', '');
                 ifr.style.border = '0';
                 ifr.style.maxWidth = '100%';
-                ifr.style.overflow = 'hidden';
+                // Portrait social embeds need explicit height instead of ratio-cropping wrappers.
+                if (isPortraitSocial) {
+                    var wrapper = ifr.closest('.video-embed-wrapper');
+                    if (wrapper) {
+                        wrapper.style.width = '325px';
+                        wrapper.style.maxWidth = '100%';
+                        wrapper.style.overflow = 'visible';
+                        wrapper.style.height = 'auto';
+                        var ratioInner = wrapper.querySelector('div[style*="padding-bottom"]');
+                        if (ratioInner) {
+                            ratioInner.style.position = 'static';
+                            ratioInner.style.paddingBottom = '0';
+                            ratioInner.style.height = 'auto';
+                            ratioInner.style.overflow = 'visible';
+                        }
+                    }
+                    ifr.style.position = 'static';
+                    ifr.style.width = '100%';
+                    ifr.style.height = '760px';
+                    ifr.style.overflow = 'hidden';
+                    ifr.style.display = 'block';
+                }
             });
             return tmp.innerHTML;
         }

@@ -1,9 +1,1708 @@
-<!DOCTYPE html>
-<html>
+﻿<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Loading…</title>
-    <script>location.replace('blog_tmp.html' + location.search);</script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Article - Aesthetic Legacy</title>
+    <link id="site-favicon" rel="icon" href="">
+    <!-- Include Manrope Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* --- GLOBAL VARIABLES & RESET --- */
+        :root {
+            --primary-red: #EC262D; 
+            --light-grey: #f4f4f4;
+            --text-dark: #111;
+            --bg-dark: #282828;
+            --text-light: #fff;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        main { visibility: hidden; }
+        
+        body { 
+            font-family: 'Manrope', sans-serif; 
+            color: var(--text-dark); 
+            overflow-x: hidden; 
+            background: #fff; 
+            position: relative;
+        }
+
+        /* --- HEADER --- */
+        header {
+            position: absolute; 
+            top: 40px;
+            left: 10%;
+            width: 80%; 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000; 
+            background: #fff; 
+            padding: 15px 30px; 
+            border-radius: 4px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .logo { font-weight: 900; font-size: 1.2rem; display: flex; align-items: center; gap: 10px; text-transform: uppercase;}
+        
+        nav { display: flex; font-size: 0.9rem; font-weight: 600; text-transform: uppercase; }
+        nav a { text-decoration: none; color: var(--text-dark); margin-left: 20px; transition: color 0.3s ease;}
+        nav a:hover { color: var(--primary-red); }
+        nav a.active { color: var(--primary-red); } 
+        
+        .hamburger { display: none; cursor: pointer; color: var(--text-dark); padding: 5px;}
+
+        /* --- SECTION 1: BLOG HERO --- */
+        .blog-hero {
+            position: relative;
+            width: 100%;
+            height: 100vh; 
+            display: flex;
+            justify-content: center;
+            align-items: flex-end; 
+            padding-bottom: 40px;
+            overflow: hidden;
+            background-color: #e0e0e0;
+        }
+
+        .blog-hero-bg {
+            position: absolute;
+            top: 0; 
+            left: 0;
+            width: 100%; 
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            z-index: 1;
+        }
+
+        .blog-hero-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 30%;
+            background: linear-gradient(to top, rgba(0,0,0,0.3) 0%, transparent 100%);
+            z-index: 2;
+        }
+
+        .scroll-indicator {
+            position: relative;
+            z-index: 3;
+            color: #fff;
+            animation: bounceArrow 2s infinite ease-in-out;
+            opacity: 0.9;
+        }
+        
+        .scroll-indicator svg { width: 30px; height: 50px; }
+
+        @keyframes bounceArrow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(15px); }
+        }
+
+        /* --- SECTION 2: BLOG BODY CONTENT --- */
+        .blog-body-section {
+            padding: 80px 5%;
+            display: flex;
+            justify-content: center;
+            background: #ffffff;
+        }
+
+        .blog-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 40px;
+            width: 100%;
+            max-width: 1072px; /* 734 + 298 + 40 gap */
+            align-items: flex-start;
+        }
+
+        /* Left Side: Main Content (734px) */
+        .blog-main-content {
+            flex: 0 0 734px; 
+            max-width: 734px;
+            min-width: 0;
+        }
+
+        /* Right Side: Sidebar (298px) */
+        .blog-sidebar {
+            flex: 0 0 298px; 
+            max-width: 298px;
+            min-width: 0;
+        }
+
+        /* Keep CMS-normal-mode embeds/media from overflowing into sidebar */
+        .normal-content-body,
+        .normal-content-body * {
+            max-width: 100%;
+        }
+        .normal-content-body iframe,
+        .normal-content-body video,
+        .normal-content-body img,
+        .normal-content-body embed,
+        .normal-content-body object {
+            max-width: 100%;
+            border: 0;
+        }
+        .normal-content-body .video-embed-remove {
+            display: none !important;
+        }
+        .video-embed-remove {
+            display: none !important;
+        }
+        .video-embed-wrapper > button,
+        .video-embed-wrapper button[title*="Remove"],
+        .video-embed-wrapper button[title*="remove"] {
+            display: none !important;
+            visibility: hidden !important;
+            pointer-events: none !important;
+        }
+
+        /* --- Blog Detail Blocks --- */
+        
+        /* First Block: Title Header */
+        .article-header-block {
+            background-color: #F8F9F9;
+            padding: 40px 35px;
+            border-radius: 4px;
+            margin-bottom: 20px; 
+        }
+
+        .article-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .article-date {
+            font-size: 1.05rem;
+            color: #111;
+            font-weight: 400;
+        }
+
+        .lang-switcher {
+            display: flex;
+            border: 1px solid #D1D1D1;
+            border-radius: 4px;
+            overflow: hidden;
+            background: #fff;
+        }
+
+        .lang-switcher button {
+            padding: 8px 24px;
+            border: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: 'Manrope', sans-serif;
+            transition: all 0.2s ease;
+        }
+
+        .btn-vn,
+        .btn-eng {
+            background: #f4f4f4;
+            color: #888;
+        }
+
+        .btn-vn.active,
+        .btn-eng.active {
+            background: #282828;
+            color: #fff;
+        }
+
+        .btn-vn {
+            border-right: 1px solid #D1D1D1 !important;
+        }
+
+        .lang-disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+        }
+
+        .article-header-block h1 {
+            font-size: clamp(32px, 4vw, 48px);
+            font-weight: 800;
+            line-height: 1.15;
+            color: #111;
+            letter-spacing: -0.02em;
+        }
+
+        /* Second Block: Quick Stats */
+        .quick-stats-block {
+            border: 1px solid #E8E8E8; 
+            border-radius: 4px;
+            padding: 40px 35px;
+            margin-bottom: 20px; 
+            background-color: #fff;
+        }
+
+        .quick-stats-title {
+            font-size: 1.4rem;
+            font-weight: 800; 
+            color: #111;
+            margin-bottom: 15px;
+        }
+
+        .stats-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .stats-list li {
+            font-size: 1.1rem;
+            color: #444; 
+            padding: 22px 0;
+            border-bottom: 1px solid #EAEAEA;
+            font-weight: 400;
+        }
+
+        .stats-list li:last-child {
+            padding-bottom: 22px; 
+            border-bottom: none; 
+            border-bottom: 1px solid #EAEAEA; 
+        }
+
+        /* Third & Fifth Block: Standard Image & Paragraph */
+        .article-content-block {
+            margin-bottom: 20px; 
+        }
+
+        .article-inline-image {
+            width: 100%;
+            height: auto;
+            border-radius: 2px;
+            margin-bottom: 25px;
+            display: block;
+        }
+
+        .article-subheading {
+            font-size: 1.45rem;
+            font-weight: 700;
+            color: #222;
+            margin-bottom: 15px;
+            line-height: 1.3;
+            letter-spacing: -0.01em;
+        }
+
+        .article-paragraph {
+            font-size: 1rem;
+            color: #444;
+            line-height: 1.65;
+            margin-bottom: 20px;
+            font-weight: 400;
+        }
+
+        /* Fourth & Sixth Block: Pull Quote */
+        .article-pull-quote {
+            position: relative;
+            border: 1px solid #E8E8E8;
+            border-radius: 4px;
+            padding: 50px 80px; 
+            margin-bottom: 20px; 
+            background-color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .pull-quote-text {
+            font-size: clamp(1.4rem, 2.5vw, 1.8rem);
+            font-weight: 700;
+            color: var(--primary-red);
+            text-align: center;
+            line-height: 1.4;
+            margin: 0;
+            z-index: 2;
+        }
+
+        .quote-mark {
+            position: absolute;
+            width: 40px;
+            height: auto;
+            color: #F0F2F4; 
+            z-index: 1;
+        }
+
+        .quote-mark.top-left {
+            top: 25px;
+            left: 25px;
+        }
+
+        .quote-mark.bottom-right {
+            bottom: 25px;
+            right: 25px;
+        }
+
+        /* Seventh Block: Full Routine */
+        .routine-block {
+            border: 1px solid #E8E8E8;
+            border-radius: 4px;
+            padding: 40px 35px;
+            margin-bottom: 20px; 
+            background-color: #fff;
+        }
+
+        .routine-main-title {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #111;
+            margin-bottom: 10px;
+        }
+
+        .routine-day {
+            padding: 22px 0;
+            border-bottom: 1px solid #EAEAEA;
+        }
+
+        .routine-day:last-child {
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .routine-day h4 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 12px;
+        }
+
+        .routine-list {
+            list-style-type: disc;
+            padding-left: 20px;
+            margin: 0;
+        }
+
+        .routine-list li {
+            font-size: 0.95rem;
+            color: #444;
+            line-height: 1.6;
+            margin-bottom: 4px;
+        }
+
+        /* Eighth Block: Social Media */
+        .social-media-block {
+            border: 1px solid #E8E8E8;
+            border-radius: 4px;
+            padding: 40px 35px;
+            margin-bottom: 20px; 
+            background-color: #fff;
+        }
+
+        .social-media-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #111;
+            margin-bottom: 25px;
+        }
+
+        .social-media-icons {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .social-icon {
+            display: inline-block;
+            width: 46px;
+            height: 46px;
+            transition: transform 0.3s ease;
+            color: inherit;
+        }
+
+        .social-icon:hover {
+            transform: translateY(-3px);
+        }
+
+        .social-icon svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* --- RIGHT PANEL / SIDEBAR WIDGETS --- */
+        
+        .sidebar-avatar {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 4 / 5;
+            overflow: hidden;
+            display: flex;
+            align-items: flex-end;
+            margin-bottom: 40px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .sidebar-avatar:hover { opacity: 0.85; }
+        
+        .sidebar-avatar img {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover;
+            z-index: 1;
+        }
+
+        .sidebar-avatar-overlay {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            background-color: rgba(40, 40, 40, 0.6);
+            padding: 15px;
+            text-align: center;
+        }
+
+        .sidebar-avatar-overlay h3 {
+            color: #fff;
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .sidebar-heading {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #111;
+            margin-bottom: 20px;
+        }
+
+        .sidebar-card {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 4 / 5;
+            overflow: hidden;
+            display: flex;
+            align-items: flex-end;
+            margin-bottom: 24px;
+        }
+
+        .sidebar-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .sidebar-card img {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover;
+            z-index: 1;
+        }
+
+        .sidebar-card-overlay {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            background-color: rgba(40, 40, 40, 0.6);
+            padding: 15px;
+        }
+
+        .sidebar-card-overlay h4 {
+            color: #ffffff;
+            font-size: 0.95rem;
+            font-weight: 500;
+            line-height: 1.4;
+            margin-bottom: 6px;
+        }
+
+        .sidebar-card-overlay span {
+            display: block;
+            color: #bbbbbb;
+            font-size: 0.75rem;
+            font-weight: 400;
+        }
+
+        /* --- SECTION 3: MOST POPULAR --- */
+        .most-popular-section {
+            background-color: #282828;
+            padding: 80px 5%;
+        }
+
+        .most-popular-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .most-popular-heading {
+            color: #ffffff;
+            font-size: 2rem;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .popular-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+        }
+
+        .popular-card {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 4 / 5;
+            overflow: hidden;
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .popular-card img {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover;
+            z-index: 1;
+        }
+
+        .popular-overlay {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            background-color: rgba(40, 40, 40, 0.55);
+            padding: 20px 15px;
+        }
+
+        .popular-overlay h3 {
+            color: #ffffff;
+            font-size: 1rem;
+            font-weight: 500;
+            line-height: 1.4;
+            margin-bottom: 6px;
+        }
+
+        .popular-overlay span {
+            display: block;
+            color: #bbbbbb;
+            font-size: 0.75rem;
+            font-weight: 400;
+        }
+
+        /* --- SECTION 4: FOOTER --- */
+        .block-footer { background: #fff; align-items: center; text-align: center; padding: 60px 10%; border-top: 1px solid #eee;}
+        .footer-logo-container svg { width: 100%; height: auto; max-width: 416px; display: block; margin: 0 auto 30px; }
+        
+        .socials-wrapper { display: flex; align-items: center; justify-content: center; gap: 20px; }
+        .follow-text { font-size: 1.1rem; font-weight: 500; color: #111; }
+        .social-icons { display: flex; gap: 15px; align-items: center; }
+        .social-icons svg { width: 24px; height: 24px; cursor: pointer; color: #111; transition: color 0.3s ease; }
+        .social-icons svg:hover { color: var(--primary-red); }
+
+        /* --- RESPONSIVE MOBILE FIXES --- */
+        @media (max-width: 1100px) {
+            .blog-container { flex-direction: column; align-items: center; }
+            .blog-main-content, .blog-sidebar { flex: auto; width: 100%; max-width: 100%; }
+        }
+
+        @media (max-width: 900px) {
+            .popular-grid { grid-template-columns: repeat(2, 1fr); }
+            .sidebar-card { max-width: 400px; margin: 0 auto 24px auto; }
+            .sidebar-avatar { max-width: 400px; margin: 0 auto 40px auto; }
+            .sidebar-heading { text-align: center; }
+        }
+
+        @media (max-width: 768px) {
+            header { 
+                position: relative; width: 100%; left: 0; flex-direction: row; 
+                justify-content: space-between; top: 0; margin-bottom: 0px; 
+                padding: 15px 5%; border-radius: 0;
+            }
+            .logo span { display: none; } 
+            .hamburger { display: flex; align-items: center; z-index: 101; position: relative;}
+            
+            nav { 
+                position: absolute; top: 60px; right: 5%; width: 90%;
+                background: #ffffff; flex-direction: column; align-items: center;
+                border-radius: 12px; box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+                max-height: 0; opacity: 0; visibility: hidden; overflow: hidden;
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            nav.open { max-height: 300px; opacity: 1; visibility: visible; padding: 20px 0; }
+            nav a { margin: 15px 0; font-size: 1.1rem; opacity: 0; transform: translateY(-10px); transition: all 0.3s ease; }
+            nav.open a { opacity: 1; transform: translateY(0); }
+
+            .scroll-indicator { bottom: 20px; }
+            .blog-body-section { padding: 50px 5%; }
+            .article-header-block { padding: 30px 20px; margin-bottom: 16px; }
+            .article-meta { flex-direction: column; align-items: flex-start; gap: 15px; }
+            
+            .quick-stats-block { padding: 25px 20px; margin-bottom: 16px; }
+            .quick-stats-title { font-size: 1.25rem; }
+            .stats-list li { font-size: 1rem; padding: 15px 0; }
+
+            .article-content-block { margin-bottom: 16px; }
+            .article-subheading { font-size: 1.25rem; }
+            .article-paragraph { font-size: 0.95rem; }
+
+            .article-pull-quote { padding: 40px 30px; margin-bottom: 16px; }
+            .quote-mark { width: 28px; }
+            .quote-mark.top-left { top: 15px; left: 15px; }
+            .quote-mark.bottom-right { bottom: 15px; right: 15px; }
+
+            .routine-block { padding: 25px 20px; margin-bottom: 16px; }
+            .routine-main-title { font-size: 1.25rem; }
+            .routine-day { padding: 18px 0; }
+            .routine-day h4 { font-size: 1.05rem; }
+
+            .social-media-block { padding: 25px 20px; margin-bottom: 16px; }
+            .social-media-title { font-size: 1.35rem; margin-bottom: 20px; }
+            .social-media-icons { gap: 12px; }
+            .social-icon { width: 40px; height: 40px; }
+
+            .most-popular-section { padding: 50px 5%; }
+            .most-popular-heading { font-size: 1.5rem; margin-bottom: 30px; }
+
+            .block-footer { padding: 50px 5%; }
+            .footer-logo-container svg { max-width: 80%; margin-bottom: 25px; }
+        }
+
+        @media (max-width: 500px) {
+            .popular-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+<script src="js/config.js"></script>
+<script src="js/github-storage.js"></script>
+<script src="js/site-guard.js"></script>
 </head>
-<body></body>
+<body>
+
+    <!-- HEADER -->
+    <header>
+        <a href="index.html" style="text-decoration:none;color:inherit;">
+        <div class="logo">
+            <svg width="30" height="28" viewBox="0 0 30 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M13.4007 7.72751H18.9762V0H10.833L13.4007 7.72751Z" fill="#0A0A0A"/>
+                <path d="M5.6 27.9999L0 17.3379H18.9764V27.9999H5.6Z" fill="#0A0A0A"/>
+                <path d="M29.6386 22.3755L18.9766 28V0H29.6386V22.3755Z" fill="url(#paint0_linear_1213_3730)"/>
+                <defs>
+                <linearGradient id="paint0_linear_1213_3730" x1="23.6961" y1="28" x2="23.6961" y2="0" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#EC262D"/><stop offset="1" stop-color="#F57B7F"/>
+                </linearGradient>
+                </defs>
+            </svg>
+            <span>AESTHETIC LEGACY</span>
+        </div>
+        </a>
+        <nav id="main-nav">
+            <a href="index.html">Home</a>
+            <a href="about.html">About us</a>
+            <a href="interviewees.html">Interviewees</a>
+        </nav>
+        <div class="hamburger" id="hamburger-menu">
+            <svg width="30" height="20" viewBox="0 0 30 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0 1H30M0 10H30M0 19H30" stroke="currentColor" stroke-width="2"/>
+            </svg>
+        </div>
+    </header>
+
+    <main>
+        <!-- SECTION 1: BLOG HERO -->
+        <section class="blog-hero">
+            <img src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=1920" alt="Blog Article Hero Cover" class="blog-hero-bg">
+            <div class="blog-hero-overlay"></div>
+            <div class="scroll-indicator">
+                <svg viewBox="0 0 24 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 0V48M12 48L6 42M12 48L18 42" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+        </section>
+
+        <!-- SECTION 2: BLOG BODY CONTENT -->
+        <section class="blog-body-section">
+            <div class="blog-container">
+                
+                <!-- Left Side: Main Content (734px) -->
+                <article class="blog-main-content">
+                    
+                    <!-- Part 1: Header Block -->
+                    <div class="article-header-block">
+                        <div class="article-meta">
+                            <span class="article-date">August 24, 2024</span>
+                            <div class="lang-switcher">
+                                <button class="btn-vn">VN</button>
+                                <button class="btn-eng">ENG</button>
+                            </div>
+                        </div>
+                        <h1>Bulgarian Beauty: Yanita Yancheva Talks With Simplyshredded.com</h1>
+                    </div>
+
+                    <!-- Part 2: Quick Stats Block -->
+                    <div class="quick-stats-block">
+                        <h2 class="quick-stats-title">Quick Stats:</h2>
+                        <ul class="stats-list">
+                            <li>Age: 29</li>
+                            <li>Height: 5'5" – 169 cm</li>
+                            <li>Weight: 110 lbs – 50 kg</li>
+                        </ul>
+                    </div>
+
+                    <!-- Part 3: Article Content Block -->
+                    <div class="article-content-block">
+                        <img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&q=80&w=800" alt="Yanita Yancheva Portrait" class="article-inline-image">
+                        
+                        <h3 class="article-subheading">How did you get started with bodybuilding?</h3>
+                        
+                        <p class="article-paragraph">
+                            Before I got into fitness, I had done various sports including rhythmic gymnastics. About five or six years ago, shortly after participating on the television show, Survivor Bulgaria, I started going to the gym. During my fifty two day stretch on the television show on an island in Panama, I ended up losing eighteen pounds, and I dropped to eighty eight pounds! When I returned home, I decided that fitness and proper nutrition would help me reclaim my body and get me back into shape.
+                        </p>
+                    </div>
+
+                    <!-- Part 4: Pull Quote Block -->
+                    <div class="article-pull-quote">
+                        <!-- Top Left Quote Mark -->
+                        <svg class="quote-mark top-left" viewBox="0 0 40 32" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M0 0h14v16H6c0 4.418 3.582 8 8 8v8c-8.837 0-16-7.163-16-16V0z"/>
+                            <path d="M22 0h14v16h-8c0 4.418 3.582 8 8 8v8c-8.837 0-16-7.163-16-16V0z"/>
+                        </svg>
+                        
+                        <p class="pull-quote-text">In the process of recovering from the show, I got hooked on training, and I just haven't stopped since!</p>
+                        
+                        <!-- Bottom Right Quote Mark (Rotated) -->
+                        <svg class="quote-mark bottom-right" viewBox="0 0 40 32" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="transform: rotate(180deg);">
+                            <path d="M0 0h14v16H6c0 4.418 3.582 8 8 8v8c-8.837 0-16-7.163-16-16V0z"/>
+                            <path d="M22 0h14v16h-8c0 4.418 3.582 8 8 8v8c-8.837 0-16-7.163-16-16V0z"/>
+                        </svg>
+                    </div>
+
+                    <!-- Part 5: Second Content Block -->
+                    <div class="article-content-block">
+                        <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=800" alt="Fitness Training" class="article-inline-image">
+                        
+                        <h3 class="article-subheading">What is your training philosophy?</h3>
+                        
+                        <p class="article-paragraph">
+                            I believe in consistency and listening to your body. Overtraining can be just as detrimental as not training enough. Finding a balance between heavy lifting days, cardiovascular health, and proper recovery time is essential for long-term growth and injury prevention. Nutrition plays an equally massive role; without the right fuel, the engine simply can't perform optimally.
+                        </p>
+                    </div>
+
+                    <!-- Part 6: Second Pull Quote Block -->
+                    <div class="article-pull-quote">
+                        <!-- Top Left Quote Mark -->
+                        <svg class="quote-mark top-left" viewBox="0 0 40 32" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M0 0h14v16H6c0 4.418 3.582 8 8 8v8c-8.837 0-16-7.163-16-16V0z"/>
+                            <path d="M22 0h14v16h-8c0 4.418 3.582 8 8 8v8c-8.837 0-16-7.163-16-16V0z"/>
+                        </svg>
+                        
+                        <p class="pull-quote-text">Fitness is not about being better than someone else. It's about being better than you used to be.</p>
+                        
+                        <!-- Bottom Right Quote Mark (Rotated) -->
+                        <svg class="quote-mark bottom-right" viewBox="0 0 40 32" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="transform: rotate(180deg);">
+                            <path d="M0 0h14v16H6c0 4.418 3.582 8 8 8v8c-8.837 0-16-7.163-16-16V0z"/>
+                            <path d="M22 0h14v16h-8c0 4.418 3.582 8 8 8v8c-8.837 0-16-7.163-16-16V0z"/>
+                        </svg>
+                    </div>
+
+                    <!-- Part 7: Full Routine Block -->
+                    <div class="routine-block">
+                        <h2 class="routine-main-title">Full Routine:</h2>
+                        
+                        <!-- Monday -->
+                        <div class="routine-day">
+                            <h4>Monday: Back/Abs</h4>
+                            <ul class="routine-list">
+                                <li>Pull Ups 3 x 10</li>
+                                <li>Barbell Rows 3 x 10</li>
+                                <li>Wide Grip Lat Pulldowns 3 x 10</li>
+                                <li>One-Arm Dumbbell Rows 3 x 12</li>
+                                <li>Seated Cable Rows 3 x 12</li>
+                                <li>Hyperextensions 4 x 20</li>
+                                <li>Bicycle Crunch 1 x 40</li>
+                                <li>Vertical Leg Crunch 1 x 40</li>
+                                <li>Knee Tucks 1 x 40</li>
+                                <li>Plank Ups 1 x 40</li>
+                                <li>Cable Crunches 1 x 20</li>
+                            </ul>
+                        </div>
+
+                        <!-- Tuesday -->
+                        <div class="routine-day">
+                            <h4>Tuesday: Shoulders/Abs</h4>
+                            <ul class="routine-list">
+                                <li>Upright Rows 3 x 10</li>
+                                <li>Dumbbell Shoulder Press 4 x 12</li>
+                                <li>Side Lateral Raises 3 x 15</li>
+                                <li>Barbell Shoulder Press 3 x 15</li>
+                                <li>Bent-Over Lateral Raises 3 x 18</li>
+                                <li>Bicycle Crunch 1 x 40</li>
+                                <li>Vertical Leg Crunch 1 x 40</li>
+                                <li>Knee Tucks 1 x 40</li>
+                                <li>Plank Ups 1 x 40</li>
+                                <li>Cable Crunches 1 x 20</li>
+                            </ul>
+                        </div>
+
+                        <!-- Wednesday -->
+                        <div class="routine-day">
+                            <h4>Wednesday: Arms/Abs</h4>
+                            <ul class="routine-list">
+                                <li>Dips 3 x 10</li>
+                                <li>Dumbbell Curls 3 x 12</li>
+                                <li>Dumbbell Kickbacks 3 x 12</li>
+                                <li>Hammer Curls 3 x 15</li>
+                                <li>One-Arm Overhead Extensions 3 x 12</li>
+                                <li>Standing Barbell Curls 21s</li>
+                                <li>Bicycle Crunch 1 x 40</li>
+                                <li>Vertical Leg Crunch 1 x 40</li>
+                                <li>Knee Tucks 1 x 40</li>
+                                <li>Plank Ups 1 x 40</li>
+                                <li>Cable Crunches 1 x 20</li>
+                            </ul>
+                        </div>
+
+                        <!-- Thursday -->
+                        <div class="routine-day">
+                            <h4>Thursday: Legs/Abs</h4>
+                            <ul class="routine-list">
+                                <li>Thigh Abductor 4 x 20</li>
+                                <li>Squats 4 x 12</li>
+                                <li>Inner Thigh Abductor 3 x 30 Superset</li>
+                                <li>Outer Thigh Abductor 3 x 30</li>
+                                <li>Lunges 4 x 20</li>
+                                <li>Romanian Deadlifts 4 x 20</li>
+                                <li>Calf Raises 4 x 20</li>
+                                <li>Bicycle Crunch 1 x 40</li>
+                                <li>Vertical Leg Crunch 1 x 40</li>
+                                <li>Knee Tucks 1 x 40</li>
+                                <li>Plank Ups 1 x 40</li>
+                                <li>Cable Crunches 1 x 20</li>
+                            </ul>
+                        </div>
+
+                        <!-- Friday -->
+                        <div class="routine-day">
+                            <h4>Friday: Cardio</h4>
+                            <ul class="routine-list">
+                                <li>HIIT</li>
+                            </ul>
+                        </div>
+
+                        <!-- Saturday -->
+                        <div class="routine-day">
+                            <h4>Saturday: Rest</h4>
+                            <ul class="routine-list">
+                                <li>Recovery</li>
+                            </ul>
+                        </div>
+
+                        <!-- Sunday -->
+                        <div class="routine-day">
+                            <h4>Sunday: Rest</h4>
+                            <ul class="routine-list">
+                                <li>Recovery</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Part 8: Social Media Block -->
+                    <div class="social-media-block">
+                        <h2 class="social-media-title">Social Media:</h2>
+                        <div class="social-media-icons">
+                            <!-- Facebook -->
+                            <a href="#" class="social-icon" aria-label="Facebook">
+                                <svg viewBox="0 0 36 36" fill="currentColor">
+                                    <path d="M18 0C8.06 0 0 8.06 0 18c0 8.95 6.53 16.38 15.19 17.79v-12.58h-4.57v-5.21h4.57V14c0-4.51 2.69-7 6.8-7 1.97 0 4.04.35 4.04.35v4.44h-2.28c-2.24 0-2.94 1.39-2.94 2.81v3.38h5.05l-.81 5.21h-4.24v12.58C29.47 34.38 36 26.95 36 18 36 8.06 27.94 0 18 0z" fill="#1877F2"/>
+                                </svg>
+                            </a>
+                            <!-- Twitter -->
+                            <a href="#" class="social-icon" aria-label="Twitter">
+                                <svg viewBox="0 0 36 36" fill="currentColor">
+                                    <circle cx="18" cy="18" r="18" fill="#1DA1F2"/>
+                                    <path d="M26.8 13.1c-.6.3-1.3.5-2 .5.7-.4 1.3-1.1 1.5-1.9-.7.4-1.4.7-2.2.9-.6-.7-1.5-1.1-2.5-1.1-1.9 0-3.5 1.6-3.5 3.5 0 .3 0 .5.1.8-2.9-.1-5.5-1.5-7.2-3.6-.3.5-.5 1.1-.5 1.7 0 1.2.6 2.3 1.5 2.9-.6 0-1.1-.2-1.6-.4v.1c0 1.7 1.2 3.1 2.8 3.4-.3.1-.6.1-.9.1-.2 0-.4 0-.6-.1.4 1.4 1.7 2.4 3.3 2.4-1.2.9-2.7 1.5-4.3 1.5-.3 0-.6 0-.8 0 1.5 1 3.4 1.5 5.3 1.5 6.4 0 9.9-5.3 9.9-9.9v-.4c.7-.5 1.3-1.1 1.7-1.8z" fill="#FFF"/>
+                                </svg>
+                            </a>
+                            <!-- YouTube -->
+                            <a href="#" class="social-icon" aria-label="YouTube">
+                                <svg viewBox="0 0 36 36" fill="currentColor">
+                                    <circle cx="18" cy="18" r="18" fill="#FF0000"/>
+                                    <path d="M25.8 12.8c-.3-1.1-1.2-2-2.3-2.3C21.4 10 18 10 18 10s-3.4 0-5.5.5c-1.1.3-2 1.2-2.3 2.3-.5 2-.5 6.2-.5 6.2s0 4.2.5 6.2c.3 1.1 1.2 2 2.3 2.3 2.1.5 5.5.5 5.5.5s3.4 0 5.5-.5c1.1-.3 2-1.2 2.3-2.3.5-2 .5-6.2 .5-6.2s0-4.2-.5-6.2zM15 21v-6l6 3-6 3z" fill="#FFF"/>
+                                </svg>
+                            </a>
+                            <!-- Instagram -->
+                            <a href="#" class="social-icon" aria-label="Instagram">
+                                <svg viewBox="0 0 36 36" fill="currentColor">
+                                    <defs>
+                                        <linearGradient id="ig-grad" x1="15%" y1="85%" x2="85%" y2="15%">
+                                            <stop offset="0%" stop-color="#f09433"/>
+                                            <stop offset="20%" stop-color="#e6683c"/>
+                                            <stop offset="40%" stop-color="#dc2743"/>
+                                            <stop offset="60%" stop-color="#cc2366"/>
+                                            <stop offset="80%" stop-color="#bc1888"/>
+                                            <stop offset="100%" stop-color="#8a3ab9"/>
+                                        </linearGradient>
+                                    </defs>
+                                    <circle cx="18" cy="18" r="18" fill="url(#ig-grad)"/>
+                                    <rect x="9.5" y="9.5" width="17" height="17" rx="4.5" fill="none" stroke="#FFF" stroke-width="2"/>
+                                    <circle cx="18" cy="18" r="4" fill="none" stroke="#FFF" stroke-width="2"/>
+                                    <circle cx="23" cy="13" r="1" fill="#FFF"/>
+                                </svg>
+                            </a>
+                            <!-- Website/Globe -->
+                            <a href="#" class="social-icon" aria-label="Website">
+                                <svg viewBox="0 0 36 36" fill="none" stroke="#282828" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="18" cy="18" r="15"/>
+                                    <ellipse cx="18" cy="18" rx="6.5" ry="15"/>
+                                    <line x1="18" y1="3" x2="18" y2="33"/>
+                                    <line x1="3" y1="18" x2="33" y2="18"/>
+                                    <line x1="6.5" y1="10.5" x2="29.5" y2="10.5"/>
+                                    <line x1="6.5" y1="25.5" x2="29.5" y2="25.5"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+
+                </article>
+
+                <!-- Right Side: Sidebar (298px) -->
+                <aside class="blog-sidebar">
+                    
+                    <!-- Avatar Widget -->
+                    <a class="sidebar-avatar" id="sidebar-interviewee-link" href="#" style="text-decoration:none;color:inherit;">
+                        <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80" alt="Savannah Nguyen">
+                        <div class="sidebar-avatar-overlay">
+                            <h3>Savannah Nguyen</h3>
+                        </div>
+                    </a>
+
+                    <!-- Latest Article Widget -->
+                    <div class="sidebar-latest-articles">
+                        <h2 class="sidebar-heading">Latest Article</h2>
+                        
+                        <!-- Sidebar Card 1 -->
+                        <div class="sidebar-card">
+                            <img src="https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&w=400&q=80" alt="Latest Article 1">
+                            <div class="sidebar-card-overlay">
+                                <h4>Lorem ipsum dolor sit amet, consectetur adipiscing elit</h4>
+                                <span>Sep 4, 2021</span>
+                            </div>
+                        </div>
+
+                        <!-- Sidebar Card 2 -->
+                        <div class="sidebar-card">
+                            <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=400&q=80" alt="Latest Article 2">
+                            <div class="sidebar-card-overlay">
+                                <h4>Lorem ipsum dolor sit amet, consectetur adipiscing elit</h4>
+                                <span>Sep 4, 2021</span>
+                            </div>
+                        </div>
+
+                        <!-- Sidebar Card 3 -->
+                        <div class="sidebar-card">
+                            <img src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&w=400&q=80" alt="Latest Article 3">
+                            <div class="sidebar-card-overlay">
+                                <h4>Lorem ipsum dolor sit amet, consectetur adipiscing elit</h4>
+                                <span>Sep 4, 2021</span>
+                            </div>
+                        </div>
+
+                        <!-- Sidebar Card 4 -->
+                        <div class="sidebar-card">
+                            <img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=400&q=80" alt="Latest Article 4">
+                            <div class="sidebar-card-overlay">
+                                <h4>Lorem ipsum dolor sit amet, consectetur adipiscing elit</h4>
+                                <span>Sep 4, 2021</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </aside>
+
+            </div>
+        </section>
+
+        <!-- SECTION 3: MOST POPULAR -->
+        <section class="most-popular-section">
+            <div class="most-popular-container">
+                <h2 class="most-popular-heading">Most popular</h2>
+                <div class="popular-grid">
+                    <!-- Card 1 -->
+                    <div class="popular-card">
+                        <img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=600&q=80" alt="Popular Article 1">
+                        <div class="popular-overlay">
+                            <h3>Lorem ipsum dolor sit amet, consectetur adipiscing elit</h3>
+                            <span>Sep 4, 2021</span>
+                        </div>
+                    </div>
+                    <!-- Card 2 -->
+                    <div class="popular-card">
+                        <img src="https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&w=600&q=80" alt="Popular Article 2">
+                        <div class="popular-overlay">
+                            <h3>Lorem ipsum dolor sit amet, consectetur adipiscing elit</h3>
+                            <span>Sep 4, 2021</span>
+                        </div>
+                    </div>
+                    <!-- Card 3 -->
+                    <div class="popular-card">
+                        <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=600&q=80" alt="Popular Article 3">
+                        <div class="popular-overlay">
+                            <h3>Lorem ipsum dolor sit amet, consectetur adipiscing elit</h3>
+                            <span>Sep 4, 2021</span>
+                        </div>
+                    </div>
+                    <!-- Card 4 -->
+                    <div class="popular-card">
+                        <img src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&w=600&q=80" alt="Popular Article 4">
+                        <div class="popular-overlay">
+                            <h3>Lorem ipsum dolor sit amet, consectetur adipiscing elit</h3>
+                            <span>Sep 4, 2021</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- SECTION 4: FOOTER -->
+    <section class="block-footer">
+        <div class="footer-logo-container">
+            <svg viewBox="0 0 416 98" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g clip-path="url(#clip0_footer)">
+                <path d="M117.808 42.6613L133.95 0.423828H139L155.189 42.6613H146.599L136.499 13.8116L126.398 42.6613H117.808ZM133.997 35.9203L131.448 28.2364H147.826V35.9203H133.997Z" fill="#0A0A0A"/>
+                <path d="M209.326 43.085C207.296 43.085 205.314 42.8965 203.426 42.4722C201.491 42.0479 199.697 41.4823 197.998 40.6809C196.299 39.8795 194.789 38.9367 193.42 37.8525L197.101 31.3C198.753 32.6199 200.594 33.657 202.765 34.4112C204.889 35.1183 207.108 35.4955 209.326 35.4955C211.922 35.4955 213.951 35.0712 215.367 34.1755C216.783 33.2799 217.538 32.0542 217.538 30.4515C217.538 29.2258 217.161 28.283 216.453 27.6231C215.745 26.9631 214.801 26.4917 213.621 26.2089C212.441 25.926 211.167 25.6432 209.798 25.4075C208.146 25.1718 206.494 24.8418 204.795 24.4647C203.096 24.0876 201.538 23.4748 200.122 22.6734C198.706 21.872 197.573 20.6935 196.724 19.1379C195.874 17.6294 195.449 15.5552 195.449 13.0097C195.449 8.86135 196.818 5.65583 199.509 3.39311C202.246 1.13038 206.069 -0.000976562 211.025 -0.000976562C213.291 -0.000976562 215.65 0.376144 218.01 1.13038C220.37 1.88462 222.589 2.96885 224.618 4.38305L221.267 11.1241C219.615 9.99271 217.916 9.09705 216.17 8.48423C214.376 7.87141 212.677 7.58857 211.072 7.58857C208.618 7.58857 206.73 8.01283 205.408 8.81421C204.087 9.61559 203.379 10.747 203.379 12.2083C203.379 13.5754 203.756 14.6124 204.559 15.3195C205.361 16.0266 206.4 16.5452 207.674 16.8752C208.948 17.2051 210.317 17.5351 211.827 17.818C213.479 18.1479 215.084 18.5251 216.689 18.9493C218.294 19.3736 219.757 20.0807 221.125 20.9292C222.447 21.7777 223.533 22.9562 224.335 24.4647C225.137 25.9732 225.515 27.9059 225.515 30.2629C225.515 34.4112 224.099 37.5225 221.314 39.7852C218.482 42.0008 214.518 43.1321 209.42 43.1321L209.326 43.085Z" fill="#0A0A0A"/>
+                <path d="M226.884 8.10765V0.423828H257.894V8.10765H226.884ZM238.401 42.6613V3.91219H246.377V42.7084H238.401V42.6613Z" fill="#0A0A0A"/>
+                <path d="M262.519 42.6613V0.423828H270.496V42.6613H262.519ZM266.248 25.5495V17.8656H285.694L281.634 25.5495H266.201H266.248ZM285.694 42.6613V0.423828H293.67V42.6613H285.694Z" fill="#0A0A0A"/>
+                <path d="M302.968 42.6613V0.423828H310.944V42.6613H302.968ZM305.847 8.10765V0.423828H331.287V8.10765H305.847ZM314.956 25.5495L310.897 17.8656H324.726V25.5495H314.956ZM305.847 42.6613V34.9775H331.287V42.6613H305.847Z" fill="#0A0A0A"/>
+                <path d="M160.429 42.6613V0.423828H168.405V42.6613H160.429ZM163.308 8.10765V0.423828H188.748V8.10765H163.308ZM172.464 25.5495L168.405 17.8656H182.234V25.5495H172.464ZM163.308 42.6613V34.9775H188.748V42.6613H163.308Z" fill="#0A0A0A"/>
+                <path d="M333.931 8.10765V0.423828H364.94V8.10765H333.931ZM345.447 42.6613V3.91219H353.424V42.7084H345.447V42.6613Z" fill="#0A0A0A"/>
+                <path d="M377.258 0.423828V42.6613H368.999V0.423828H377.258Z" fill="#0A0A0A"/>
+                <path d="M400.386 43.085C397.129 43.085 394.391 42.4722 392.126 41.2466C389.86 40.0209 388.114 38.2296 386.887 35.8726C385.707 33.5156 385.093 30.6872 385.093 27.3402V15.7438C385.093 12.3969 385.707 9.56845 386.887 7.21145C388.067 4.85445 389.813 3.06313 392.126 1.83748C394.391 0.611844 397.176 -0.000976562 400.386 -0.000976562C403.076 -0.000976562 405.436 0.564704 407.513 1.69606C409.589 2.82743 411.336 4.47733 412.704 6.64577C414.073 8.81421 415.017 11.4541 415.536 14.5653H407.277C406.946 13.1511 406.474 11.9726 405.813 10.9826C405.153 9.99271 404.398 9.23847 403.454 8.71993C402.51 8.20139 401.518 7.91855 400.338 7.91855C398.12 7.91855 396.374 8.57851 395.147 9.94557C393.919 11.3126 393.306 13.2454 393.306 15.6967V27.2931C393.306 29.7915 393.919 31.6771 395.147 33.0442C396.374 34.4112 398.12 35.0712 400.338 35.0712C402.085 35.0712 403.548 34.5055 404.775 33.327C405.955 32.1957 406.805 30.5458 407.229 28.4245H415.489C414.923 31.4886 413.979 34.1284 412.61 36.2968C411.241 38.4653 409.542 40.1152 407.465 41.2937C405.389 42.4251 403.029 42.9907 400.338 42.9907L400.386 43.085Z" fill="#0A0A0A"/>
+                <path d="M220.417 96.1647L236.607 53.9272H241.657L257.846 96.1647H249.256L239.155 67.315L229.055 96.1647H220.465H220.417ZM236.607 89.3765L234.058 81.6927H250.436V89.3765H236.607Z" fill="#0A0A0A"/>
+                <path d="M151.932 96.1647V53.9272H159.909V96.1647H151.932ZM154.811 61.6111V53.9272H180.251V61.6111H154.811ZM163.968 79.0057L159.909 71.3219H173.738V79.0057H163.968ZM154.811 96.1647V88.4809H180.251V96.1647H154.811Z" fill="#0A0A0A"/>
+                <path d="M117.808 96.1647V53.9272H125.785V96.1647H117.808ZM129.797 96.1647L125.737 88.4809H146.08V96.1647H129.749H129.797Z" fill="#0A0A0A"/>
+                <path d="M202.954 72.5472H217.633V80.7967C217.633 83.9551 216.972 86.7364 215.698 89.1405C214.423 91.5447 212.63 93.336 210.317 94.6559C208.004 95.9758 205.314 96.6358 202.199 96.6358C199.084 96.6358 196.346 96.023 194.033 94.7973C191.721 93.5717 189.88 91.8275 188.606 89.6119C187.331 87.3964 186.67 84.7565 186.67 81.7867V69.3417C186.67 66.1833 187.331 63.4021 188.606 61.0451C189.88 58.6881 191.673 56.8496 193.986 55.5297C196.299 54.2098 198.989 53.5498 202.104 53.5498C204.653 53.5498 207.013 54.0683 209.09 55.1054C211.166 56.1425 212.96 57.6038 214.376 59.4894C215.792 61.3751 216.783 63.5435 217.302 66.0891H208.712C208.287 64.722 207.438 63.6378 206.163 62.9307C204.889 62.1764 203.52 61.7993 202.104 61.7993C199.933 61.7993 198.234 62.5064 196.913 63.8735C195.591 65.2405 194.977 67.079 194.977 69.3417V81.7867C194.977 83.7666 195.638 85.3693 196.96 86.595C198.281 87.8206 200.075 88.4334 202.246 88.4334C204.417 88.4334 206.116 87.7735 207.438 86.4535C208.759 85.1336 209.373 83.3423 209.373 80.9853V80.2782H202.954V72.5944V72.5472Z" fill="#0A0A0A"/>
+                <path d="M274.979 96.5884C271.723 96.5884 268.985 95.9756 266.72 94.75C264.454 93.5243 262.708 91.733 261.481 89.376C260.301 87.019 259.687 84.1906 259.687 80.8437V69.2472C259.687 65.9003 260.301 63.0719 261.481 60.7149C262.661 58.3579 264.407 56.5665 266.72 55.3409C268.985 54.1153 271.77 53.5024 274.979 53.5024C277.67 53.5024 280.03 54.0681 282.106 55.1995C284.183 56.3308 285.929 57.9807 287.298 60.1492C288.667 62.3176 289.611 64.9575 290.13 68.0687H281.87C281.54 66.6545 281.068 65.476 280.407 64.4861C279.746 63.4961 278.991 62.7419 278.047 62.2233C277.103 61.7048 276.112 61.422 274.932 61.422C272.714 61.422 270.967 62.0819 269.74 63.449C268.513 64.816 267.9 66.7488 267.9 69.2001V80.7965C267.9 83.2949 268.513 85.1805 269.74 86.5476C270.967 87.9147 272.714 88.5746 274.932 88.5746C276.678 88.5746 278.142 88.0089 279.369 86.8304C280.596 85.6519 281.398 84.0492 281.823 81.9279H290.083C289.517 84.992 288.573 87.6318 287.204 89.8003C285.835 91.9687 284.136 93.6186 282.059 94.7971C279.982 95.9285 277.622 96.4941 274.932 96.4941L274.979 96.5884Z" fill="#0A0A0A"/>
+                <path d="M324.16 53.9272L311.699 79.8543V96.1647H303.723V79.8543L291.262 53.9272H299.616L307.687 72.1233L315.758 53.9272H324.112H324.16Z" fill="#0A0A0A"/>
+                <path d="M46.632 26.9164H66.0306V0.09375H37.7114L46.632 26.9164Z" fill="#0A0A0A"/>
+                <path d="M19.5402 97.3904L0 60.3384H66.0308V97.3904H19.5402Z" fill="#0A0A0A"/>
+                <path d="M103.129 77.8748L66.0308 97.3908V0.09375H103.129V77.8748Z" fill="url(#paint0_linear_footer)"/>
+                </g>
+                <defs>
+                <linearGradient id="paint0_linear_footer" x1="82.4524" y1="97.3908" x2="82.4524" y2="0.0937489" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#EC262D"/>
+                <stop offset="1" stop-color="#F57B7F"/>
+                </linearGradient>
+                <clipPath id="clip0_footer">
+                <rect width="415.933" height="97.2985" fill="white"/>
+                </clipPath>
+                </defs>
+            </svg>
+        </div>
+
+        <div class="socials-wrapper">
+            <span class="follow-text">Follow Us</span>
+            <div class="social-icons">
+                <a id="footer-fb" href="#" aria-label="Facebook" target="_blank" rel="noopener" style="color:inherit;"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
+                <a id="footer-x" href="#" aria-label="Twitter / X" target="_blank" rel="noopener" style="color:inherit;"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+                <a id="footer-ig" href="#" aria-label="Instagram" target="_blank" rel="noopener" style="color:inherit;"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Scripts -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // --- Mobile Menu Toggle ---
+            const hamburger = document.getElementById('hamburger-menu');
+            const nav = document.getElementById('main-nav');
+            if (hamburger && nav) {
+                hamburger.addEventListener('click', function() {
+                    nav.classList.toggle('open');
+                });
+            }
+            // Apply favicon from home layout
+            if (window.ghStorage) {
+                ghStorage.getHomeLayout().then(function(layout) {
+                    if (!layout) return;
+                    var fbLink = document.getElementById('footer-fb');
+                    var xLink  = document.getElementById('footer-x');
+                    var igLink = document.getElementById('footer-ig');
+                    if (fbLink && layout.fbUrl) fbLink.href = layout.fbUrl;
+                    if (xLink  && layout.xUrl)  xLink.href  = layout.xUrl;
+                    if (igLink && layout.igUrl) igLink.href = layout.igUrl;
+                    if (fbLink) fbLink.style.display = layout.fbVisible === false ? 'none' : '';
+                    if (xLink)  xLink.style.display  = layout.xVisible  === false ? 'none' : '';
+                    if (igLink) igLink.style.display = layout.igVisible === false ? 'none' : '';
+                    var favicon = document.getElementById('site-favicon');
+                    if (favicon && layout.faviconUrl) favicon.href = layout.faviconUrl;
+                }).catch(function(){});
+            }
+
+            // --- Language Switcher Functionality handled by switchArticleLang() ---
+        });
+    </script>
+
+    <!-- ================================================================
+         DYNAMIC ARTICLE POPULATION — reads ?id= from URL
+         ================================================================ -->
+    <script>
+    // Safety: always reveal main after 2s even if async fails
+    setTimeout(function() { var m = document.querySelector('main'); if(m) m.style.visibility='visible'; }, 2000);
+    (async function() {
+        // ---- helpers ----
+        function showMain() { var m = document.querySelector('main'); if(m) m.style.visibility='visible'; }
+        function esc(str) { return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+        function escAttr(str) { return String(str || '').replace(/"/g,'&quot;'); }
+
+        var DEFAULT_INTERVIEWEES = [
+            { name: "Jeremy Buendia",  role: "Men's Physique Champion", type: "men",   img: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&q=80&w=800",  avatar: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&q=80&w=200" },
+            { name: "Aminova Inna",    role: "Yoga Instructor",          type: "women", img: "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&q=80&w=800",  avatar: "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&q=80&w=200" },
+            { name: "Kathryn Murphy",  role: "Bodybuilder Pro",          type: "men",   img: "https://images.unsplash.com/photo-1526506159807-1a52701b22e1?auto=format&fit=crop&q=80&w=800",  avatar: "https://images.unsplash.com/photo-1526506159807-1a52701b22e1?auto=format&fit=crop&q=80&w=200" },
+            { name: "Coralie",         role: "Crossfit Athlete",         type: "women", img: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&q=80&w=800",  avatar: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&q=80&w=200" },
+            { name: "Lazar Angelov",   role: "Boxing Coach",             type: "men",   img: "https://images.unsplash.com/photo-1594381898411-846e7d193883?auto=format&fit=crop&q=80&w=800",  avatar: "https://images.unsplash.com/photo-1594381898411-846e7d193883?auto=format&fit=crop&q=80&w=200" },
+            { name: "Guy Hawkins",     role: "Gymnast",                  type: "women", img: "https://images.unsplash.com/photo-1574680093668-0782e2cb658e?auto=format&fit=crop&q=80&w=800",  avatar: "https://images.unsplash.com/photo-1574680093668-0782e2cb658e?auto=format&fit=crop&q=80&w=200" },
+            { name: "Wade Warren",     role: "Sprinter",                 type: "men",   img: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=800",  avatar: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=200" },
+            { name: "Bessie Cooper",   role: "Fitness Influencer",       type: "women", img: "https://images.unsplash.com/photo-1608667508764-33cf0726b13a?auto=format&fit=crop&q=80&w=800",  avatar: "https://images.unsplash.com/photo-1608667508764-33cf0726b13a?auto=format&fit=crop&q=80&w=200" },
+            { name: "Jacob Jones",     role: "Personal Trainer",         type: "men",   img: "https://images.unsplash.com/photo-1567013127542-490d757e51fc?auto=format&fit=crop&q=80&w=800",  avatar: "https://images.unsplash.com/photo-1567013127542-490d757e51fc?auto=format&fit=crop&q=80&w=200" },
+            { name: "Kristin Watson",  role: "Pilates Coach",            type: "women", img: "https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?auto=format&fit=crop&q=80&w=800",  avatar: "https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?auto=format&fit=crop&q=80&w=200" },
+            { name: "Cody Fisher",     role: "Powerlifter",              type: "men",   img: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&q=80&w=800",  avatar: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&q=80&w=200" },
+            { name: "Esther Howard",   role: "Dance Fitness Coach",      type: "women", img: "https://images.unsplash.com/photo-1579703473489-02ebcb7de488?auto=format&fit=crop&q=80&w=800",  avatar: "https://images.unsplash.com/photo-1579703473489-02ebcb7de488?auto=format&fit=crop&q=80&w=200" }
+        ];
+
+        // ---- read data ----
+        var params = new URLSearchParams(window.location.search);
+        var articleId = params.get('id');
+        var articleIndexParam = params.get('index');
+        var isPreview = params.get('preview') === '1';
+        // Custom slug: treat the first query key as a slug when no id/index/preview param
+        var articleSlugParam = (!articleId && articleIndexParam === null && !isPreview) ? (params.keys().next().value || null) : null;
+        if (articleSlugParam === 'id' || articleSlugParam === 'index' || articleSlugParam === 'preview') articleSlugParam = null;
+
+        // Preview draft is ephemeral — kept in localStorage, not GitHub
+        var previewDraft = null;
+        if (isPreview) {
+            try {
+                previewDraft = JSON.parse(localStorage.getItem('aestheticLegacyPreviewDraft') || 'null');
+                localStorage.removeItem('aestheticLegacyPreviewDraft');
+            } catch(e) {}
+            if (!previewDraft) { showMain(); return; }
+        } else {
+            if (!articleId && articleIndexParam === null && !articleSlugParam) { showMain(); return; }
+        }
+
+        // Fetch all persistent data from GitHub
+        var ghResults;
+        try {
+            ghResults = await Promise.all([
+                ghStorage.getArticles(),
+                ghStorage.getInterviewees(),
+                ghStorage.getHomeOrder()
+            ]);
+        } catch(e) { showMain(); return; }
+
+        var articles    = ghResults[0];
+        var intervieweeData = ghResults[1];
+        var homeOrder   = ghResults[2];
+        var interviewees = (intervieweeData.interviewees && intervieweeData.interviewees.length) ? intervieweeData.interviewees : DEFAULT_INTERVIEWEES;
+
+        var article;
+        if (isPreview) {
+            article = previewDraft;
+            // Show draft banner
+            var _banner = document.createElement('div');
+            _banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;background:#2d7ef7;color:#fff;text-align:center;font-size:0.78rem;font-weight:700;padding:8px;letter-spacing:0.05em;';
+            _banner.textContent = 'DRAFT PREVIEW — This article has not been published';
+            document.body.appendChild(_banner);
+        } else {
+            if (articleIndexParam !== null) {
+                var _artIdx = parseInt(articleIndexParam, 10);
+                article = articles[_artIdx] || null;
+            } else if (articleSlugParam) {
+                article = articles.find(function(a) { return a.slug && a.slug === articleSlugParam; }) || null;
+            } else {
+                article = articles.find(function(a) { return a.id === articleId; });
+            }
+            if (!article) { showMain(); return; } // article not found → show static template
+            // Draft protection: block access unless caller has the article's own ID as token
+            if (article.status === 'draft') {
+                var _previewToken = params.get('preview');
+                if (_previewToken !== article.id) {
+                    document.title = 'Not Published';
+                    document.body.innerHTML = '<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:sans-serif;background:#f5f5f5;"><div style="text-align:center;padding:40px;"><h2 style="font-weight:900;">This article is not yet published.</h2><p><a href="index.html" style="color:#2d7ef7;">← Back to Home</a></p></div></div>';
+                    return;
+                }
+                // Valid draft token — show draft banner
+                var _draftBanner = document.createElement('div');
+                _draftBanner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;background:#ff9500;color:#fff;text-align:center;font-size:0.78rem;font-weight:700;padding:8px;letter-spacing:0.05em;';
+                _draftBanner.textContent = 'DRAFT PREVIEW — This article has not been published';
+                document.body.appendChild(_draftBanner);
+            }
+            var _finalArtIdx = articleIndexParam !== null ? parseInt(articleIndexParam, 10) : articles.indexOf(article);
+            if (_finalArtIdx >= 0) {
+                var _replaceUrl = article.slug ? 'blog_article.html?' + article.slug : 'blog_article.html?index=' + _finalArtIdx;
+                if (article.status === 'draft') _replaceUrl += '&preview=' + article.id;
+                history.replaceState(null, '', _replaceUrl);
+            }
+        }
+
+        var interviewee = (article.intervieweeIdx !== null && article.intervieweeIdx !== undefined) ? interviewees[article.intervieweeIdx] : null;
+
+        // Expose article globally for language switcher
+        window._articleData = article;
+
+        // ---- page title ----
+        document.title = (article.title || 'Article') + ' | Aesthetic Legacy';
+
+        // ---- HERO ----
+        if (article.heroImage) {
+            var heroBg = document.querySelector('.blog-hero-bg');
+            if (heroBg) heroBg.src = article.heroImage;
+        }
+
+        // ---- URL helpers ----
+        function articleUrl(art) {
+            return art.slug ? 'blog_article.html?' + art.slug : 'blog_article.html?index=' + articles.indexOf(art);
+        }
+        function intervieweeUrl(iee, idx) {
+            return (iee && iee.slug) ? 'interviewee_detail.html?' + iee.slug : 'interviewee_detail.html?index=' + idx;
+        }
+
+        // ---- SIDEBAR: interviewee avatar ----
+        if (interviewee) {
+            var avatarImg = document.querySelector('.sidebar-avatar img');
+            if (avatarImg) { avatarImg.src = interviewee.avatar || interviewee.img || ''; avatarImg.alt = interviewee.name || ''; }
+            var avatarH3 = document.querySelector('.sidebar-avatar-overlay h3');
+            if (avatarH3) avatarH3.textContent = interviewee.name || '';
+            var intervieweeLink = document.getElementById('sidebar-interviewee-link');
+            if (intervieweeLink) intervieweeLink.href = intervieweeUrl(interviewee, article.intervieweeIdx);
+        }
+
+        // ---- SIDEBAR: latest articles from same interviewee ----
+        var sidebarLatest = document.querySelector('.sidebar-latest-articles');
+        if (sidebarLatest) {
+            // Always clear static placeholder cards
+            sidebarLatest.querySelectorAll('.sidebar-card').forEach(function(c) { c.remove(); });
+
+            if (interviewee) {
+                var siblingArticles = articles.filter(function(a) {
+                    return a.id !== article.id && a.intervieweeIdx === article.intervieweeIdx;
+                }).sort(function(a,b) { return b.createdAt - a.createdAt; }).slice(0, 4);
+
+                if (siblingArticles.length > 0) {
+                    siblingArticles.forEach(function(sa) {
+                        var link = document.createElement('a');
+                        link.href = articleUrl(sa);
+                        link.style.cssText = 'text-decoration:none;display:block;';
+                        var card = document.createElement('div');
+                        card.className = 'sidebar-card';
+                        var imgEl = document.createElement('img');
+                        imgEl.src = sa.heroImage || '';
+                        imgEl.alt = sa.title || '';
+                        var overlay = document.createElement('div');
+                        overlay.className = 'sidebar-card-overlay';
+                        var h4 = document.createElement('h4');
+                        h4.textContent = sa.title || 'Untitled';
+                        var span = document.createElement('span');
+                        span.textContent = sa.date || '';
+                        overlay.appendChild(h4);
+                        overlay.appendChild(span);
+                        card.appendChild(imgEl);
+                        card.appendChild(overlay);
+                        link.appendChild(card);
+                        sidebarLatest.appendChild(link);
+                    });
+                } else {
+                    var sidebarHeading = sidebarLatest.querySelector('.sidebar-heading');
+                    if (sidebarHeading) sidebarHeading.style.display = 'none';
+                }
+            } else {
+                sidebarLatest.style.display = 'none';
+            }
+        }
+
+        // ---- MOST POPULAR SECTION ----
+        var popularSection = document.querySelector('.most-popular-section');
+        if (popularSection) {
+            var popularIds = homeOrder ? (homeOrder.popular || []) : [];
+            var popularArticles = popularIds.map(function(id) {
+                return articles.find(function(a) { return a.id === id; });
+            }).filter(Boolean).slice(0, 6);
+
+            if (popularArticles.length > 0) {
+                var grid = popularSection.querySelector('.popular-grid');
+                if (grid) {
+                    grid.innerHTML = '';
+                    popularArticles.forEach(function(pa) {
+                        var a = document.createElement('a');
+                        a.href = articleUrl(pa);
+                        a.style.cssText = 'text-decoration:none;display:block;';
+                        var card = document.createElement('div');
+                        card.className = 'popular-card';
+                        var img = document.createElement('img');
+                        img.src = pa.heroImage || '';
+                        img.alt = pa.title || '';
+                        var overlay = document.createElement('div');
+                        overlay.className = 'popular-overlay';
+                        var h3 = document.createElement('h3');
+                        h3.textContent = pa.title || 'Untitled';
+                        var span = document.createElement('span');
+                        span.textContent = pa.date || '';
+                        overlay.appendChild(h3);
+                        overlay.appendChild(span);
+                        card.appendChild(img);
+                        card.appendChild(overlay);
+                        a.appendChild(card);
+                        grid.appendChild(a);
+                    });
+                }
+            }
+        }
+
+        // ================================================================
+        //  MAIN CONTENT — component vs normal mode
+        // ================================================================
+        var mainContent = document.querySelector('.blog-main-content');
+        if (!mainContent) { showMain(); return; }
+
+        function sanitizeNormalArticleHtml(rawHtml) {
+            var tmp = document.createElement('div');
+            tmp.innerHTML = rawHtml || '';
+            // Remove editor-only close buttons that should not appear on live pages
+            tmp.querySelectorAll('.video-embed-remove').forEach(function(btn) { btn.remove(); });
+            tmp.querySelectorAll('.video-embed-wrapper button').forEach(function(btn) { btn.remove(); });
+            tmp.querySelectorAll('button[title*="Remove"],button[title*="remove"]').forEach(function(btn) {
+                var oc = (btn.getAttribute('onclick') || '');
+                if (oc.indexOf('video-embed-wrapper') >= 0) btn.remove();
+            });
+            // Legacy content may have plain <button>✕</button> next to iframes without classes.
+            tmp.querySelectorAll('button').forEach(function(btn) {
+                var txt = (btn.textContent || '').trim();
+                if (txt !== '✕' && txt !== '×' && txt !== 'x' && txt !== 'X') return;
+                var p = btn.parentElement;
+                if (p && p.querySelector('iframe,video,embed,object')) { btn.remove(); return; }
+                var n = btn.nextElementSibling;
+                if (n && /^(iframe|video|embed|object)$/i.test(n.tagName || '')) { btn.remove(); }
+            });
+            // Normalize embeds so social iframe widgets don't show scrollbars/overflow
+            tmp.querySelectorAll('iframe').forEach(function(ifr) {
+                var src = (ifr.getAttribute('src') || '').toLowerCase();
+                var isPortraitSocial = src.indexOf('tiktok.com/embed') >= 0 || src.indexOf('instagram.com') >= 0;
+                ifr.setAttribute('frameborder', '0');
+                ifr.setAttribute('scrolling', 'no');
+                ifr.setAttribute('allowfullscreen', '');
+                ifr.style.border = '0';
+                ifr.style.maxWidth = '100%';
+                // Portrait social embeds need explicit height instead of ratio-cropping wrappers.
+                if (isPortraitSocial) {
+                    var wrapper = ifr.closest('.video-embed-wrapper');
+                    if (wrapper) {
+                        wrapper.style.width = '325px';
+                        wrapper.style.maxWidth = '100%';
+                        wrapper.style.overflow = 'visible';
+                        wrapper.style.height = 'auto';
+                        var ratioInner = wrapper.querySelector('div[style*="padding-bottom"]');
+                        if (ratioInner) {
+                            ratioInner.style.position = 'static';
+                            ratioInner.style.paddingBottom = '0';
+                            ratioInner.style.height = 'auto';
+                            ratioInner.style.overflow = 'visible';
+                        }
+                    }
+                    ifr.style.position = 'static';
+                    ifr.style.width = '100%';
+                    ifr.style.height = '760px';
+                    ifr.style.overflow = 'hidden';
+                    ifr.style.display = 'block';
+                }
+            });
+            return tmp.innerHTML;
+        }
+
+        if (article.editorMode === 'normal') {
+            // --- NORMAL MODE: inject HTML directly ---
+            // Clear all block elements (header, stats, content, pullquote, routine, social)
+            var toRemove = mainContent.querySelectorAll('.article-header-block,.quick-stats-block,.article-content-block,.article-pull-quote,.routine-block,.social-media-block');
+            toRemove.forEach(function(el) { el.remove(); });
+            // Add article header (title + date + lang switcher) — same as component mode
+            var normalHeaderEl = buildHeaderBlock({ title: article.title || '', date: article.date || '' });
+            mainContent.insertBefore(normalHeaderEl, mainContent.firstChild);
+            // Inject normal content into a wrapper
+            var wrapper = document.createElement('div');
+            wrapper.className = 'normal-content-body';
+            wrapper.style.cssText = 'font-family:inherit;line-height:1.75;color:#282828;';
+            wrapper.innerHTML = sanitizeNormalArticleHtml(article.normalContent || '');
+            mainContent.insertBefore(wrapper, normalHeaderEl.nextSibling);
+        } else {
+            // --- COMPONENT MODE: populate template blocks ---
+            var blocks = article.blocks || [];
+
+            // Clear the existing static content so we can repopulate
+            var staticRemove = mainContent.querySelectorAll('.article-header-block,.quick-stats-block,.article-content-block,.article-pull-quote,.routine-block,.social-media-block');
+            staticRemove.forEach(function(el) { el.remove(); });
+
+            // Build and insert blocks in order; only allow one header block
+            var fragment = document.createDocumentFragment();
+            var headerRendered = false;
+
+            blocks.forEach(function(blk) {
+                if (blk.type === 'header') {
+                    if (headerRendered) return; // skip duplicate header blocks
+                    headerRendered = true;
+                }
+                var el = buildBlockElement(blk);
+                if (el) fragment.appendChild(el);
+            });
+
+            // If no header block in data, synthesize one from article metadata
+            if (!headerRendered) {
+                var syntheticHeader = buildHeaderBlock({ title: article.title || '', date: article.date || '' });
+                fragment.insertBefore(syntheticHeader, fragment.firstChild);
+            }
+
+            // Insert before sidebar (which is outside mainContent, so just append)
+            mainContent.appendChild(fragment);
+        }
+
+        showMain();
+
+        // ---- block builders ----
+        function buildBlockElement(blk) {
+            if (blk.type === 'header') return buildHeaderBlock(blk);
+            if (blk.type === 'stats')  return buildStatsBlock(blk);
+            if (blk.type === 'content') return buildContentBlock(blk);
+            if (blk.type === 'pullquote') return buildPullquoteBlock(blk);
+            if (blk.type === 'routine') return buildRoutineBlock(blk);
+            if (blk.type === 'social')  return buildSocialBlock(blk);
+            return null;
+        }
+
+        function buildHeaderBlock(blk) {
+            var div = document.createElement('div');
+            div.className = 'article-header-block';
+            var meta = document.createElement('div');
+            meta.className = 'article-meta';
+            var dateSpan = document.createElement('span');
+            dateSpan.className = 'article-date';
+            dateSpan.textContent = blk.date || article.date || '';
+            var langDiv = document.createElement('div');
+            langDiv.className = 'lang-switcher';
+            var hasEn = !!(article.blocksEn && article.blocksEn.length || article.normalContentEn);
+            langDiv.innerHTML =
+                '<button class="btn-vn active" onclick="switchArticleLang(\'vn\')">VN</button>' +
+                '<button class="btn-eng' + (hasEn ? '' : ' lang-disabled') + '" onclick="switchArticleLang(\'en\')"' + (hasEn ? '' : ' disabled') + '>EN</button>';
+            meta.appendChild(dateSpan);
+            meta.appendChild(langDiv);
+            var h1 = document.createElement('h1');
+            h1.id = 'article-main-title';
+            h1.textContent = blk.title || article.title || '';
+            div.appendChild(meta);
+            div.appendChild(h1);
+            return div;
+        }
+
+        function buildStatsBlock(blk) {
+            var div = document.createElement('div');
+            div.className = 'quick-stats-block';
+            var h2 = document.createElement('h2');
+            h2.className = 'quick-stats-title';
+            h2.textContent = blk.heading || 'Quick Stats:';
+            var ul = document.createElement('ul');
+            ul.className = 'stats-list';
+            (blk.items || []).forEach(function(item) {
+                var li = document.createElement('li');
+                li.textContent = item;
+                ul.appendChild(li);
+            });
+            div.appendChild(h2);
+            div.appendChild(ul);
+            return div;
+        }
+
+        function buildContentBlock(blk) {
+            var div = document.createElement('div');
+            div.className = 'article-content-block';
+            if (blk.image) {
+                var img = document.createElement('img');
+                img.src = blk.image;
+                img.alt = blk.imageAlt || '';
+                img.className = 'article-inline-image';
+                div.appendChild(img);
+            }
+            if (blk.heading) {
+                var h3 = document.createElement('h3');
+                h3.className = 'article-subheading';
+                h3.textContent = blk.heading;
+                div.appendChild(h3);
+            }
+            (blk.paragraphs || []).forEach(function(p) {
+                if (!p) return;
+                var para = document.createElement('p');
+                para.className = 'article-paragraph';
+                para.textContent = p;
+                div.appendChild(para);
+            });
+            return div;
+        }
+
+        function buildPullquoteBlock(blk) {
+            var div = document.createElement('div');
+            div.className = 'article-pull-quote';
+            var svgTL = '<svg class="quote-mark top-left" viewBox="0 0 40 32" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h14v16H6c0 4.418 3.582 8 8 8v8c-8.837 0-16-7.163-16-16V0z"/><path d="M22 0h14v16h-8c0 4.418 3.582 8 8 8v8c-8.837 0-16-7.163-16-16V0z"/></svg>';
+            var svgBR = '<svg class="quote-mark bottom-right" viewBox="0 0 40 32" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="transform:rotate(180deg)"><path d="M0 0h14v16H6c0 4.418 3.582 8 8 8v8c-8.837 0-16-7.163-16-16V0z"/><path d="M22 0h14v16h-8c0 4.418 3.582 8 8 8v8c-8.837 0-16-7.163-16-16V0z"/></svg>';
+            var p = document.createElement('p');
+            p.className = 'pull-quote-text';
+            p.textContent = blk.text || '';
+            div.innerHTML = svgTL;
+            div.appendChild(p);
+            div.insertAdjacentHTML('beforeend', svgBR);
+            return div;
+        }
+
+        function buildRoutineBlock(blk) {
+            var div = document.createElement('div');
+            div.className = 'routine-block';
+            var h2 = document.createElement('h2');
+            h2.className = 'routine-main-title';
+            h2.textContent = blk.title || 'Full Routine:';
+            div.appendChild(h2);
+            (blk.days || []).forEach(function(day) {
+                var dayDiv = document.createElement('div');
+                dayDiv.className = 'routine-day';
+                var h4 = document.createElement('h4');
+                h4.textContent = day.name || '';
+                var ul = document.createElement('ul');
+                ul.className = 'routine-list';
+                (day.exercises || []).forEach(function(ex) {
+                    if (!ex) return;
+                    var li = document.createElement('li');
+                    li.textContent = ex;
+                    ul.appendChild(li);
+                });
+                dayDiv.appendChild(h4);
+                dayDiv.appendChild(ul);
+                div.appendChild(dayDiv);
+            });
+            return div;
+        }
+
+        function buildSocialBlock(blk) {
+            var div = document.createElement('div');
+            div.className = 'social-media-block';
+            var h2 = document.createElement('h2');
+            h2.className = 'social-media-title';
+            h2.textContent = 'Social Media:';
+            div.appendChild(h2);
+            var iconsDiv = document.createElement('div');
+            iconsDiv.className = 'social-media-icons';
+
+            var socialSVGs = {
+                facebook: '<svg viewBox="0 0 36 36" fill="currentColor"><path d="M18 0C8.06 0 0 8.06 0 18c0 8.95 6.53 16.38 15.19 17.79v-12.58h-4.57v-5.21h4.57V14c0-4.51 2.69-7 6.8-7 1.97 0 4.04.35 4.04.35v4.44h-2.28c-2.24 0-2.94 1.39-2.94 2.81v3.38h5.05l-.81 5.21h-4.24v12.58C29.47 34.38 36 26.95 36 18 36 8.06 27.94 0 18 0z" fill="#1877F2"/></svg>',
+                twitter:  '<svg viewBox="0 0 36 36" fill="currentColor"><circle cx="18" cy="18" r="18" fill="#1DA1F2"/><path d="M26.8 13.1c-.6.3-1.3.5-2 .5.7-.4 1.3-1.1 1.5-1.9-.7.4-1.4.7-2.2.9-.6-.7-1.5-1.1-2.5-1.1-1.9 0-3.5 1.6-3.5 3.5 0 .3 0 .5.1.8-2.9-.1-5.5-1.5-7.2-3.6-.3.5-.5 1.1-.5 1.7 0 1.2.6 2.3 1.5 2.9-.6 0-1.1-.2-1.6-.4v.1c0 1.7 1.2 3.1 2.8 3.4-.3.1-.6.1-.9.1-.2 0-.4 0-.6-.1.4 1.4 1.7 2.4 3.3 2.4-1.2.9-2.7 1.5-4.3 1.5-.3 0-.6 0-.8 0 1.5 1 3.4 1.5 5.3 1.5 6.4 0 9.9-5.3 9.9-9.9v-.4c.7-.5 1.3-1.1 1.7-1.8z" fill="#FFF"/></svg>',
+                youtube:  '<svg viewBox="0 0 36 36" fill="currentColor"><circle cx="18" cy="18" r="18" fill="#FF0000"/><path d="M25.8 12.8c-.3-1.1-1.2-2-2.3-2.3C21.4 10 18 10 18 10s-3.4 0-5.5.5c-1.1.3-2 1.2-2.3 2.3-.5 2-.5 6.2-.5 6.2s0 4.2.5 6.2c.3 1.1 1.2 2 2.3 2.3 2.1.5 5.5.5 5.5.5s3.4 0 5.5-.5c1.1-.3 2-1.2 2.3-2.3.5-2 .5-6.2 .5-6.2s0-4.2-.5-6.2zM15 21v-6l6 3-6 3z" fill="#FFF"/></svg>',
+                instagram:'<svg viewBox="0 0 36 36" fill="currentColor"><defs><linearGradient id="ig-g2" x1="15%" y1="85%" x2="85%" y2="15%"><stop offset="0%" stop-color="#f09433"/><stop offset="20%" stop-color="#e6683c"/><stop offset="40%" stop-color="#dc2743"/><stop offset="60%" stop-color="#cc2366"/><stop offset="100%" stop-color="#8a3ab9"/></linearGradient></defs><circle cx="18" cy="18" r="18" fill="url(#ig-g2)"/><rect x="9.5" y="9.5" width="17" height="17" rx="4.5" fill="none" stroke="#FFF" stroke-width="2"/><circle cx="18" cy="18" r="4" fill="none" stroke="#FFF" stroke-width="2"/><circle cx="23" cy="13" r="1" fill="#FFF"/></svg>',
+                website:  '<svg viewBox="0 0 36 36" fill="none" stroke="#282828" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="18" r="15"/><ellipse cx="18" cy="18" rx="6.5" ry="15"/><line x1="18" y1="3" x2="18" y2="33"/><line x1="3" y1="18" x2="33" y2="18"/><line x1="6.5" y1="10.5" x2="29.5" y2="10.5"/><line x1="6.5" y1="25.5" x2="29.5" y2="25.5"/></svg>'
+            };
+            var labels = { facebook:'Facebook', twitter:'Twitter', youtube:'YouTube', instagram:'Instagram', website:'Website' };
+
+            Object.keys(socialSVGs).forEach(function(k) {
+                var url = blk[k];
+                if (!url) return;
+                var a = document.createElement('a');
+                a.href = url;
+                a.className = 'social-icon';
+                a.setAttribute('aria-label', labels[k]);
+                a.target = '_blank';
+                a.rel = 'noopener noreferrer';
+                a.innerHTML = socialSVGs[k];
+                iconsDiv.appendChild(a);
+            });
+            div.appendChild(iconsDiv);
+            return div;
+        }
+
+    })();
+
+    // ================================================================
+    //  LANGUAGE SWITCHER  (global — called by VN/EN buttons in articles)
+    // ================================================================
+    var _currentArticleLang = 'vn';
+
+    function switchArticleLang(lang) {
+        var article = (function(){
+            try { return JSON.parse(localStorage.getItem('aestheticLegacyPreviewDraft')) || {}; } catch(e) { return {}; }
+        })();
+        // Try to get the live article object from the page context
+        if (window._articleData) article = window._articleData;
+        _currentArticleLang = lang;
+        // Update button states
+        document.querySelectorAll('.btn-vn, .btn-eng').forEach(function(btn) {
+            btn.classList.remove('active');
+        });
+        if (lang === 'vn') {
+            document.querySelectorAll('.btn-vn').forEach(function(b){ b.classList.add('active'); });
+        } else {
+            document.querySelectorAll('.btn-eng').forEach(function(b){ b.classList.add('active'); });
+        }
+        // Update h1 title
+        var h1 = document.getElementById('article-main-title');
+        if (h1) {
+            if (article.editorMode !== 'normal') {
+                // Component mode: title lives in the header block, not article.title/titleEn
+                var _langBlocks = (lang === 'en' && article.blocksEn && article.blocksEn.length) ? article.blocksEn : (article.blocks || []);
+                var _hdrBlk = _langBlocks.find(function(b) { return b.type === 'header'; });
+                h1.textContent = (_hdrBlk && _hdrBlk.title) ? _hdrBlk.title
+                    : (lang === 'en' ? (article.titleEn || article.title || h1.textContent) : (article.title || h1.textContent));
+            } else {
+                h1.textContent = (lang === 'en' && article.titleEn) ? article.titleEn : (article.title || h1.textContent);
+            }
+        }
+        // Re-render body
+        var mainContent = document.querySelector('.blog-main-content');
+        if (!mainContent) return;
+        if (article.editorMode === 'normal') {
+            var wrapper = mainContent.querySelector('.normal-content-body');
+            if (!wrapper) { wrapper = document.createElement('div'); wrapper.className = 'normal-content-body'; wrapper.style.cssText = 'font-family:inherit;line-height:1.75;color:#282828;'; mainContent.insertBefore(wrapper, mainContent.firstChild); }
+            wrapper.innerHTML = sanitizeNormalArticleHtml((lang === 'en' && article.normalContentEn) ? article.normalContentEn : (article.normalContent || ''));
+        } else {
+            // Component mode: re-render blocks
+            var blocks = lang === 'en' && article.blocksEn && article.blocksEn.length ? article.blocksEn : (article.blocks || []);
+            var existing = mainContent.querySelectorAll('.quick-stats-block,.article-content-block,.article-pull-quote,.routine-block,.social-media-block');
+            existing.forEach(function(el){ el.remove(); });
+            // Re-add non-header blocks (header h1 already updated above)
+            var frag = document.createDocumentFragment();
+            blocks.forEach(function(blk) {
+                if (blk.type === 'header') return; // header already in DOM with updated h1
+                // We need access to buildBlockElement — it's defined inside the IIFE, so we rebuild inline
+                var el = _buildBlockFallback(blk);
+                if (el) frag.appendChild(el);
+            });
+            mainContent.appendChild(frag);
+        }
+    }
+
+    // Minimal block builder for switchArticleLang (outside IIFE)
+    function _buildBlockFallback(blk) {
+        if (blk.type === 'stats') {
+            var d = document.createElement('div'); d.className = 'quick-stats-block';
+            var h = document.createElement('h2'); h.className = 'quick-stats-title'; h.textContent = blk.heading||'Quick Stats:'; d.appendChild(h);
+            var ul = document.createElement('ul'); ul.className = 'stats-list';
+            (blk.items||[]).forEach(function(it){ var li=document.createElement('li');li.textContent=it;ul.appendChild(li); });
+            d.appendChild(ul); return d;
+        }
+        if (blk.type === 'content') {
+            var d = document.createElement('div'); d.className = 'article-content-block';
+            if (blk.image){ var img=document.createElement('img');img.src=blk.image;img.alt=blk.imageAlt||'';img.className='article-inline-image';d.appendChild(img); }
+            if (blk.heading){ var h3=document.createElement('h3');h3.className='article-subheading';h3.textContent=blk.heading;d.appendChild(h3); }
+            (blk.paragraphs||[]).forEach(function(p){ if(!p)return;var para=document.createElement('p');para.className='article-paragraph';para.textContent=p;d.appendChild(para); });
+            return d;
+        }
+        if (blk.type === 'pullquote') {
+            var d = document.createElement('div'); d.className = 'article-pull-quote';
+            var p = document.createElement('p'); p.className = 'pull-quote-text'; p.textContent = blk.text||'';
+            d.appendChild(p); return d;
+        }
+        if (blk.type === 'routine') {
+            var d = document.createElement('div'); d.className = 'routine-block';
+            var h2 = document.createElement('h2'); h2.className = 'routine-main-title'; h2.textContent = blk.title||'Full Routine:'; d.appendChild(h2);
+            (blk.days||[]).forEach(function(day) {
+                var db=document.createElement('div');db.className='routine-day';
+                var dn=document.createElement('h3');dn.className='routine-day-title';dn.textContent=day.name||'';db.appendChild(dn);
+                var ul=document.createElement('ul');ul.className='routine-exercises-list';
+                (day.exercises||[]).forEach(function(ex){ var li=document.createElement('li');li.textContent=ex;ul.appendChild(li); });
+                db.appendChild(ul);d.appendChild(db);
+            });
+            return d;
+        }
+        return null;
+    }
+    </script>
+</body>
 </html>
