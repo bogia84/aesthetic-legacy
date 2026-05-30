@@ -2961,9 +2961,6 @@
                 if (art.publishedTo.women)       badges += '<span class="art-badge women">Women</span>';
             }
             var artListIdx = artAllArticles.findIndex(function(a){ return a.id === art.id; });
-            var draftLinkBtn = (art.status === 'draft')
-                ? '<button class="article-card-cms-btn article-card-cms-btn-link" onclick="copyDraftLink(\'' + escapeAttr(art.id) + '\',' + artListIdx + ')">Copy Link</button>'
-                : '';
             card.innerHTML =
                 imgEl +
                 '<div class="article-card-cms-body">' +
@@ -2973,7 +2970,6 @@
                     (badges ? '<div class="article-card-cms-badges">' + badges + '</div>' : '') +
                     '<div class="article-card-cms-actions">' +
                         '<button class="article-card-cms-btn article-card-cms-btn-edit" onclick="openArticleEditor(\'' + escapeAttr(art.id) + '\')">Edit</button>' +
-                        draftLinkBtn +
                         '<button class="article-card-cms-btn article-card-cms-btn-del" onclick="deleteArticle(\'' + escapeAttr(art.id) + '\')">Delete</button>' +
                     '</div>' +
                 '</div>';
@@ -2992,25 +2988,7 @@
         ['popular','men','women'].forEach(renderHomePanel);
     }
 
-    function copyDraftLink(artId) {
-        var baseUrl = window.location.href.replace(/[?#].*$/, '').replace(/cms\.html$/, '');
-        var link = baseUrl + 'blog_article.html?id=' + artId + '&preview=' + artId;
-        navigator.clipboard.writeText(link).then(function() {
-            showStatus('✓ Draft link copied to clipboard!', 'success');
-        }).catch(function() {
-            showStatus('Draft link: ' + link, 'info');
-        });
-    }
 
-    function copyIntervieweeDraftLink(ieeId, ieeIdx) {
-        var baseUrl = window.location.href.replace(/[?#].*$/, '').replace(/cms\.html$/, '');
-        var link = baseUrl + 'interviewee_detail.html?id=' + ieeId + '&preview=' + ieeId;
-        navigator.clipboard.writeText(link).then(function() {
-            showStatus('✓ Draft link copied to clipboard!', 'success');
-        }).catch(function() {
-            showStatus('Draft link: ' + link, 'info');
-        });
-    }
 
     // ================================================================
     //  BLOG ARTICLE EDITOR
@@ -4681,7 +4659,6 @@
                     '</div>' +
                     '<div class="interviewee-actions">' +
                         '<button class="interviewee-btn interviewee-btn-edit" onclick="editInterviewee(' + ci + ')">Edit</button>' +
-                        draftLinkBtn +
                         '<button class="interviewee-btn interviewee-btn-del" onclick="deleteInterviewee(' + ci + ')">Remove</button>' +
                     '</div>' +
                 '</div>';
