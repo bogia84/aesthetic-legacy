@@ -251,6 +251,8 @@
 
     var CACHE_TTL = 30 * 1000; // 30 seconds
     var CACHE_PREFIX = 'alCache_';
+    // Per-file write queue — ensures concurrent saves to the same file are serialized
+    var _writeQueue = {};
 
     function cacheGet(filePath) {
         try {
@@ -319,40 +321,49 @@
             'Authorization': 'Bearer ' + pat,
             'Content-Type': 'application/json'
         };
-        var encodedContent = b64encode(JSON.stringify(value, null, 2));
 
-        function fetchSha() {
-            return fetch(url + '?ref=' + branch, { headers: hdrs, cache: 'no-store' })
-                .then(function(res) {
-                    if (!res.ok && res.status !== 404) throw new Error('SHA fetch failed: ' + res.status);
-                    return res.status === 404 ? null : res.json();
+        // Serialize all writes to the same filePath to avoid stale-SHA 409s from concurrent calls
+        var prev = _writeQueue[filePath] || Promise.resolve();
+        var next = prev.then(function() {
+            var encodedContent = b64encode(JSON.stringify(value, null, 2));
+
+            function fetchSha() {
+                return fetch(url + '?ref=' + branch, { headers: hdrs, cache: 'no-store' })
+                    .then(function(res) {
+                        if (!res.ok && res.status !== 404) throw new Error('SHA fetch failed: ' + res.status);
+                        return res.status === 404 ? null : res.json();
+                    });
+            }
+
+            function doPut(sha) {
+                var body = {
+                    message: commitMessage || 'Update ' + filePath,
+                    content: encodedContent,
+                    branch: branch
+                };
+                if (sha) body.sha = sha;
+                return fetch(url, { method: 'PUT', headers: hdrs, body: JSON.stringify(body) });
+            }
+
+            function attemptWrite(attemptsLeft) {
+                return fetchSha().then(function(data) {
+                    return doPut(data && data.sha);
+                }).then(function(res) {
+                    if (res.status === 409 && attemptsLeft > 1) {
+                        return attemptWrite(attemptsLeft - 1);
+                    }
+                    if (!res.ok) return res.text().then(function(t) { throw new Error('GitHub PUT failed: ' + res.status + ' — ' + t); });
+                    cacheSet(filePath, value);
+                    return res.json();
                 });
-        }
+            }
 
-        function doPut(sha) {
-            var body = {
-                message: commitMessage || 'Update ' + filePath,
-                content: encodedContent,
-                branch: branch
-            };
-            if (sha) body.sha = sha;
-            return fetch(url, { method: 'PUT', headers: hdrs, body: JSON.stringify(body) });
-        }
+            return attemptWrite(4);
+        });
 
-        return fetchSha()
-            .then(function(data) { return doPut(data && data.sha); })
-            .then(function(res) {
-                if (res.status === 409) {
-                    // Stale SHA (concurrent save or git push) — re-fetch and retry once
-                    return fetchSha().then(function(data) { return doPut(data && data.sha); });
-                }
-                return res;
-            })
-            .then(function(res) {
-                if (!res.ok) return res.text().then(function(t) { throw new Error('GitHub PUT failed: ' + res.status + ' — ' + t); });
-                cacheSet(filePath, value); // seed cache with written value — next read bypasses stale CDN
-                return res.json();
-            });
+        // Keep queue reference alive only while there are pending writes
+        _writeQueue[filePath] = next.catch(function() {});
+        return next;
     }
 
     function ghPut(filePath, value, commitMessage) {
