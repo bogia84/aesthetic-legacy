@@ -580,78 +580,123 @@
         var api = 'https://api.github.com/repos/' + ctx.owner + '/' + ctx.repo;
         var hdrs = _ghAuthHeaders(pat, false);
 
-        return fetch(api + '/git/ref/heads/' + encodeURIComponent(ctx.branch), { headers: hdrs, cache: 'no-store' })
-            .then(function(refRes) {
-                if (!refRes.ok) {
-                    return refRes.text().then(function(t) {
-                        throw new Error('Reset failed to read branch ref: ' + refRes.status + ' - ' + t);
-                    });
-                }
-                return refRes.json();
-            })
-            .then(function(refData) {
-                var commitSha = refData && refData.object && refData.object.sha;
-                if (!commitSha) throw new Error('Reset failed: branch commit SHA missing.');
-                return fetch(api + '/git/commits/' + commitSha, { headers: hdrs, cache: 'no-store' });
-            })
-            .then(function(commitRes) {
-                if (!commitRes.ok) {
-                    return commitRes.text().then(function(t) {
-                        throw new Error('Reset failed to read commit tree: ' + commitRes.status + ' - ' + t);
-                    });
-                }
-                return commitRes.json();
-            })
-            .then(function(commitData) {
-                var treeSha = commitData && commitData.tree && commitData.tree.sha;
-                if (!treeSha) throw new Error('Reset failed: tree SHA missing.');
-                return fetch(api + '/git/trees/' + treeSha + '?recursive=1', { headers: hdrs, cache: 'no-store' });
-            })
-            .then(function(treeRes) {
-                if (!treeRes.ok) {
-                    return treeRes.text().then(function(t) {
-                        throw new Error('Reset failed to list media files: ' + treeRes.status + ' - ' + t);
-                    });
-                }
-                return treeRes.json();
-            })
-            .then(function(treeData) {
-                var items = Array.isArray(treeData && treeData.tree) ? treeData.tree : [];
-                var blobs = items.filter(function(entry) {
-                    return entry && entry.type === 'blob' && typeof entry.path === 'string' && entry.path.indexOf('data/images/') === 0;
-                });
-
-                if (!blobs.length) return { deletedMediaEntries: 0 };
-
-                var delHdrs = _ghAuthHeaders(pat, true);
-                var chain = Promise.resolve();
-
-                blobs.forEach(function(entry) {
-                    chain = chain.then(function() {
-                        var encodedPath = entry.path.split('/').map(encodeURIComponent).join('/');
-                        var body = {
-                            message: 'CMS: reset remove ' + entry.path,
-                            sha: entry.sha,
-                            branch: ctx.branch
-                        };
-                        return fetch(api + '/contents/' + encodedPath, {
-                            method: 'DELETE',
-                            headers: delHdrs,
-                            body: JSON.stringify(body)
-                        }).then(function(delRes) {
-                            if (!delRes.ok) {
-                                return delRes.text().then(function(t) {
-                                    throw new Error('Reset failed deleting media file ' + entry.path + ': ' + delRes.status + ' - ' + t);
-                                });
-                            }
+        function listImagePaths() {
+            return fetch(api + '/git/ref/heads/' + encodeURIComponent(ctx.branch), { headers: hdrs, cache: 'no-store' })
+                .then(function(refRes) {
+                    if (!refRes.ok) {
+                        return refRes.text().then(function(t) {
+                            throw new Error('Reset failed to read branch ref: ' + refRes.status + ' - ' + t);
                         });
+                    }
+                    return refRes.json();
+                })
+                .then(function(refData) {
+                    var commitSha = refData && refData.object && refData.object.sha;
+                    if (!commitSha) throw new Error('Reset failed: branch commit SHA missing.');
+                    return fetch(api + '/git/commits/' + commitSha, { headers: hdrs, cache: 'no-store' });
+                })
+                .then(function(commitRes) {
+                    if (!commitRes.ok) {
+                        return commitRes.text().then(function(t) {
+                            throw new Error('Reset failed to read commit tree: ' + commitRes.status + ' - ' + t);
+                        });
+                    }
+                    return commitRes.json();
+                })
+                .then(function(commitData) {
+                    var treeSha = commitData && commitData.tree && commitData.tree.sha;
+                    if (!treeSha) throw new Error('Reset failed: tree SHA missing.');
+                    return fetch(api + '/git/trees/' + treeSha + '?recursive=1', { headers: hdrs, cache: 'no-store' });
+                })
+                .then(function(treeRes) {
+                    if (!treeRes.ok) {
+                        return treeRes.text().then(function(t) {
+                            throw new Error('Reset failed to list media files: ' + treeRes.status + ' - ' + t);
+                        });
+                    }
+                    return treeRes.json();
+                })
+                .then(function(treeData) {
+                    var items = Array.isArray(treeData && treeData.tree) ? treeData.tree : [];
+                    return items.filter(function(entry) {
+                        return entry && entry.type === 'blob' && typeof entry.path === 'string' && entry.path.indexOf('data/images/') === 0;
+                    }).map(function(entry) {
+                        return entry.path;
                     });
                 });
+        }
 
-                return chain.then(function() {
-                    return { deletedMediaEntries: blobs.length };
+        function getCurrentSha(path) {
+            var encodedPath = path.split('/').map(encodeURIComponent).join('/');
+            return fetch(api + '/contents/' + encodedPath + '?ref=' + encodeURIComponent(ctx.branch), {
+                headers: hdrs,
+                cache: 'no-store'
+            }).then(function(res) {
+                if (res.status === 404) return null;
+                if (!res.ok) {
+                    return res.text().then(function(t) {
+                        throw new Error('Reset failed reading file SHA ' + path + ': ' + res.status + ' - ' + t);
+                    });
+                }
+                return res.json().then(function(data) {
+                    return data && data.sha ? data.sha : null;
                 });
             });
+        }
+
+        function deleteWithSha(path, sha) {
+            var delHdrs = _ghAuthHeaders(pat, true);
+            var encodedPath = path.split('/').map(encodeURIComponent).join('/');
+            var body = {
+                message: 'CMS: reset remove ' + path,
+                sha: sha,
+                branch: ctx.branch
+            };
+            return fetch(api + '/contents/' + encodedPath, {
+                method: 'DELETE',
+                headers: delHdrs,
+                body: JSON.stringify(body)
+            });
+        }
+
+        function deleteOne(path) {
+            return getCurrentSha(path).then(function(sha) {
+                if (!sha) return false;
+                return deleteWithSha(path, sha).then(function(delRes) {
+                    if (delRes.ok || delRes.status === 404) return true;
+                    if (delRes.status === 409) {
+                        return getCurrentSha(path).then(function(nextSha) {
+                            if (!nextSha) return false;
+                            return deleteWithSha(path, nextSha).then(function(retryRes) {
+                                if (retryRes.ok || retryRes.status === 404) return true;
+                                return retryRes.text().then(function(t) {
+                                    throw new Error('Reset failed deleting media file ' + path + ': ' + retryRes.status + ' - ' + t);
+                                });
+                            });
+                        });
+                    }
+                    return delRes.text().then(function(t) {
+                        throw new Error('Reset failed deleting media file ' + path + ': ' + delRes.status + ' - ' + t);
+                    });
+                });
+            });
+        }
+
+        return listImagePaths().then(function(paths) {
+            if (!paths.length) return { deletedMediaEntries: 0 };
+            var deletedCount = 0;
+            var chain = Promise.resolve();
+            paths.forEach(function(path) {
+                chain = chain.then(function() {
+                    return deleteOne(path).then(function(deleted) {
+                        if (deleted) deletedCount += 1;
+                    });
+                });
+            });
+            return chain.then(function() {
+                return { deletedMediaEntries: deletedCount };
+            });
+        });
     }
 
     function _resetAllDataClientMode(payload, pat) {
