@@ -556,6 +556,33 @@
         return ghPut('data/site-status.json', { published: published, bypassPassword: bypassPassword || '' }, 'CMS: update site status');
     }
 
+    function resetAllData(payload) {
+        var token = getCmsToken();
+        if (!token) return Promise.reject(new Error('Not authenticated. Please log in.'));
+        if (getCmsMode() === 'client') {
+            return Promise.reject(new Error('Reset all data is only available in server mode.'));
+        }
+        return fetch('/api/reset-all-data', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+            },
+            body: JSON.stringify(payload || {})
+        }).then(function(res) {
+            return res.json().then(function(data) {
+                if (!res.ok) {
+                    if (res.status === 401) clearCmsToken();
+                    throw new Error(data.error || 'Reset failed: ' + res.status);
+                }
+                cacheInvalidate('data/articles.json');
+                cacheInvalidate('data/home-order.json');
+                cacheInvalidate('data/interviewees.json');
+                return data;
+            });
+        });
+    }
+
     // Expose on window
     global.ghStorage = {
         getArticles:      getArticles,
@@ -570,6 +597,7 @@
         saveAboutConfig:  saveAboutConfig,
         getSiteStatus:    getSiteStatus,
         saveSiteStatus:   saveSiteStatus,
+        resetAllData:     resetAllData,
         uploadImage:     uploadImage,
         login:           login,
         logout:          logout,

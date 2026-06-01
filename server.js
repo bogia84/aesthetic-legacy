@@ -229,6 +229,63 @@ app.delete('/api/users/:username', requireMaster, (req, res) => {
     res.json({ ok: true });
 });
 
+// ---- POST /api/reset-all-data (master only) ----
+app.post('/api/reset-all-data', requireMaster, async (req, res) => {
+    const body = req.body || {};
+    const confirm = body.confirm;
+    const articles = body.articles;
+    const homeOrder = body.homeOrder;
+    const intervieweesPayload = body.intervieweesPayload;
+
+    if (confirm !== true) {
+        return res.status(400).json({ error: 'Reset confirmation is required.' });
+    }
+
+    if (!Array.isArray(articles)) {
+        return res.status(400).json({ error: 'Invalid payload: articles must be an array.' });
+    }
+    if (!homeOrder || !Array.isArray(homeOrder.popular) || !Array.isArray(homeOrder.men) || !Array.isArray(homeOrder.women)) {
+        return res.status(400).json({ error: 'Invalid payload: homeOrder must include popular/men/women arrays.' });
+    }
+    if (!intervieweesPayload || !Array.isArray(intervieweesPayload.interviewees) || !Array.isArray(intervieweesPayload.menOrder) || !Array.isArray(intervieweesPayload.womenOrder)) {
+        return res.status(400).json({ error: 'Invalid payload: intervieweesPayload is malformed.' });
+    }
+
+    const files = [
+        { filePath: 'data/articles.json', content: articles },
+        { filePath: 'data/home-order.json', content: homeOrder },
+        { filePath: 'data/interviewees.json', content: intervieweesPayload }
+    ];
+
+    const imagesDir = path.join(__dirname, 'data', 'images');
+
+    try {
+        // Persist the reset JSON payload first.
+        await Promise.all(files.map((f) => {
+            const absPath = path.join(__dirname, f.filePath);
+            return fs.promises.writeFile(absPath, JSON.stringify(f.content, null, 2), 'utf8');
+        }));
+
+        // Purge everything currently inside data/images (files and nested dirs).
+        const entries = await fs.promises.readdir(imagesDir, { withFileTypes: true }).catch((err) => {
+            if (err && err.code === 'ENOENT') return [];
+            throw err;
+        });
+
+        await Promise.all(entries.map((entry) => {
+            const target = path.join(imagesDir, entry.name);
+            return fs.promises.rm(target, { recursive: true, force: true });
+        }));
+
+        // Ensure the images directory still exists after purge.
+        await fs.promises.mkdir(imagesDir, { recursive: true });
+
+        res.json({ ok: true, deletedMediaEntries: entries.length });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // ---- POST /api/save-json (session required — direct file write for local dev) ----
 app.post('/api/save-json', requireSession, (req, res) => {
     const { filePath, content } = req.body;

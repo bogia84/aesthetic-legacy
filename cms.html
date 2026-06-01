@@ -5386,22 +5386,42 @@
     }
 
     function resetCMS() {
-        if (!confirm('Reset all orders, articles, and interviewees to default? This cannot be undone.')) return;
-        _articles  = [];
-        _homeOrder = { popular: [], men: [], women: [] };
-        interviewees = DEFAULT_INTERVIEWEES.slice();
-        menOrder   = interviewees.reduce(function(acc,c,i){ if(c.type==='men') acc.push(i); return acc; },[]);
-        womenOrder = interviewees.reduce(function(acc,c,i){ if(c.type==='women') acc.push(i); return acc; },[]);
-        Promise.all([
-            ghStorage.saveArticles(_articles),
-            ghStorage.saveHomeOrder(_homeOrder),
-            ghStorage.saveInterviewees(interviewees, menOrder, womenOrder)
-        ]).then(function() {
-            showStatus('✓ Reset to default.', 'success');
-        }).catch(function(e) { showStatus('⚠ Reset failed: ' + e.message, 'error'); });
-        ['popular','men','women'].forEach(renderHomePanel);
-        renderInterviewees();
-        renderBlogList();
+        if (typeof ghStorage.isMasterAdmin === 'function' && !ghStorage.isMasterAdmin()) {
+            showStatus('Only master admin can run full reset.', 'error');
+            return;
+        }
+        if (!confirm('Reset orders, articles, and interviewees to default, and delete all files in data/images/? This cannot be undone.')) return;
+
+        var nextArticles = [];
+        var nextHomeOrder = { popular: [], men: [], women: [] };
+        var nextInterviewees = DEFAULT_INTERVIEWEES.slice();
+        var nextMenOrder = nextInterviewees.reduce(function(acc, c, i) { if (c.type === 'men') acc.push(i); return acc; }, []);
+        var nextWomenOrder = nextInterviewees.reduce(function(acc, c, i) { if (c.type === 'women') acc.push(i); return acc; }, []);
+
+        ghStorage.resetAllData({
+            confirm: true,
+            articles: nextArticles,
+            homeOrder: nextHomeOrder,
+            intervieweesPayload: {
+                interviewees: nextInterviewees,
+                menOrder: nextMenOrder,
+                womenOrder: nextWomenOrder,
+                heroConfig: { bgImage: '', title: '', description: '', overlayVisible: true }
+            }
+        }).then(function() {
+            _articles = nextArticles;
+            _homeOrder = nextHomeOrder;
+            interviewees = nextInterviewees;
+            menOrder = nextMenOrder;
+            womenOrder = nextWomenOrder;
+            _heroConfig = { bgImage: '', title: '', description: '', overlayVisible: true };
+            ['popular','men','women'].forEach(renderHomePanel);
+            renderInterviewees();
+            renderBlogList();
+            showStatus('Reset completed. Data/images media removed.', 'success');
+        }).catch(function(e) {
+            showStatus('Reset failed: ' + e.message, 'error');
+        });
     }
 
     function showStatus(msg, type) {
