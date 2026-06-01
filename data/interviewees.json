@@ -1,24 +1,7 @@
 {
-  "interviewees": [
-    {
-      "name": "Esther Howard",
-      "role": "Dance Fitness Coach",
-      "type": "women",
-      "img": "https://images.unsplash.com/photo-1579703473489-02ebcb7de488?auto=format&fit=crop&q=80&w=800",
-      "bg": "https://images.unsplash.com/photo-1579703473489-02ebcb7de488?auto=format&fit=crop&q=80&w=1920",
-      "avatar": "https://images.unsplash.com/photo-1579703473489-02ebcb7de488?auto=format&fit=crop&q=80&w=200",
-      "stats": [
-        "Cardio",
-        "5 Years",
-        "High energy",
-        "Zumba"
-      ]
-    }
-  ],
+  "interviewees": [],
   "menOrder": [],
-  "womenOrder": [
-    0
-  ],
+  "womenOrder": [],
   "heroConfig": {
     "bgImage": "",
     "title": "",
