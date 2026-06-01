@@ -1,20 +1,6 @@
 {
   "interviewees": [
     {
-      "name": "Lazar Angelov",
-      "role": "Boxing Coach",
-      "type": "men",
-      "img": "https://images.unsplash.com/photo-1594381898411-846e7d193883?auto=format&fit=crop&q=80&w=800",
-      "bg": "https://images.unsplash.com/photo-1594381898411-846e7d193883?auto=format&fit=crop&q=80&w=1920",
-      "avatar": "https://images.unsplash.com/photo-1594381898411-846e7d193883?auto=format&fit=crop&q=80&w=200",
-      "stats": [
-        "Agility",
-        "15 Years",
-        "Pro approach",
-        "Striking"
-      ]
-    },
-    {
       "name": "Guy Hawkins",
       "role": "Gymnast",
       "type": "women",
@@ -100,15 +86,14 @@
     }
   ],
   "menOrder": [
-    0,
+    1,
     2,
-    3,
-    5
+    4
   ],
   "womenOrder": [
-    1,
-    4,
-    6
+    0,
+    3,
+    5
   ],
   "heroConfig": {
     "bgImage": "",
