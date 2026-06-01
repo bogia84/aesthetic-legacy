@@ -556,11 +556,146 @@
         return ghPut('data/site-status.json', { published: published, bypassPassword: bypassPassword || '' }, 'CMS: update site status');
     }
 
+    function _ghAuthHeaders(pat, includeContentType) {
+        var h = {
+            'Accept': 'application/vnd.github+json',
+            'X-GitHub-Api-Version': '2022-11-28',
+            'Authorization': 'Bearer ' + pat
+        };
+        if (includeContentType) h['Content-Type'] = 'application/json';
+        return h;
+    }
+
+    function _ghRepoContext() {
+        var cfg = global.GITHUB_CONFIG || {};
+        return {
+            owner:  cfg.owner  || OWNER,
+            repo:   cfg.repo   || REPO,
+            branch: cfg.branch || BRANCH
+        };
+    }
+
+    function _deleteImagesClientMode(pat) {
+        var ctx = _ghRepoContext();
+        var api = 'https://api.github.com/repos/' + ctx.owner + '/' + ctx.repo;
+        var hdrs = _ghAuthHeaders(pat, false);
+
+        return fetch(api + '/git/ref/heads/' + encodeURIComponent(ctx.branch), { headers: hdrs, cache: 'no-store' })
+            .then(function(refRes) {
+                if (!refRes.ok) {
+                    return refRes.text().then(function(t) {
+                        throw new Error('Reset failed to read branch ref: ' + refRes.status + ' - ' + t);
+                    });
+                }
+                return refRes.json();
+            })
+            .then(function(refData) {
+                var commitSha = refData && refData.object && refData.object.sha;
+                if (!commitSha) throw new Error('Reset failed: branch commit SHA missing.');
+                return fetch(api + '/git/commits/' + commitSha, { headers: hdrs, cache: 'no-store' });
+            })
+            .then(function(commitRes) {
+                if (!commitRes.ok) {
+                    return commitRes.text().then(function(t) {
+                        throw new Error('Reset failed to read commit tree: ' + commitRes.status + ' - ' + t);
+                    });
+                }
+                return commitRes.json();
+            })
+            .then(function(commitData) {
+                var treeSha = commitData && commitData.tree && commitData.tree.sha;
+                if (!treeSha) throw new Error('Reset failed: tree SHA missing.');
+                return fetch(api + '/git/trees/' + treeSha + '?recursive=1', { headers: hdrs, cache: 'no-store' });
+            })
+            .then(function(treeRes) {
+                if (!treeRes.ok) {
+                    return treeRes.text().then(function(t) {
+                        throw new Error('Reset failed to list media files: ' + treeRes.status + ' - ' + t);
+                    });
+                }
+                return treeRes.json();
+            })
+            .then(function(treeData) {
+                var items = Array.isArray(treeData && treeData.tree) ? treeData.tree : [];
+                var blobs = items.filter(function(entry) {
+                    return entry && entry.type === 'blob' && typeof entry.path === 'string' && entry.path.indexOf('data/images/') === 0;
+                });
+
+                if (!blobs.length) return { deletedMediaEntries: 0 };
+
+                var delHdrs = _ghAuthHeaders(pat, true);
+                var chain = Promise.resolve();
+
+                blobs.forEach(function(entry) {
+                    chain = chain.then(function() {
+                        var encodedPath = entry.path.split('/').map(encodeURIComponent).join('/');
+                        var body = {
+                            message: 'CMS: reset remove ' + entry.path,
+                            sha: entry.sha,
+                            branch: ctx.branch
+                        };
+                        return fetch(api + '/contents/' + encodedPath, {
+                            method: 'DELETE',
+                            headers: delHdrs,
+                            body: JSON.stringify(body)
+                        }).then(function(delRes) {
+                            if (!delRes.ok) {
+                                return delRes.text().then(function(t) {
+                                    throw new Error('Reset failed deleting media file ' + entry.path + ': ' + delRes.status + ' - ' + t);
+                                });
+                            }
+                        });
+                    });
+                });
+
+                return chain.then(function() {
+                    return { deletedMediaEntries: blobs.length };
+                });
+            });
+    }
+
+    function _resetAllDataClientMode(payload, pat) {
+        var body = payload || {};
+        var articles = body.articles;
+        var homeOrder = body.homeOrder;
+        var intervieweesPayload = body.intervieweesPayload;
+
+        if (body.confirm !== true) {
+            return Promise.reject(new Error('Reset confirmation is required.'));
+        }
+        if (!Array.isArray(articles)) {
+            return Promise.reject(new Error('Invalid payload: articles must be an array.'));
+        }
+        if (!homeOrder || !Array.isArray(homeOrder.popular) || !Array.isArray(homeOrder.men) || !Array.isArray(homeOrder.women)) {
+            return Promise.reject(new Error('Invalid payload: homeOrder must include popular/men/women arrays.'));
+        }
+        if (!intervieweesPayload || !Array.isArray(intervieweesPayload.interviewees) || !Array.isArray(intervieweesPayload.menOrder) || !Array.isArray(intervieweesPayload.womenOrder)) {
+            return Promise.reject(new Error('Invalid payload: intervieweesPayload is malformed.'));
+        }
+
+        return Promise.all([
+            ghPutDirect('data/articles.json', articles, 'CMS: reset articles', pat),
+            ghPutDirect('data/home-order.json', homeOrder, 'CMS: reset home order', pat),
+            ghPutDirect('data/interviewees.json', intervieweesPayload, 'CMS: reset interviewees', pat)
+        ]).then(function() {
+            return _deleteImagesClientMode(pat);
+        }).then(function(result) {
+            cacheInvalidate('data/articles.json');
+            cacheInvalidate('data/home-order.json');
+            cacheInvalidate('data/interviewees.json');
+            return {
+                ok: true,
+                deletedMediaEntries: result.deletedMediaEntries || 0,
+                mode: 'client'
+            };
+        });
+    }
+
     function resetAllData(payload) {
         var token = getCmsToken();
         if (!token) return Promise.reject(new Error('Not authenticated. Please log in.'));
         if (getCmsMode() === 'client') {
-            return Promise.reject(new Error('Reset all data is only available in server mode.'));
+            return _resetAllDataClientMode(payload, token);
         }
         return fetch('/api/reset-all-data', {
             method: 'POST',
