@@ -71,20 +71,6 @@
       ]
     },
     {
-      "name": "Bessie Cooper",
-      "role": "Fitness Influencer",
-      "type": "women",
-      "img": "https://images.unsplash.com/photo-1608667508764-33cf0726b13a?auto=format&fit=crop&q=80&w=800",
-      "bg": "https://images.unsplash.com/photo-1608667508764-33cf0726b13a?auto=format&fit=crop&q=80&w=1920",
-      "avatar": "https://images.unsplash.com/photo-1608667508764-33cf0726b13a?auto=format&fit=crop&q=80&w=200",
-      "stats": [
-        "Physique type",
-        "Training years",
-        "Casual approach",
-        "Specialisation"
-      ]
-    },
-    {
       "name": "Jacob Jones",
       "role": "Personal Trainer",
       "type": "men",
@@ -144,16 +130,15 @@
   "menOrder": [
     2,
     4,
-    6,
-    8
+    5,
+    7
   ],
   "womenOrder": [
     0,
     1,
     3,
-    5,
-    7,
-    9
+    6,
+    8
   ],
   "heroConfig": {
     "bgImage": "",
