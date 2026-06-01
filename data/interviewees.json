@@ -1,20 +1,6 @@
 {
   "interviewees": [
     {
-      "name": "Jacob Jones",
-      "role": "Personal Trainer",
-      "type": "men",
-      "img": "https://images.unsplash.com/photo-1567013127542-490d757e51fc?auto=format&fit=crop&q=80&w=800",
-      "bg": "https://images.unsplash.com/photo-1567013127542-490d757e51fc?auto=format&fit=crop&q=80&w=1920",
-      "avatar": "https://images.unsplash.com/photo-1567013127542-490d757e51fc?auto=format&fit=crop&q=80&w=200",
-      "stats": [
-        "Strength",
-        "9 Years",
-        "Functional",
-        "HIIT"
-      ]
-    },
-    {
       "name": "Kristin Watson",
       "role": "Pilates Coach",
       "type": "women",
@@ -58,12 +44,11 @@
     }
   ],
   "menOrder": [
-    0,
-    2
+    1
   ],
   "womenOrder": [
-    1,
-    3
+    0,
+    2
   ],
   "heroConfig": {
     "bgImage": "",
