@@ -1,20 +1,6 @@
 {
   "interviewees": [
     {
-      "name": "Coralie",
-      "role": "Crossfit Athlete",
-      "type": "women",
-      "img": "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&q=80&w=800",
-      "bg": "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&q=80&w=1920",
-      "avatar": "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&q=80&w=200",
-      "stats": [
-        "Endurance",
-        "4 Years",
-        "High intensity",
-        "WOD Specialisation"
-      ]
-    },
-    {
       "name": "Lazar Angelov",
       "role": "Boxing Coach",
       "type": "men",
@@ -114,16 +100,15 @@
     }
   ],
   "menOrder": [
-    1,
-    3,
-    4,
-    6
-  ],
-  "womenOrder": [
     0,
     2,
-    5,
-    7
+    3,
+    5
+  ],
+  "womenOrder": [
+    1,
+    4,
+    6
   ],
   "heroConfig": {
     "bgImage": "",
