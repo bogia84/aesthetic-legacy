@@ -1346,7 +1346,7 @@
 <!-- CMS loading overlay -->
 <div id="cms-loading-overlay" style="position:fixed;inset:0;background:rgba(255,255,255,0.95);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;">
     <div style="width:36px;height:36px;border:3px solid #e63946;border-top-color:transparent;border-radius:50%;animation:spin 0.7s linear infinite;"></div>
-    <div style="font-family:Manrope,sans-serif;font-weight:700;color:#111;font-size:0.9rem;">Loading data from GitHub…</div>
+    <div style="font-family:Manrope,sans-serif;font-weight:700;color:#111;font-size:0.9rem;">loading please wait</div>
 </div>
 <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
 
@@ -1379,7 +1379,6 @@
             <button class="btn-set-pw" onclick="saveBypassPassword()" title="Save access password">Set</button>
         </div>
         <button class="btn btn-save" onclick="saveCMS()">Save Changes</button>
-        <button class="btn btn-reset" onclick="resetCMS()">Reset to Default</button>
         <span class="save-status" id="save-status"><span class="header-spinner"></span><span id="save-status-text"></span></span>
         <a href="index.html" class="back-link">← Back to Site</a>
         <button class="btn-logout" onclick="cmsLogout()">Log Out</button>
@@ -2587,6 +2586,12 @@
             <div style="display:flex;align-items:center;gap:12px;">
                 <button class="cms-btn" onclick="saveSiteSettingsCMS()">Save Changes</button>
                 <span id="ss-save-status" style="font-size:0.78rem;color:var(--muted);"></span>
+            </div>
+
+            <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--border);">
+                <h3 style="font-size:0.8rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;margin:0 0 10px;color:#e63946;">Danger Zone</h3>
+                <p style="font-size:0.76rem;color:var(--muted);margin:0 0 12px;line-height:1.5;">Remove all articles and interviewees, clear all home orders, and delete all files in data/images. This cannot be undone.</p>
+                <button class="btn btn-reset" style="border-color:#e63946;color:#e63946;" onclick="resetCMS()">Reset All CMS Data</button>
             </div>
         </div>
 
