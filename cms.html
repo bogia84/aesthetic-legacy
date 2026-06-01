@@ -5390,13 +5390,13 @@
             showStatus('Only master admin can run full reset.', 'error');
             return;
         }
-        if (!confirm('Reset orders, articles, and interviewees to default, and delete all files in data/images/? This cannot be undone.')) return;
+        if (!confirm('Reset CMS: remove all articles and interviewees, clear all home orders, and delete all data/images files? This cannot be undone.')) return;
 
         var nextArticles = [];
         var nextHomeOrder = { popular: [], men: [], women: [] };
-        var nextInterviewees = DEFAULT_INTERVIEWEES.slice();
-        var nextMenOrder = nextInterviewees.reduce(function(acc, c, i) { if (c.type === 'men') acc.push(i); return acc; }, []);
-        var nextWomenOrder = nextInterviewees.reduce(function(acc, c, i) { if (c.type === 'women') acc.push(i); return acc; }, []);
+        var nextInterviewees = [];
+        var nextMenOrder = [];
+        var nextWomenOrder = [];
 
         ghStorage.resetAllData({
             confirm: true,
@@ -5418,7 +5418,7 @@
             ['popular','men','women'].forEach(renderHomePanel);
             renderInterviewees();
             renderBlogList();
-            showStatus('Reset completed. Data/images media removed.', 'success');
+            showStatus('Reset completed. Articles and interviewees removed; data/images files deleted.', 'success');
         }).catch(function(e) {
             showStatus('Reset failed: ' + e.message, 'error');
         });
