@@ -1,20 +1,6 @@
 {
   "interviewees": [
     {
-      "name": "Aminova Inna",
-      "role": "Yoga Instructor",
-      "type": "women",
-      "img": "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&q=80&w=800",
-      "bg": "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&q=80&w=1920",
-      "avatar": "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&q=80&w=200",
-      "stats": [
-        "Flexibility",
-        "8 Years",
-        "Mindfulness",
-        "Vinyasa"
-      ]
-    },
-    {
       "name": "Coralie",
       "role": "Crossfit Athlete",
       "type": "women",
@@ -128,17 +114,16 @@
     }
   ],
   "menOrder": [
-    2,
+    1,
+    3,
     4,
-    5,
-    7
+    6
   ],
   "womenOrder": [
     0,
-    1,
-    3,
-    6,
-    8
+    2,
+    5,
+    7
   ],
   "heroConfig": {
     "bgImage": "",
